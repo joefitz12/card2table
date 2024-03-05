@@ -2,23 +2,27 @@
 	import '../styles/app.css';
 </script>
 
-<nav>
-	<ul>
-		<li>
-			<a href="/">Home</a>
-		</li>
-		<li>
-			<a href="/list">To-Do list</a>
-		</li>
-		<li>
-			<a href="/admin/paid-status">Account status</a>
-		</li>
-		<li>
-			<a href="/admin/user-settings">User settings</a>
-		</li>
-	</ul>
-</nav>
+<div class="flex column main-container">
+	<nav>
+		<ul>
+			<li>
+				<a href="/">Home</a>
+			</li>
+			<li>
+				<a href="/template">+ Template</a>
+			</li>
+		</ul>
+	</nav>
+	<main class="flex column">
+		<slot />
+	</main>
+</div>
 
-<ol />
-
-<slot />
+<style>
+	.main-container {
+		height: 100vh;
+	}
+	main {
+		flex-grow: 1;
+	}
+</style>

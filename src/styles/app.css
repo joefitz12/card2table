@@ -1,8 +1,12 @@
+body {
+	margin: 0;
+}
 nav {
 	background-color: beige;
-}
-nav ul {
-	display: flex;
+	ul {
+		display: flex;
+		margin: 0;
+	}
 }
 li {
 	list-style: none;
@@ -11,4 +15,16 @@ li {
 a {
 	text-decoration: none;
 	color: black;
+}
+
+.flex {
+	display: flex;
+}
+.column {
+	flex-direction: column;
+	gap: 0.25rem;
+}
+.row {
+	flex-direction: row;
+	gap: 0.5rem;
 }
