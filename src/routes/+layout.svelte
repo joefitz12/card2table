@@ -1,5 +1,21 @@
-<script>
+<script lang="ts">
 	import '../styles/app.css';
+	import { onNavigate } from '$app/navigation';
+
+	interface ExtendedDocument extends Document {
+		startViewTransition: any;
+	}
+
+	onNavigate((navigation) => {
+		if (!('startViewTransition' in document)) return;
+
+		return new Promise((resolve) => {
+			(document as ExtendedDocument).startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 </script>
 
 <div class="flex column main-container">
@@ -21,6 +37,9 @@
 <style>
 	.main-container {
 		height: 100vh;
+	}
+	nav {
+		view-transition-name: header-nav;
 	}
 	main {
 		flex-grow: 1;
