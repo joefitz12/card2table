@@ -39,7 +39,7 @@
 		}
 	}
 
-	function focus(input) {
+	function focus(input: HTMLInputElement) {
 		input.focus();
 	}
 </script>
@@ -75,8 +75,7 @@
 <style>
 	.title h1,
 	.title input {
-		font-size: 1rem;
-		font-family: Courier;
+		font-size: 2rem;
 		font-weight: 400;
 		margin: 0 0 16px 0;
 		padding: 0;
