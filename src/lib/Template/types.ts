@@ -3,12 +3,14 @@ export type FontSizes = {
 	[x: string]: number;
 };
 export type CardState = {
+	title?: string;
 	unit?: Unit;
 	borderRadius?: string;
 	width?: number;
 	height?: number;
-	fontSizes?: FontSizes;
 	backgroundColor?: string;
+	color?: string;
+	textElements: any[];
 };
 
 export type ViewerState = {

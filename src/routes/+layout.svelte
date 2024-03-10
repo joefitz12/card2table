@@ -18,7 +18,7 @@
 	});
 </script>
 
-<div class="flex column main-container">
+<div class="main-container">
 	<nav>
 		<ul>
 			<li>
@@ -37,6 +37,8 @@
 <style>
 	.main-container {
 		height: 100vh;
+		display: flex;
+		flex-direction: column;
 	}
 	nav {
 		view-transition-name: header-nav;
