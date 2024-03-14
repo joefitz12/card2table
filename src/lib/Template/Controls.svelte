@@ -62,7 +62,7 @@
 </script>
 
 <div class="flex column controls">
-	<div class="container">
+	<div class="flex column container">
 		<div class="flex row">
 			<div class="flex column">
 				<label for="card-template-unit">Unit</label>

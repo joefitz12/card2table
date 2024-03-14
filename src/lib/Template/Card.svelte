@@ -70,7 +70,6 @@
 		dragId = (e.target as HTMLElement).id;
 
 		e.dataTransfer.setData('text/plain', dragId);
-		(e.target as HTMLElement).classList.add('hide');
 	}
 
 	function handleDrop(e: DragEvent) {
@@ -89,8 +88,6 @@
 		textElement.topTransform = e.offsetY - offsetTop;
 
 		cardState.textElements = cardState.textElements;
-
-		(e.target as HTMLElement).classList.remove('hide');
 	}
 
 	function handleDragover(e: DragEvent) {

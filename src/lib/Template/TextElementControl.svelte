@@ -95,7 +95,7 @@
 	.container {
 		/* animation: 90ms cubic-bezier(0.4, 0, 1, 1) both fade-in,
             300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right; */
-		animation: 50ms ease both fade-in, 300ms ease both slide-from-right;
+		animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
 	}
 	input.title {
 		border: none;
@@ -112,6 +112,7 @@
 		cursor: pointer;
 		display: flex;
 		align-items: center;
+		font-size: 1rem;
 	}
 	button.delete:hover {
 		background-color: whitesmoke;
