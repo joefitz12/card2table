@@ -61,9 +61,8 @@
 	}
 </script>
 
-<div class="flex column">
-	<h3>Customize card</h3>
-	<div class="flex column controls">
+<div class="flex column controls">
+	<div class="container">
 		<div class="flex row">
 			<div class="flex column">
 				<label for="card-template-unit">Unit</label>
@@ -106,41 +105,45 @@
 				<input type="color" id="card-template-color" bind:value={cardState.color} />
 			</div>
 		</div>
-		<button
-			type="button"
-			on:click={() => {
-				cardState.textElements.push({
-					id: textElementId,
-					title: `Text Element ${textElementId}`,
-					color: cardState.color
-				});
-				cardState.textElements = cardState.textElements;
-				textElementId = textElementId + 1;
-			}}>New text element</button
-		>
-		{#each cardState.textElements as textElement, i}
-			{@const handleClick = () => {
-				cardState.textElements.splice(
-					cardState.textElements.findIndex(
-						(cardStateTextElement) => textElement.id === cardStateTextElement.id
-					),
-					1
-				);
-				cardState.textElements = cardState.textElements;
-			}}
-			<TextElementControl
-				id={textElement.id}
-				title={textElement.title}
-				fontSize={textElement.fontSize}
-				color={textElement.color}
-				{handleClick}
-			/>
-		{/each}
 	</div>
+	<button
+		type="button"
+		on:click={() => {
+			cardState.textElements.push({
+				id: textElementId,
+				title: `Text Element ${textElementId}`,
+				color: cardState.color,
+				fontSize: 0.22
+			});
+			cardState.textElements = cardState.textElements;
+			textElementId = textElementId + 1;
+		}}>New text element</button
+	>
+	{#each cardState.textElements as textElement, i}
+		{@const handleRemove = () => {
+			cardState.textElements.splice(
+				cardState.textElements.findIndex(
+					(cardStateTextElement) => textElement.id === cardStateTextElement.id
+				),
+				1
+			);
+			cardState.textElements = cardState.textElements;
+		}}
+		<TextElementControl
+			title={textElement.title}
+			fontSize={textElement.fontSize}
+			color={textElement.color}
+			id={textElement.id}
+			{handleRemove}
+		/>
+	{/each}
 </div>
 
 <style>
 	.controls {
 		gap: 0.5rem;
+	}
+	label {
+		font-size: 1rem;
 	}
 </style>

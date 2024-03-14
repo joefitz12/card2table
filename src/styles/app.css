@@ -22,6 +22,17 @@ a {
 	color: black;
 }
 
+input,
+select {
+	font-size: 0.875rem;
+	padding: 0;
+	margin: 0;
+}
+
+button {
+	cursor: pointer;
+}
+
 .flex {
 	display: flex;
 }
@@ -32,6 +43,11 @@ a {
 .row {
 	flex-direction: row;
 	gap: 0.5rem;
+}
+.container {
+	padding: 0.75rem;
+	border: 1px solid lightgray;
+	border-radius: 0.25rem;
 }
 
 @keyframes fade-in {
