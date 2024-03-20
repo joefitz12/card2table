@@ -10,7 +10,20 @@ export type CardState = {
 	height?: number;
 	backgroundColor?: string;
 	color?: string;
-	textElements: any[];
+	borderColor?: string;
+	textElements: TextElement[];
+};
+
+export type TextElement = {
+	id: string;
+	title: string;
+	fontSize: number;
+	fontWeight: string;
+	color: string;
+	textDecoration: string;
+	fontStyle: string;
+	leftTransform?: number;
+	topTransform?: number;
 };
 
 export type ViewerState = {
