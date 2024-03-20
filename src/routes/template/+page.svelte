@@ -33,7 +33,7 @@
 		opacity: 0;
 		transition: opacity 250ms ease;
 	}
-	.card-container:hover input {
+	/* .card-container:hover input {
 		opacity: 1;
-	}
+	} */
 </style>

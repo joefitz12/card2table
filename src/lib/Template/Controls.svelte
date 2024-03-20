@@ -7,6 +7,7 @@
 		borderRadius,
 		backgroundColor,
 		color,
+		borderColor,
 		textElements,
 		title
 	} from './store';
@@ -20,6 +21,7 @@
 		height: undefined,
 		backgroundColor: undefined,
 		color: undefined,
+		borderColor: undefined,
 		textElements: []
 	};
 
@@ -32,6 +34,7 @@
 	width.subscribe((value) => (cardState.width = value));
 	backgroundColor.subscribe((value) => (cardState.backgroundColor = value));
 	color.subscribe((value) => (cardState.color = value));
+	borderColor.subscribe((value) => (cardState.color = value));
 
 	$: {
 		if (cardState.title) {
@@ -59,9 +62,20 @@
 			textElements.set(cardState.textElements);
 		}
 	}
+
+	// document.addEventListener('click', (e) => {
+	// 	if (!(e.target instanceof HTMLElement)) {
+	// 		return;
+	// 	}
+	// 	if (e.target.classList) {
+	// 	}
+	// });
 </script>
 
 <div class="flex column controls">
+	<div class="flex row header">
+		<h3>Dimensions</h3>
+	</div>
 	<div class="flex column container">
 		<div class="flex row">
 			<div class="flex column">
@@ -91,9 +105,14 @@
 				<input type="number" id="card-template-height" step="0.01" bind:value={cardState.height} />
 			</div>
 		</div>
+	</div>
+	<div class="flex row header">
+		<h3>Colors</h3>
+	</div>
+	<div class="flex column container">
 		<div class="flex row">
 			<div class="flex column">
-				<label for="card-template-background-color">Background Color</label>
+				<label for="card-template-background-color">Background</label>
 				<input
 					type="color"
 					id="card-template-background-color"
@@ -101,24 +120,35 @@
 				/>
 			</div>
 			<div class="flex column">
-				<label for="card-template-color">Text Color</label>
+				<label for="card-template-color">Text</label>
 				<input type="color" id="card-template-color" bind:value={cardState.color} />
+			</div>
+			<div class="flex column">
+				<label for="card-template-color">Border</label>
+				<input type="color" id="card-template-border-color" bind:value={cardState.borderColor} />
 			</div>
 		</div>
 	</div>
-	<button
-		type="button"
-		on:click={() => {
-			cardState.textElements.push({
-				id: textElementId,
-				title: `Text Element ${textElementId}`,
-				color: cardState.color,
-				fontSize: 0.22
-			});
-			cardState.textElements = cardState.textElements;
-			textElementId = textElementId + 1;
-		}}>New text element</button
-	>
+	<div class="flex row header">
+		<h3>Text Elements</h3>
+		<button
+			type="button"
+			class="create"
+			on:click={() => {
+				cardState.textElements.push({
+					id: textElementId.toString(),
+					title: `Text Element ${textElementId}`,
+					color: cardState.color || '#000000',
+					fontSize: 0.22,
+					fontWeight: '400',
+					fontStyle: '',
+					textDecoration: ''
+				});
+				cardState.textElements = cardState.textElements;
+				textElementId = textElementId + 1;
+			}}>+</button
+		>
+	</div>
 	{#each cardState.textElements as textElement, i}
 		{@const handleRemove = () => {
 			cardState.textElements.splice(
@@ -132,7 +162,10 @@
 		<TextElementControl
 			title={textElement.title}
 			fontSize={textElement.fontSize}
+			fontWeight={textElement.fontWeight}
+			fontStyle={textElement.fontStyle}
 			color={textElement.color}
+			textDecoration={textElement.textDecoration}
 			id={textElement.id}
 			{handleRemove}
 		/>
@@ -143,7 +176,29 @@
 	.controls {
 		gap: 0.5rem;
 	}
+
+	/* .container .column {
+	} */
+	h3 {
+		margin: 0;
+	}
 	label {
 		font-size: 1rem;
+	}
+
+	button.create {
+		background-color: transparent;
+		border: none;
+		border-radius: 4px;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 1rem;
+		height: 1.5rem;
+		width: 1.5rem;
+	}
+	button.create:hover {
+		background-color: whitesmoke;
 	}
 </style>
