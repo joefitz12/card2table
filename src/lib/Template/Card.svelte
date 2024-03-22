@@ -2,26 +2,37 @@
 	import type { CardState } from './types';
 	import {
 		backgroundColor,
+		borderColor,
 		borderRadius,
+		borderWidth,
 		color,
 		height,
 		textElements,
 		title,
-		unit,
-		width
+		width,
+		topPadding,
+		rightPadding,
+		bottomPadding,
+		leftPadding
 	} from './store';
 
 	export let scale: Number;
 
-	export let cardState: Omit<CardState, 'borderRadius'> & { borderRadius?: string } = {
+	export let cardState: CardState = {
 		title: undefined,
-		unit: undefined,
+		// unit: undefined,
+		borderColor: undefined,
+		borderWidth: undefined,
 		borderRadius: undefined,
 		width: undefined,
 		height: undefined,
 		backgroundColor: undefined,
 		color: undefined,
-		textElements: []
+		textElements: [],
+		topPadding: 0,
+		rightPadding: 0,
+		bottomPadding: 0,
+		leftPadding: 0
 	};
 
 	title.subscribe((value) => (cardState.title = value));
@@ -32,6 +43,12 @@
 	backgroundColor.subscribe((value) => (cardState.backgroundColor = value));
 	color.subscribe((value) => (cardState.color = value));
 	textElements.subscribe((value) => (cardState.textElements = value));
+	borderColor.subscribe((value) => (cardState.borderColor = value));
+	borderWidth.subscribe((value) => (cardState.borderWidth = value));
+	topPadding.subscribe((value) => (cardState.topPadding = value));
+	rightPadding.subscribe((value) => (cardState.rightPadding = value));
+	bottomPadding.subscribe((value) => (cardState.bottomPadding = value));
+	leftPadding.subscribe((value) => (cardState.leftPadding = value));
 
 	$: {
 		if (cardState.title) {
@@ -69,6 +86,7 @@
 		offsetLeft = e.offsetX;
 		offsetTop = e.offsetY;
 		isDragInProgress = true;
+		// WIP create and use separate preview image
 		// const dragImage = e.target.cloneNode(true) as HTMLElement;
 		// dragImage.setAttribute('id', 'drag-preview');
 		// document.body.appendChild(dragImage);
@@ -85,8 +103,6 @@
 		if (!(e.target instanceof HTMLElement)) {
 			return;
 		}
-
-		console.log(e);
 
 		if (!e.dataTransfer) {
 			return;
@@ -131,39 +147,59 @@
 	}
 </script>
 
-<div class="title">
-	<input id="card-title" type="text" bind:value={cardState.title} use:focus />
-</div>
-<div
-	id="card-template"
-	style="--height: {(cardState.height || 3.43) * 96}px; --width: {(cardState.width || 2.44) *
-		96}px; --border-radius: {cardState.borderRadius}; --background-color: {cardState.backgroundColor}; --scale: {scale}"
-	on:drop={handleDrop}
-	on:dragover={handleDragover}
->
-	{#each cardState.textElements as textElement}
-		<div
-			class="text-element-container"
-			draggable="true"
-			on:dragstart={handleDragStart}
-			id={textElement.id}
-			style="--color: {textElement.color}; 
-				--font-size: {(textElement.fontSize || 0.22) * 96}px; 
-				--transform-left: {textElement.leftTransform || 0}px; 
-				--transform-top: {textElement.topTransform || 0}px;
-				--font-weight: {textElement.fontWeight};
-				--font-style: {textElement.fontStyle || 'normal'};
-				--text-decoration: {textElement.textDecoration || 'normal'}
-				"
-		>
-			<span>&#123;</span><span class="text-element"
-				>{textElement.title.toLowerCase().split(' ').join('-')}</span
-			><span>&#125;</span>
-		</div>
-	{/each}
+<div class="template-container">
+	<div class="title">
+		<input id="card-title" type="text" bind:value={cardState.title} use:focus />
+	</div>
+	<div
+		id="card-template"
+		style="--height: {(cardState.height || 3.43) * 96}px; 
+			--width: {(cardState.width || 2.44) * 96}px; 
+			--border-color: {cardState.borderColor}; 
+			--border-width: {(cardState.borderWidth || 0) * 96}px; 
+			--border-radius: {cardState.borderRadius}%; 
+			--background-color: {cardState.backgroundColor}; 
+			--scale: {scale};
+			--top-padding: {(cardState.topPadding || 0) * 96}px;
+			--right-padding: {(cardState.rightPadding || 0) * 96}px;
+			--bottom-padding: {(cardState.bottomPadding || 0) * 96}px;
+			--left-padding: {(cardState.leftPadding || 0) * 96}px;
+			"
+		on:drop={handleDrop}
+		on:dragover={handleDragover}
+	>
+		<div class="overlay" />
+		{#each cardState.textElements as textElement}
+			<div
+				class="text-element-container"
+				draggable="true"
+				on:dragstart={handleDragStart}
+				id={textElement.id}
+				style="--color: {textElement.color}; 
+					--font-size: {(textElement.fontSize || 0.22) * 96}px; 
+					--transform-left: {textElement.leftTransform || 0}px; 
+					--transform-top: {textElement.topTransform || 0}px;
+					--font-weight: {textElement.fontWeight};
+					--font-style: {textElement.fontStyle || 'normal'};
+					--text-decoration: {textElement.textDecoration || 'normal'};
+					--top-padding: {textElement.topPadding * 96}px;
+					--right-padding: {textElement.rightPadding * 96}px;
+					--bottom-padding: {textElement.bottomPadding * 96}px;
+					--left-padding: {textElement.leftPadding * 96}px;
+					"
+			>
+				<span>&#123;</span><span class="text-element"
+					>{textElement.title.toLowerCase().split(' ').join('-')}</span
+				><span>&#125;</span>
+			</div>
+		{/each}
+	</div>
 </div>
 
 <style>
+	.template-container {
+		padding: 1rem;
+	}
 	.title input {
 		font-size: 2rem;
 		font-weight: 400;
@@ -175,6 +211,7 @@
 		outline: none !important;
 	}
 	#card-template {
+		margin: 0 auto;
 		position: relative;
 		height: var(--height);
 		width: var(--width);
@@ -189,8 +226,22 @@
 			0px 4px 5.6px -0.4px hsl(var(--shadow-color) / 0.39),
 			0.1px 8.6px 12.1px -0.6px hsl(var(--shadow-color) / 0.53);
 		box-shadow: var(--box-shadow);
-		border: 0.05in solid black;
+		overflow: hidden;
+		padding: var(--top-padding) var(--right-padding) var(--bottom-padding) var(--left-padding);
 		box-sizing: border-box;
+	}
+
+	#card-template .overlay {
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		border: var(--border-width) solid var(--border-color);
+		box-sizing: border-box;
+		border-radius: var(--border-radius);
 	}
 
 	.text-element-container {
@@ -206,6 +257,7 @@
 		/* */
 		/* display: flex; */
 		transition: border-color 75ms ease-in-out;
+		padding: var(--top-padding) var(--right-padding) var(--bottom-padding) var(--left-padding);
 	}
 	.text-element-container:hover {
 		border: 1px dashed var(--color);

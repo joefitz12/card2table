@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { text } from '@sveltejs/kit';
 	import { textElements } from './store';
 	export let id: string;
 	export let title: string;
@@ -12,6 +11,10 @@
 	let lineThrough: boolean = false;
 	export let color: string;
 	export let handleRemove: () => void;
+	export let topPadding: number;
+	export let rightPadding: number;
+	export let bottomPadding: number;
+	export let leftPadding: number;
 
 	let _textElements: any[];
 
@@ -69,6 +72,22 @@
 				(!italic && currentControl.fontStyle === 'italic')
 			) {
 				currentControl.fontStyle = italic ? 'italic' : 'normal';
+				update = true;
+			}
+			if (typeof topPadding === 'number' && currentControl.topPadding !== topPadding) {
+				currentControl.topPadding = topPadding;
+				update = true;
+			}
+			if (typeof rightPadding === 'number' && currentControl.rightPadding !== rightPadding) {
+				currentControl.rightPadding = rightPadding;
+				update = true;
+			}
+			if (typeof bottomPadding === 'number' && currentControl.bottomPadding !== bottomPadding) {
+				currentControl.bottomPadding = bottomPadding;
+				update = true;
+			}
+			if (typeof leftPadding === 'number' && currentControl.leftPadding !== leftPadding) {
+				currentControl.leftPadding = leftPadding;
 				update = true;
 			}
 
@@ -154,12 +173,51 @@
 			/><span class="strikethrough">strikethrough</span></label
 		>
 	</div>
+	<fieldset class="flex column padding">
+		<legend>Padding</legend>
+		<div class="flex row">
+			<div class="flex column">
+				<label for={`text-element-${id}-padding-top`}>Top</label>
+				<input
+					type="number"
+					id={`text-element-${id}-padding-top`}
+					step="0.01"
+					bind:value={topPadding}
+				/>
+			</div>
+			<div class="flex column">
+				<label for={`text-element-${id}-padding-right`}>Right</label>
+				<input
+					type="number"
+					id={`text-element-${id}-padding-right`}
+					step="0.01"
+					bind:value={rightPadding}
+				/>
+			</div>
+			<div class="flex column">
+				<label for={`text-element-${id}-padding-bottom`}>Bottom</label>
+				<input
+					type="number"
+					id={`text-element-${id}-padding-bottom`}
+					step="0.01"
+					bind:value={bottomPadding}
+				/>
+			</div>
+			<div class="flex column">
+				<label for={`text-element-${id}-padding-left`}>Left</label>
+				<input
+					type="number"
+					id={`text-element-${id}-padding-left`}
+					step="0.01"
+					bind:value={leftPadding}
+				/>
+			</div>
+		</div>
+	</fieldset>
 </div>
 
 <style>
 	.container {
-		/* animation: 90ms cubic-bezier(0.4, 0, 1, 1) both fade-in,
-            300ms cubic-bezier(0.4, 0, 0.2, 1) both slide-from-right; */
 		animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
 	}
 	.header input[type='color'] {
@@ -168,10 +226,6 @@
 		width: 1.5rem;
 		height: 1.5rem;
 		cursor: pointer;
-	}
-	/* input[type='color']:: */
-	::--webkit-color-swatch-wrapper {
-		padding: 0;
 	}
 	input.title {
 		border: none;
@@ -199,7 +253,8 @@
 	.formatting .flex.row {
 		align-items: center;
 	}
-	.formatting label {
+	.formatting label,
+	.formatting input {
 		cursor: pointer;
 	}
 
