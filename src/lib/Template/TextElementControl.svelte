@@ -1,110 +1,144 @@
 <script lang="ts">
-	import { textElements } from './store';
+	import { count, textElements } from '../store';
+	import type { TextElement } from './types';
 	export let id: string;
-	export let title: string;
-	export let fontSize: number;
-	export let fontWeight: string;
-	export let fontStyle: string;
-	let italic: boolean = false;
-	export let textDecoration: string;
-	let underline: boolean = false;
-	let lineThrough: boolean = false;
-	export let color: string;
 	export let handleRemove: () => void;
-	export let topPadding: number;
-	export let rightPadding: number;
-	export let bottomPadding: number;
-	export let leftPadding: number;
 
-	let _textElements: any[];
+	let state: Partial<TextElement> & {
+		italic: boolean;
+		underline: boolean;
+		lineThrough: boolean;
+	} = {
+		title: undefined,
+		fontSize: undefined,
+		fontWeight: undefined,
+		fontStyle: undefined,
+		italic: false,
+		textDecoration: undefined,
+		underline: false,
+		lineThrough: false,
+		color: undefined,
+		topPadding: undefined,
+		rightPadding: undefined,
+		bottomPadding: undefined,
+		leftPadding: undefined
+	};
 
-	textElements.subscribe((value) => {
-		_textElements = value;
+	let _textElements: TextElement[];
+	let currentControl: TextElement | undefined;
+
+	textElements.subscribe(($textElements) => {
+		_textElements = $textElements;
+		currentControl = $textElements.find((textElement) => id == textElement.id);
+		if (!currentControl) {
+			return;
+		}
+		Object.entries(currentControl).forEach(([key, value]) => {
+			const _key = key as keyof typeof state;
+			if (Object.hasOwnProperty.call(state, _key) && state[_key] !== value) {
+				(state[_key] as string | number) = value;
+			}
+		});
+		console.log(currentControl);
+		if (currentControl.textDecoration === 'underline') {
+			state.underline = true;
+		}
+		if (currentControl.textDecoration === 'line-through') {
+			state.lineThrough = true;
+		}
+		if (currentControl.fontStyle === 'italic') {
+			state.italic = true;
+		}
 	});
 
-	let count = 0;
+	let currentCount = 0;
+	count.subscribe((value) => (currentCount = value));
 
 	$: {
-		const currentControl = _textElements.find((textElement) => id === textElement.id);
+		if (!currentControl) {
+			console.log('id', id);
+			console.log('_textElements', _textElements);
+		}
 		let update = false;
 
-		if (count < 30) {
-			if (currentControl.color !== color) {
-				currentControl.color = color;
+		// if (currentControl && currentCount < 30) {
+		if (currentControl) {
+			if (state.color && currentControl?.color !== state.color) {
+				currentControl.color = state.color;
 				update = true;
 			}
-			if (currentControl.fontSize !== fontSize) {
-				currentControl.fontSize = fontSize;
+			if (state.fontSize && currentControl?.fontSize !== state.fontSize) {
+				currentControl.fontSize = state.fontSize;
 				update = true;
 			}
-			if (currentControl.fontStyle !== fontStyle) {
-				currentControl.fontStyle = fontStyle;
+			if (state.fontStyle && currentControl?.fontStyle !== state.fontStyle) {
+				currentControl.fontStyle = state.fontStyle;
 				update = true;
 			}
-			if (currentControl.fontWeight !== fontWeight) {
-				currentControl.fontWeight = fontWeight;
+			if (state.fontWeight && currentControl?.fontWeight !== state.fontWeight) {
+				currentControl.fontWeight = state.fontWeight;
 				update = true;
 			}
-			if (currentControl.textDecoration !== textDecoration) {
-				currentControl.textDecoration = textDecoration;
+			if (state.textDecoration && currentControl?.textDecoration !== state.textDecoration) {
+				currentControl.textDecoration = state.textDecoration;
 				update = true;
 			}
-			if (currentControl.title !== title) {
-				currentControl.title = title;
-				update = true;
-			}
-			if (
-				(lineThrough && currentControl.textDecoration !== 'line-through') ||
-				(!lineThrough && currentControl.textDecoration === 'line-through')
-			) {
-				currentControl.textDecoration = lineThrough ? 'line-through' : 'normal';
+			if (typeof state.title === 'string' && currentControl?.title !== state.title) {
+				currentControl.title = state.title;
 				update = true;
 			}
 			if (
-				(underline && currentControl.textDecoration !== 'underline') ||
-				(!underline && currentControl.textDecoration === 'underline')
+				(state.lineThrough && currentControl?.textDecoration !== 'line-through') ||
+				(!state.lineThrough && currentControl?.textDecoration === 'line-through')
 			) {
-				currentControl.textDecoration = underline ? 'underline' : 'normal';
+				currentControl.textDecoration = state.lineThrough ? 'line-through' : 'normal';
 				update = true;
 			}
 			if (
-				(italic && currentControl.fontStyle !== 'italic') ||
-				(!italic && currentControl.fontStyle === 'italic')
+				(state.underline && currentControl?.textDecoration !== 'underline') ||
+				(!state.underline && currentControl?.textDecoration === 'underline')
 			) {
-				currentControl.fontStyle = italic ? 'italic' : 'normal';
+				currentControl.textDecoration = state.underline ? 'underline' : 'normal';
 				update = true;
 			}
-			if (typeof topPadding === 'number' && currentControl.topPadding !== topPadding) {
-				currentControl.topPadding = topPadding;
+			if (
+				(state.italic && currentControl?.fontStyle !== 'italic') ||
+				(!state.italic && currentControl?.fontStyle === 'italic')
+			) {
+				currentControl.fontStyle = state.italic ? 'italic' : 'normal';
 				update = true;
 			}
-			if (typeof rightPadding === 'number' && currentControl.rightPadding !== rightPadding) {
-				currentControl.rightPadding = rightPadding;
+			if (typeof state.topPadding === 'number' && currentControl?.topPadding !== state.topPadding) {
+				currentControl.topPadding = state.topPadding;
 				update = true;
 			}
-			if (typeof bottomPadding === 'number' && currentControl.bottomPadding !== bottomPadding) {
-				currentControl.bottomPadding = bottomPadding;
+			if (
+				typeof state.rightPadding === 'number' &&
+				currentControl?.rightPadding !== state.rightPadding
+			) {
+				currentControl.rightPadding = state.rightPadding;
 				update = true;
 			}
-			if (typeof leftPadding === 'number' && currentControl.leftPadding !== leftPadding) {
-				currentControl.leftPadding = leftPadding;
+			if (
+				typeof state.bottomPadding === 'number' &&
+				currentControl?.bottomPadding !== state.bottomPadding
+			) {
+				currentControl.bottomPadding = state.bottomPadding;
+				update = true;
+			}
+			if (
+				typeof state.leftPadding === 'number' &&
+				currentControl?.leftPadding !== state.leftPadding
+			) {
+				currentControl.leftPadding = state.leftPadding;
 				update = true;
 			}
 
 			if (update) {
 				console.log('updating');
+				count.set(currentCount + 1);
 				textElements.set(_textElements);
 			}
-		}
-	}
-
-	let isTitleEditable = false;
-
-	function setTitleIsNotEditable(e: Event) {
-		console.dir(e.target);
-		if (e.target && 'id' in e.target && (e.target as HTMLElement).nodeName !== 'INPUT') {
-			isTitleEditable = false;
-			document.removeEventListener('click', setTitleIsNotEditable);
 		}
 	}
 
@@ -115,20 +149,28 @@
 
 <div class="flex column container">
 	<div class="flex row header">
-		<input type="color" id={`text-element-${id}-color`} bind:value={color} />
-		<input type="text" bind:value={title} class="title" use:focus />
-		<button type="button" on:click={handleRemove} aria-label={`Remove ${title}`} class="delete"
-			>&#10005;</button
+		<input type="color" id={`text-element-${id}-color`} bind:value={state.color} />
+		<input type="text" bind:value={state.title} class="title" use:focus />
+		<button
+			type="button"
+			on:click={handleRemove}
+			aria-label={`Remove ${state.title}`}
+			class="delete">&#10005;</button
 		>
 	</div>
 	<div class="flex row">
 		<div class="flex column">
 			<label for={`text-element-${id}-font-size`}>Size</label>
-			<input type="number" id={`text-element-${id}-font-size`} step="0.01" bind:value={fontSize} />
+			<input
+				type="number"
+				id={`text-element-${id}-font-size`}
+				step="0.01"
+				bind:value={state.fontSize}
+			/>
 		</div>
 		<div class="flex column">
 			<label for={`text-element-${id}-font-weight`}>Weight</label>
-			<select id={`text-element-${id}-font-weight`} bind:value={fontWeight}>
+			<select id={`text-element-${id}-font-weight`} bind:value={state.fontWeight}>
 				<option>100</option>
 				<option>200</option>
 				<option>300</option>
@@ -144,32 +186,34 @@
 	<div class="flex row formatting">
 		<!-- <label class="flex row"><input type="checkbox" /><span class="bold">bold</span></label> -->
 		<label class="flex row"
-			><input type="checkbox" on:change={(e) => (italic = !italic)} /><span class="italic"
-				>italic</span
-			></label
+			><input
+				type="checkbox"
+				on:change={(e) => (state.italic = !state.italic)}
+				bind:checked={state.italic}
+			/><span class="italic">italic</span></label
 		>
 		<label class="flex row"
 			><input
 				type="checkbox"
 				on:change={(e) => {
-					underline = !underline;
-					if (underline) {
-						lineThrough = false;
+					state.underline = !state.underline;
+					if (state.underline) {
+						state.lineThrough = false;
 					}
 				}}
-				bind:checked={underline}
+				bind:checked={state.underline}
 			/><span class="underline">underline</span></label
 		>
 		<label class="flex row"
 			><input
 				type="checkbox"
 				on:change={(e) => {
-					lineThrough = !lineThrough;
-					if (lineThrough) {
-						underline = false;
+					state.lineThrough = !state.lineThrough;
+					if (state.lineThrough) {
+						state.underline = false;
 					}
 				}}
-				bind:checked={lineThrough}
+				bind:checked={state.lineThrough}
 			/><span class="strikethrough">strikethrough</span></label
 		>
 	</div>
@@ -182,7 +226,7 @@
 					type="number"
 					id={`text-element-${id}-padding-top`}
 					step="0.01"
-					bind:value={topPadding}
+					bind:value={state.topPadding}
 				/>
 			</div>
 			<div class="flex column">
@@ -191,7 +235,7 @@
 					type="number"
 					id={`text-element-${id}-padding-right`}
 					step="0.01"
-					bind:value={rightPadding}
+					bind:value={state.rightPadding}
 				/>
 			</div>
 			<div class="flex column">
@@ -200,7 +244,7 @@
 					type="number"
 					id={`text-element-${id}-padding-bottom`}
 					step="0.01"
-					bind:value={bottomPadding}
+					bind:value={state.bottomPadding}
 				/>
 			</div>
 			<div class="flex column">
@@ -209,7 +253,7 @@
 					type="number"
 					id={`text-element-${id}-padding-left`}
 					step="0.01"
-					bind:value={leftPadding}
+					bind:value={state.leftPadding}
 				/>
 			</div>
 		</div>

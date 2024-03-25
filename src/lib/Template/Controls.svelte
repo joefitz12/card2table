@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PapaParse from 'papaparse';
 	import TextElementControl from './TextElementControl.svelte';
 	import {
 		unit,
@@ -14,11 +15,13 @@
 		leftPadding,
 		topPadding,
 		rightPadding,
-		bottomPadding
-	} from './store';
+		bottomPadding,
+		cards,
+		textElementTemplateId
+	} from '../store';
 	import type { CardState } from './types';
 
-	export let cardState: CardState = {
+	let cardState: CardState = {
 		title: undefined,
 		unit: undefined,
 		borderRadius: undefined,
@@ -34,7 +37,7 @@
 		leftPadding: undefined
 	};
 
-	export let textElementId = 0;
+	let currentId: number;
 
 	title.subscribe((value) => (cardState.title = value));
 	unit.subscribe((value) => (cardState.unit = value));
@@ -49,6 +52,8 @@
 	rightPadding.subscribe((value) => (cardState.rightPadding = value));
 	bottomPadding.subscribe((value) => (cardState.bottomPadding = value));
 	leftPadding.subscribe((value) => (cardState.leftPadding = value));
+	textElements.subscribe((value) => (cardState.textElements = value));
+	textElementTemplateId.subscribe((value) => (currentId = value));
 
 	$: {
 		if (cardState.title) {
@@ -94,6 +99,21 @@
 			leftPadding.set(cardState.leftPadding);
 		}
 	}
+
+	const handleFileUpload = (e: Event) => {
+		const input = e.target as HTMLInputElement;
+		const file = input.files ? input.files[0] : null;
+		if (!file) {
+			return;
+		}
+
+		PapaParse.parse(file, {
+			header: true,
+			complete: (results) => {
+				cards.set(results.data as { [x: string]: string }[]);
+			}
+		});
+	};
 </script>
 
 <div class="flex controls">
@@ -224,8 +244,8 @@
 				class="create"
 				on:click={() => {
 					cardState.textElements.push({
-						id: textElementId.toString(),
-						title: `Text Element ${textElementId}`,
+						id: currentId.toString(),
+						title: `Text Element ${currentId}`,
 						color: cardState.color || '#000000',
 						fontSize: 0.22,
 						fontWeight: '400',
@@ -237,7 +257,6 @@
 						leftPadding: 0
 					});
 					cardState.textElements = cardState.textElements;
-					textElementId = textElementId + 1;
 				}}>+</button
 			>
 		</div>
@@ -251,7 +270,7 @@
 				);
 				cardState.textElements = cardState.textElements;
 			}}
-			<TextElementControl {...textElement} {handleRemove} />
+			<TextElementControl id={textElement.id} {handleRemove} />
 		{/each}
 	</div>
 </div>
@@ -260,7 +279,8 @@
 	.controls {
 		padding: 1rem;
 		gap: 0.5rem;
-		flex-wrap: wrap;
+		/* flex-wrap: wrap; */
+		flex-direction: column;
 		animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
 	}
 	.header input[type='color'] {

@@ -14,9 +14,7 @@
 		rightPadding,
 		bottomPadding,
 		leftPadding
-	} from './store';
-
-	export let scale: Number;
+	} from '../store';
 
 	export let cardState: CardState = {
 		title: undefined,
@@ -53,15 +51,6 @@
 	$: {
 		if (cardState.title) {
 			title.set(cardState.title);
-		}
-	}
-
-	let isTitleEditable = false;
-
-	function setTitleIsNotEditable(e: Event) {
-		if (e.target && 'id' in e.target && e.target.id !== 'card-title') {
-			isTitleEditable = false;
-			document.removeEventListener('click', setTitleIsNotEditable);
 		}
 	}
 
@@ -149,21 +138,21 @@
 
 <div class="template-container">
 	<div class="title">
+		<button type="button">&#9776;</button>
 		<input id="card-title" type="text" bind:value={cardState.title} use:focus />
 	</div>
 	<div
 		id="card-template"
-		style="--height: {(cardState.height || 3.43) * 96}px; 
-			--width: {(cardState.width || 2.44) * 96}px; 
-			--border-color: {cardState.borderColor}; 
-			--border-width: {(cardState.borderWidth || 0) * 96}px; 
-			--border-radius: {cardState.borderRadius}%; 
-			--background-color: {cardState.backgroundColor}; 
-			--scale: {scale};
-			--top-padding: {(cardState.topPadding || 0) * 96}px;
-			--right-padding: {(cardState.rightPadding || 0) * 96}px;
-			--bottom-padding: {(cardState.bottomPadding || 0) * 96}px;
-			--left-padding: {(cardState.leftPadding || 0) * 96}px;
+		style="--card-height: {(cardState.height || 3.43) * 96}px; 
+			--card-width: {(cardState.width || 2.44) * 96}px; 
+			--card-border-color: {cardState.borderColor}; 
+			--card-border-width: {(cardState.borderWidth || 0) * 96}px; 
+			--card-border-radius: {cardState.borderRadius}%; 
+			--card-background-color: {cardState.backgroundColor}; 
+			--card-top-padding: {(cardState.topPadding || 0) * 96}px;
+			--card-right-padding: {(cardState.rightPadding || 0) * 96}px;
+			--card-bottom-padding: {(cardState.bottomPadding || 0) * 96}px;
+			--card-left-padding: {(cardState.leftPadding || 0) * 96}px;
 			"
 		on:drop={handleDrop}
 		on:dragover={handleDragover}
@@ -172,6 +161,7 @@
 		{#each cardState.textElements as textElement}
 			<div
 				class="text-element-container"
+				class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
 				draggable="true"
 				on:dragstart={handleDragStart}
 				id={textElement.id}
@@ -199,27 +189,35 @@
 <style>
 	.template-container {
 		padding: 1rem;
+		position: sticky;
+		top: 3rem;
+	}
+	.title {
+		margin: 0 0 16px 0;
+		display: flex;
+		align-items: center;
+		column-gap: 8px;
+	}
+	.title button {
+		border: none;
+		background-color: transparent;
+		font-size: 1.5rem;
 	}
 	.title input {
 		font-size: 2rem;
 		font-weight: 400;
-		margin: 0 0 16px 0;
 		padding: 0;
-	}
-	.title input {
 		border: none;
 		outline: none !important;
 	}
 	#card-template {
 		margin: 0 auto;
 		position: relative;
-		height: var(--height);
-		width: var(--width);
-		border-radius: var(--border-radius);
-		background-color: var(--background-color);
-		transform: scale(var(--scale));
+		height: var(--card-height);
+		width: var(--card-width);
+		border-radius: var(--card-border-radius);
+		background-color: var(--card-background-color);
 		transform-origin: top left;
-		/* filter: drop-shadow(0.35rem 0.35rem 0.4rem rgba(0, 0, 0, 0.5)); */
 		--shadow-color: 0deg 0% 60%;
 		--box-shadow: 0px 0.4px 0.6px hsl(var(--shadow-color) / 0.1),
 			0px 1.9px 2.7px -0.2px hsl(var(--shadow-color) / 0.24),
@@ -227,7 +225,8 @@
 			0.1px 8.6px 12.1px -0.6px hsl(var(--shadow-color) / 0.53);
 		box-shadow: var(--box-shadow);
 		overflow: hidden;
-		padding: var(--top-padding) var(--right-padding) var(--bottom-padding) var(--left-padding);
+		padding: var(--card-top-padding) var(--card-right-padding) var(--card-bottom-padding)
+			var(--card-left-padding);
 		box-sizing: border-box;
 	}
 
@@ -239,25 +238,24 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-		border: var(--border-width) solid var(--border-color);
+		border: var(--card-border-width) solid var(--card-border-color);
 		box-sizing: border-box;
-		border-radius: var(--border-radius);
+		border-radius: var(--card-border-radius);
+		pointer-events: none;
 	}
 
 	.text-element-container {
-		position: absolute;
-		transform: translate3d(var(--transform-left), var(--transform-top), 0);
 		color: var(--color);
 		font-size: var(--font-size);
-		/* font-weight: var(--font-weight);
-		font-style: var(--font-style, 'normal');
-		text-decoration: var(--text-decoration, 'normal'); */
 		border: 1px solid transparent;
 		cursor: move;
-		/* */
-		/* display: flex; */
 		transition: border-color 75ms ease-in-out;
 		padding: var(--top-padding) var(--right-padding) var(--bottom-padding) var(--left-padding);
+		width: calc(100% - var(--right-padding) - var(--left-padding));
+	}
+	.text-element-container.positioned {
+		position: absolute;
+		transform: translate3d(var(--transform-left), var(--transform-top), 0);
 	}
 	.text-element-container:hover {
 		border: 1px dashed var(--color);
