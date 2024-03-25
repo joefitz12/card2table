@@ -1,17 +1,12 @@
 <script lang="ts">
 	import Card from '$lib/Template/Card.svelte';
 	import Controls from '$lib/Template/Controls.svelte';
-	import Menu from '$lib/Template/Menu.svelte';
-	import { writable } from 'svelte/store';
-
-	let scale = writable(1);
 </script>
 
 <div class="template-editor">
 	<!-- <Menu /> -->
 	<div class="card-container">
-		<Card scale={$scale} />
-		<input type="number" bind:value={$scale} step={0.1} />
+		<Card />
 	</div>
 	<div class="controls-container">
 		<Controls />
@@ -26,13 +21,18 @@
 		flex-grow: 1;
 		position: relative;
 	}
-	.card-container input {
+	.controls-container {
+		border-radius: 4px;
+		overflow: hidden;
+		z-index: 0;
+	}
+	/* .card-container input {
 		position: absolute;
 		right: 0;
 		top: 0;
 		opacity: 0;
 		transition: opacity 250ms ease;
-	}
+	} */
 	/* .card-container:hover input {
 		opacity: 1;
 	} */
