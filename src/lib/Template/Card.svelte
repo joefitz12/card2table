@@ -104,7 +104,9 @@
 			return;
 		}
 
-		// need to find replacement for layer
+		// @TODO: find replacement for layer
+		// this is needed to capture offset from card
+		// if user drops text element on top of another text element, e.offsetX / e.offsetY references the offset on that text element, not the card
 		const cardOffset = {
 			offsetX: e.target.nodeName === 'SPAN' ? e.layerX : e.offsetX,
 			offsetY: e.target.nodeName === 'SPAN' ? e.layerY : e.offsetY
