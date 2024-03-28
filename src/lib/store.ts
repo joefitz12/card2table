@@ -35,3 +35,4 @@ cards.subscribe((value) => {
 
 export let pageHeight = writable<number>(8.5);
 export let pageWidth = writable<number>(11);
+export let columnGap = writable<number>(0.5);
