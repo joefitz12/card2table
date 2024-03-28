@@ -19,6 +19,7 @@
 		pageHeight,
 		pageWidth
 	} from '$lib/store';
+	import { derived } from 'svelte/store';
 
 	let uploadedCards: Array<{ [x: string]: string }>;
 	let cardState: CardState = {
@@ -38,7 +39,8 @@
 	};
 	let printState = {
 		pageHeight: 8.5,
-		pageWidth: 11
+		pageWidth: 11,
+		rowsPerPage: 2
 	};
 
 	cards.subscribe((value) => (uploadedCards = value));
@@ -59,6 +61,12 @@
 	pageHeight.subscribe((value) => (printState.pageHeight = value));
 	pageWidth.subscribe((value) => (printState.pageWidth = value));
 
+	let rowsPerPage = derived([height, pageHeight], ([$height, $pageHeight]) =>
+		Math.floor($pageHeight / $height)
+	);
+
+	rowsPerPage.subscribe((value) => (printState.rowsPerPage = value));
+
 	let columnGap = 0.5;
 	let rowGap = 0.5;
 </script>
@@ -70,7 +78,8 @@
             --row-gap: {rowGap + (cardState.unit || 'in')}; 
             --card-width: {(cardState.width || 2.44) + (cardState.unit || 'in')};
             --page-height: {printState.pageHeight + (cardState.unit || 'in')};
-            --page-width: {printState.pageWidth + (cardState.unit || 'in')};"
+            --page-width: {printState.pageWidth + (cardState.unit || 'in')};
+            --rows-per-page: {printState.rowsPerPage};"
 	>
 		{#if uploadedCards}
 			{#each uploadedCards as card}
@@ -158,7 +167,7 @@
 			auto-fill,
 			minmax(calc(var(--card-width) + var(--column-gap)), 1fr)
 		);
-		grid-auto-rows: calc(var(--page-height) / 2);
+		grid-auto-rows: calc(var(--page-height) / var(--rows-per-page));
 		background-image: linear-gradient(
 			to bottom,
 			transparent calc(var(--page-height) - 1px),
@@ -222,6 +231,7 @@
 		.preview {
 			background: none;
 			border: none;
+			overflow: visible;
 		}
 	}
 </style>
