@@ -17,7 +17,8 @@
 		title,
 		unit,
 		pageHeight,
-		pageWidth
+		pageWidth,
+		columnGap
 	} from '$lib/store';
 	import { derived } from 'svelte/store';
 
@@ -40,7 +41,8 @@
 	let printState = {
 		pageHeight: 8.5,
 		pageWidth: 11,
-		rowsPerPage: 2
+		rowsPerPage: 2,
+		columnGap: 0.5
 	};
 
 	cards.subscribe((value) => (uploadedCards = value));
@@ -60,6 +62,7 @@
 	// Page
 	pageHeight.subscribe((value) => (printState.pageHeight = value));
 	pageWidth.subscribe((value) => (printState.pageWidth = value));
+	columnGap.subscribe((value) => (printState.columnGap = value));
 
 	let rowsPerPage = derived([height, pageHeight], ([$height, $pageHeight]) =>
 		Math.floor($pageHeight / $height)
@@ -67,14 +70,14 @@
 
 	rowsPerPage.subscribe((value) => (printState.rowsPerPage = value));
 
-	let columnGap = 0.5;
+	// let columnGap = 0.5;
 	let rowGap = 0.5;
 </script>
 
 <div class="flex row print-container">
 	<div
 		class="preview"
-		style="--column-gap: {columnGap + (cardState.unit || 'in')}; 
+		style="--column-gap: {printState.columnGap + (cardState.unit || 'in')}; 
             --row-gap: {rowGap + (cardState.unit || 'in')}; 
             --card-width: {(cardState.width || 2.44) + (cardState.unit || 'in')};
             --page-height: {printState.pageHeight + (cardState.unit || 'in')};
@@ -138,8 +141,16 @@
 		<div class="flex column">
 			<h3>Print Layout</h3>
 			<div class="flex column">
+				<label for="page-width">Page width</label>
+				<input id="page-width" type="number" bind:value={printState.pageWidth} step="0.1" />
+			</div>
+			<div class="flex column">
+				<label for="page-height">Page height</label>
+				<input id="page-height" type="number" bind:value={printState.pageHeight} step="0.1" />
+			</div>
+			<div class="flex column">
 				<label for="column-gap">Column gap</label>
-				<input id="column-gap" type="number" bind:value={columnGap} step="0.1" />
+				<input id="column-gap" type="number" bind:value={printState.columnGap} step="0.1" />
 			</div>
 		</div>
 	</div>
