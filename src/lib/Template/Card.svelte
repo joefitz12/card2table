@@ -1,41 +1,34 @@
 <script lang="ts">
-	import type { CardState } from './types';
+	import type { CardState, PositionalProps } from '../types';
 	import {
 		backgroundColor,
 		borderColor,
-		borderRadius,
 		borderWidth,
 		color,
 		height,
 		textElements,
 		title,
 		width,
-		topPadding,
-		rightPadding,
-		bottomPadding,
-		leftPadding
+		borderRadius,
+		padding
 	} from '../store';
 
 	export let cardState: CardState = {
 		title: undefined,
 		// unit: undefined,
+		padding: { top: 0, right: 0, bottom: 0, left: 0 },
 		borderColor: undefined,
-		borderWidth: undefined,
-		borderRadius: undefined,
+		borderWidth: { top: 0, right: 0, bottom: 0, left: 0 },
+		borderRadius: { topLeft: 0.15, topRight: 0.15, bottomRight: 0.15, bottomLeft: 0.15 },
 		width: undefined,
 		height: undefined,
 		backgroundColor: undefined,
 		color: undefined,
-		textElements: [],
-		topPadding: 0,
-		rightPadding: 0,
-		bottomPadding: 0,
-		leftPadding: 0
+		textElements: []
 	};
 
 	title.subscribe((value) => (cardState.title = value));
 	// unit.subscribe((value) => (cardState.unit = value));
-	borderRadius.subscribe((value) => (cardState.borderRadius = value));
 	height.subscribe((value) => (cardState.height = value));
 	width.subscribe((value) => (cardState.width = value));
 	backgroundColor.subscribe((value) => (cardState.backgroundColor = value));
@@ -43,10 +36,8 @@
 	textElements.subscribe((value) => (cardState.textElements = value));
 	borderColor.subscribe((value) => (cardState.borderColor = value));
 	borderWidth.subscribe((value) => (cardState.borderWidth = value));
-	topPadding.subscribe((value) => (cardState.topPadding = value));
-	rightPadding.subscribe((value) => (cardState.rightPadding = value));
-	bottomPadding.subscribe((value) => (cardState.bottomPadding = value));
-	leftPadding.subscribe((value) => (cardState.leftPadding = value));
+	borderRadius.subscribe((value) => (cardState.borderRadius = value));
+	padding.subscribe((value) => (cardState.padding = value));
 
 	$: {
 		if (cardState.title) {
@@ -104,12 +95,16 @@
 			return;
 		}
 
-		// @TODO: find replacement for layer
+		// @TODO: find replacement for layerX / layerY
 		// this is needed to capture offset from card
-		// if user drops text element on top of another text element, e.offsetX / e.offsetY references the offset on that text element, not the card
+		// if user drops text element on top of another text element,
+		// e.offsetX / e.offsetY references the offset on that text element (not the card)
+		// Remove ts-ignore
 		const cardOffset = {
-			offsetX: e.target.nodeName === 'SPAN' ? e.layerX : e.offsetX,
-			offsetY: e.target.nodeName === 'SPAN' ? e.layerY : e.offsetY
+			// @ts-ignore
+			offsetX: e.target.nodeName === 'SPAN' ? e.layerX || e.offsetX : e.offsetX,
+			// @ts-ignore
+			offsetY: e.target.nodeName === 'SPAN' ? e.layerY || e.offsetX : e.offsetY
 		};
 
 		if (!Math.abs(cardOffset.offsetX - offsetLeft) || !Math.abs(cardOffset.offsetY - offsetTop)) {
@@ -148,13 +143,19 @@
 		style="--card-height: {(cardState.height || 3.43) * 96}px; 
 			--card-width: {(cardState.width || 2.44) * 96}px; 
 			--card-border-color: {cardState.borderColor}; 
-			--card-border-width: {(cardState.borderWidth || 0) * 96}px; 
-			--card-border-radius: {cardState.borderRadius}%; 
+			--card-border-top-width: {(cardState.borderWidth.top || 0) * 96}px; 
+			--card-border-right-width: {(cardState.borderWidth.right || 0) * 96}px; 
+			--card-border-bottom-width: {(cardState.borderWidth.bottom || 0) * 96}px; 
+			--card-border-left-width: {(cardState.borderWidth.left || 0) * 96}px; 
+			--card-border-top-left-radius: {(cardState.borderRadius.topLeft || 0) * 96}px;  
+			--card-border-top-right-radius: {(cardState.borderRadius.topRight || 0) * 96}px; 
+			--card-border-bottom-right-radius: {(cardState.borderRadius.bottomRight || 0) * 96}px;  
+			--card-border-bottom-left-radius: {(cardState.borderRadius.bottomLeft || 0) * 96}px; 
 			--card-background-color: {cardState.backgroundColor}; 
-			--card-top-padding: {(cardState.topPadding || 0) * 96}px;
-			--card-right-padding: {(cardState.rightPadding || 0) * 96}px;
-			--card-bottom-padding: {(cardState.bottomPadding || 0) * 96}px;
-			--card-left-padding: {(cardState.leftPadding || 0) * 96}px;
+			--card-top-padding: {(cardState.padding.top || 0) * 96}px;
+			--card-right-padding: {(cardState.padding.right || 0) * 96}px;
+			--card-bottom-padding: {(cardState.padding.bottom || 0) * 96}px;
+			--card-left-padding: {(cardState.padding.left || 0) * 96}px;
 			"
 		on:drop={handleDrop}
 		on:dragover={handleDragover}
@@ -174,10 +175,18 @@
 					--font-weight: {textElement.fontWeight};
 					--font-style: {textElement.fontStyle || 'normal'};
 					--text-decoration: {textElement.textDecoration || 'normal'};
-					--top-padding: {textElement.topPadding * 96}px;
-					--right-padding: {textElement.rightPadding * 96}px;
-					--bottom-padding: {textElement.bottomPadding * 96}px;
-					--left-padding: {textElement.leftPadding * 96}px;
+					--top-padding: {(textElement.padding.top || 0) * 96}px;
+					--right-padding: {(textElement.padding.right || 0) * 96}px;
+					--bottom-padding: {(textElement.padding.bottom || 0) * 96}px;
+					--left-padding: {(textElement.padding.left || 0) * 96}px;
+					--border-top-width: {(textElement.borderWidth.top || 0) * 96}px;
+					--border-right-width: {(textElement.borderWidth.right || 0) * 96}px;
+					--border-bottom-width: {(textElement.borderWidth.bottom || 0) * 96}px;
+					--border-left-width: {(textElement.borderWidth.left || 0) * 96}px;
+					--border-top-left-radius: {(textElement.borderRadius.topLeft || 0) * 96}px;
+					--border-top-right-radius: {(textElement.borderRadius.topRight || 0) * 96}px; 
+					--border-bottom-right-radius: {(textElement.borderRadius.bottomRight || 0) * 96}px; 
+					--border-bottom-left-radius: {(textElement.borderRadius.bottomLeft || 0) * 96}px; 
 					"
 			>
 				<span>&#123;</span><span class="text-element"
@@ -217,7 +226,10 @@
 		position: relative;
 		height: var(--card-height);
 		width: var(--card-width);
-		border-radius: var(--card-border-radius);
+		border-top-left-radius: var(--card-border-top-left-radius);
+		border-top-right-radius: var(--card-border-top-right-radius);
+		border-bottom-right-radius: var(--card-border-bottom-right-radius);
+		border-bottom-left-radius: var(--card-border-bottom-left-radius);
 		background-color: var(--card-background-color);
 		transform-origin: top left;
 		--shadow-color: 0deg 0% 60%;
@@ -240,28 +252,64 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-		border: var(--card-border-width) solid var(--card-border-color);
+		border-style: solid;
+		border-color: var(--card-border-color);
+		border-top-width: var(--card-border-top-width);
+		border-right-width: var(--card-border-right-width);
+		border-bottom-width: var(--card-border-bottom-width);
+		border-left-width: var(--card-border-left-width);
 		box-sizing: border-box;
-		border-radius: var(--card-border-radius);
+		border-top-left-radius: var(--card-border-top-left-radius);
+		border-top-right-radius: var(--card-border-top-right-radius);
+		border-bottom-right-radius: var(--card-border-bottom-right-radius);
+		border-bottom-left-radius: var(--card-border-bottom-left-radius);
 		pointer-events: none;
 	}
 
 	.text-element-container {
+		position: relative;
 		color: var(--color);
 		font-size: var(--font-size);
-		border: 1px solid transparent;
 		cursor: move;
 		transition: border-color 75ms ease-in-out;
 		padding: var(--top-padding) var(--right-padding) var(--bottom-padding) var(--left-padding);
-		width: calc(100% - var(--right-padding) - var(--left-padding));
+		width: var(--card-width) - calc(var(--card-left-padding) + var(--card-right-padding));
+		box-sizing: border-box;
+		border: solid var(--color);
+		border-top-width: var(--border-top-width);
+		border-right-width: var(--border-right-width);
+		border-bottom-width: var(--border-bottom-width);
+		border-left-width: var(--border-left-width);
+		border-top-left-radius: var(--border-top-left-radius);
+		border-top-right-radius: var(--border-top-right-radius);
+		border-bottom-right-radius: var(--border-bottom-right-radius);
+		border-bottom-left-radius: var(--border-bottom-left-radius);
 	}
 	.text-element-container.positioned {
 		position: absolute;
 		transform: translate3d(var(--transform-left), var(--transform-top), 0);
 	}
-	.text-element-container:hover {
-		border: 1px dashed var(--color);
-	}
+	/* .text-element-container .overlay {
+		position: absolute;
+		height: 100%;
+		width: 100%;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		border-style: solid;
+		border-color: var(--card-border-color);
+		border-top-width: var(--card-border-top-width);
+		border-right-width: var(--card-border-right-width);
+		border-bottom-width: var(--card-border-bottom-width);
+		border-left-width: var(--card-border-left-width);
+		box-sizing: border-box;
+		border-top-left-radius: var(--card-border-top-left-radius);
+		border-top-right-radius: var(--card-border-top-right-radius);
+		border-bottom-right-radius: var(--card-border-bottom-right-radius);
+		border-bottom-left-radius: var(--card-border-bottom-left-radius);
+		pointer-events: none;
+	} */
 	.text-element {
 		font-weight: var(--font-weight);
 		font-style: var(--font-style, 'normal');

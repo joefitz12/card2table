@@ -5,36 +5,32 @@
 		unit,
 		height,
 		width,
-		borderRadius,
 		backgroundColor,
 		color,
 		borderColor,
+		borderWidth,
 		textElements,
 		title,
-		borderWidth,
-		leftPadding,
-		topPadding,
-		rightPadding,
-		bottomPadding,
 		cards,
-		textElementTemplateId
+		textElementTemplateId,
+		borderRadius,
+		padding
 	} from '../store';
-	import type { CardState } from './types';
+	import type { CardState, PositionalProps } from '../types';
+	import { TextElement } from '$lib/utils/textElement';
 
 	let cardState: CardState = {
 		title: undefined,
 		unit: undefined,
-		borderRadius: undefined,
+		borderRadius: { topLeft: 5, topRight: 5, bottomRight: 5, bottomLeft: 5 },
+		borderWidth: { top: 0, right: 0, bottom: 0, left: 0 },
+		padding: { top: 0, right: 0, bottom: 0, left: 0 },
 		width: undefined,
 		height: undefined,
 		backgroundColor: undefined,
 		color: undefined,
 		borderColor: undefined,
-		textElements: [],
-		topPadding: undefined,
-		rightPadding: undefined,
-		bottomPadding: undefined,
-		leftPadding: undefined
+		textElements: []
 	};
 
 	let currentId: number;
@@ -46,14 +42,11 @@
 	backgroundColor.subscribe((value) => (cardState.backgroundColor = value));
 	color.subscribe((value) => (cardState.color = value));
 	borderColor.subscribe((value) => (cardState.borderColor = value));
-	borderRadius.subscribe((value) => (cardState.borderRadius = value));
 	borderWidth.subscribe((value) => (cardState.borderWidth = value));
-	topPadding.subscribe((value) => (cardState.topPadding = value));
-	rightPadding.subscribe((value) => (cardState.rightPadding = value));
-	bottomPadding.subscribe((value) => (cardState.bottomPadding = value));
-	leftPadding.subscribe((value) => (cardState.leftPadding = value));
+	borderRadius.subscribe((value) => (cardState.borderRadius = value));
 	textElements.subscribe((value) => (cardState.textElements = value));
 	textElementTemplateId.subscribe((value) => (currentId = value));
+	padding.subscribe((value) => (cardState.padding = value));
 
 	$: {
 		if (cardState.title) {
@@ -74,11 +67,8 @@
 		if (cardState.borderColor) {
 			borderColor.set(cardState.borderColor);
 		}
-		if (typeof cardState.borderRadius === 'number') {
+		if (cardState.borderRadius) {
 			borderRadius.set(cardState.borderRadius);
-		}
-		if (cardState.borderWidth) {
-			borderWidth.set(cardState.borderWidth);
 		}
 		if (cardState.color) {
 			color.set(cardState.color);
@@ -86,18 +76,24 @@
 		if (cardState.textElements) {
 			textElements.set(cardState.textElements);
 		}
-		if (cardState.topPadding) {
-			topPadding.set(cardState.topPadding);
+		if (cardState.borderWidth) {
+			borderWidth.set(cardState.borderWidth);
 		}
-		if (cardState.rightPadding) {
-			rightPadding.set(cardState.rightPadding);
+		if (cardState.padding) {
+			padding.set(cardState.padding);
 		}
-		if (cardState.bottomPadding) {
-			bottomPadding.set(cardState.bottomPadding);
-		}
-		if (cardState.leftPadding) {
-			leftPadding.set(cardState.leftPadding);
-		}
+		// if (cardState.borderWidthTop) {
+		// 	borderWidthTop.set(cardState.borderWidthTop);
+		// }
+		// if (cardState.borderWidthRight) {
+		// 	borderWidthRight.set(cardState.borderWidthRight);
+		// }
+		// if (cardState.borderWidthBottom) {
+		// 	borderWidthBottom.set(cardState.borderWidthBottom);
+		// }
+		// if (cardState.borderWidthLeft) {
+		// 	borderWidthLeft.set(cardState.borderWidthLeft);
+		// }
 	}
 
 	const handleFileUpload = (e: Event) => {
@@ -155,7 +151,7 @@
 							type="number"
 							id={`card-template-padding-top`}
 							step="0.01"
-							bind:value={cardState.topPadding}
+							bind:value={cardState.padding.top}
 						/>
 					</div>
 					<div class="flex column">
@@ -164,7 +160,7 @@
 							type="number"
 							id={`card-template-padding-right`}
 							step="0.01"
-							bind:value={cardState.rightPadding}
+							bind:value={cardState.padding.right}
 						/>
 					</div>
 					<div class="flex column">
@@ -173,7 +169,7 @@
 							type="number"
 							id={`card-template-padding-bottom`}
 							step="0.01"
-							bind:value={cardState.bottomPadding}
+							bind:value={cardState.padding.bottom}
 						/>
 					</div>
 					<div class="flex column">
@@ -182,7 +178,7 @@
 							type="number"
 							id={`card-template-padding-left`}
 							step="0.01"
-							bind:value={cardState.leftPadding}
+							bind:value={cardState.padding.left}
 						/>
 					</div>
 				</div>
@@ -195,24 +191,92 @@
 			<h3>Border</h3>
 		</div>
 		<div class="flex column container">
-			<div class="flex column">
-				<label for="card-template-border-width">Width</label>
-				<input
-					type="number"
-					id="card-template-border-width"
-					step="0.01"
-					bind:value={cardState.borderWidth}
-				/>
-			</div>
-			<div class="flex column">
-				<label for="card-template-border-radius">Radius</label>
-				<input
-					type="number"
-					id="card-template-border-radius"
-					step="0.01"
-					bind:value={cardState.borderRadius}
-				/>
-			</div>
+			<fieldset class="flex column">
+				<legend>Width</legend>
+				<div class="flex row">
+					<div class="flex column">
+						<label for={`card-template-border-width-top`}>Top</label>
+						<input
+							type="number"
+							id={`card-template-border-width-top`}
+							step="0.01"
+							bind:value={cardState.borderWidth.top}
+						/>
+					</div>
+					<div class="flex column">
+						<label for={`card-template-border-width-right`}>Right</label>
+						<input
+							type="number"
+							id={`card-template-border-width-right`}
+							step="0.01"
+							bind:value={cardState.borderWidth.right}
+						/>
+					</div>
+					<div class="flex column">
+						<label for={`card-template-border-width-bottom`}>Bottom</label>
+						<input
+							type="number"
+							id={`card-template-border-width-bottom`}
+							step="0.01"
+							bind:value={cardState.borderWidth.bottom}
+						/>
+					</div>
+					<div class="flex column">
+						<label for={`card-template-border-width-left`}>Left</label>
+						<input
+							type="number"
+							id={`card-template-border-width-left`}
+							step="0.01"
+							bind:value={cardState.borderWidth.left}
+						/>
+					</div>
+				</div>
+			</fieldset>
+			<fieldset class="flex column">
+				<legend>Radius</legend>
+				<div class="flex row">
+					<div class="flex column">
+						<div class="flex column">
+							<label for={`card-template-border-radius-top`}>Top Left</label>
+							<input
+								type="number"
+								id={`card-template-border-radius-top`}
+								step="0.01"
+								bind:value={cardState.borderRadius.topLeft}
+							/>
+						</div>
+						<div class="flex column">
+							<label for={`card-template-border-radius-left`}>Bottom Left</label>
+							<input
+								type="number"
+								id={`card-template-border-radius-left`}
+								step="0.01"
+								bind:value={cardState.borderRadius.bottomLeft}
+							/>
+						</div>
+					</div>
+					<div class="flex column">
+						<div class="flex column">
+							<label for={`card-template-border-radius-right`}>Top Right</label>
+							<input
+								type="number"
+								id={`card-template-border-radius-right`}
+								step="0.01"
+								bind:value={cardState.borderRadius.topRight}
+							/>
+						</div>
+						<div class="flex column">
+							<label for={`card-template-border-radius-bottom`}>Bottom Right</label>
+							<input
+								type="number"
+								id={`card-template-border-radius-bottom`}
+								step="0.01"
+								bind:value={cardState.borderRadius.bottomRight}
+							/>
+						</div>
+					</div>
+				</div>
+			</fieldset>
 		</div>
 	</div>
 	<div class="flex column">
@@ -243,19 +307,28 @@
 				type="button"
 				class="create"
 				on:click={() => {
-					cardState.textElements.push({
-						id: currentId.toString(),
-						title: `Text Element ${currentId}`,
-						color: cardState.color || '#000000',
-						fontSize: 0.22,
-						fontWeight: '400',
-						fontStyle: '',
-						textDecoration: '',
-						topPadding: 0,
-						rightPadding: 0,
-						bottomPadding: 0,
-						leftPadding: 0
-					});
+					cardState.textElements.push(
+						new TextElement({
+							id: currentId.toString(),
+							color: cardState.color,
+							borderColor: cardState.borderColor
+						})
+						// 	{
+						// 	id: currentId.toString(),
+						// 	title: `Text Element ${currentId}`,
+						// 	color: cardState.color || '#000000',
+						// 	fontSize: 0.22,
+						// 	fontWeight: '400',
+						// 	fontStyle: '',
+						// 	textDecoration: '',
+						// 	topPadding: 0,
+						// 	rightPadding: 0,
+						// 	bottomPadding: 0,
+						// 	leftPadding: 0,
+						// 	borderWidth: { top: 0, right: 0, bottom: 0, left: 0 },
+						// 	borderColor: cardState.borderColor || '#000000'
+						// }
+					);
 					cardState.textElements = cardState.textElements;
 				}}>+</button
 			>
@@ -314,5 +387,9 @@
 	}
 	button.create:hover {
 		background-color: whitesmoke;
+	}
+
+	fieldset input {
+		max-width: 3rem;
 	}
 </style>

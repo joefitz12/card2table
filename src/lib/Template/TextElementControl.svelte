@@ -1,27 +1,14 @@
 <script lang="ts">
+	import { TextElement } from '$lib/utils/textElement';
 	import { count, textElements } from '../store';
-	import type { TextElement } from './types';
 	export let id: string;
 	export let handleRemove: () => void;
 
-	let state: Partial<TextElement> & {
-		italic: boolean;
-		underline: boolean;
-		lineThrough: boolean;
-	} = {
-		title: undefined,
-		fontSize: undefined,
-		fontWeight: undefined,
-		fontStyle: undefined,
+	let state = {
+		...new TextElement({ id }),
 		italic: false,
-		textDecoration: undefined,
 		underline: false,
-		lineThrough: false,
-		color: undefined,
-		topPadding: undefined,
-		rightPadding: undefined,
-		bottomPadding: undefined,
-		leftPadding: undefined
+		lineThrough: false
 	};
 
 	let _textElements: TextElement[];
@@ -33,13 +20,16 @@
 		if (!currentControl) {
 			return;
 		}
-		Object.entries(currentControl).forEach(([key, value]) => {
-			const _key = key as keyof typeof state;
-			if (Object.hasOwnProperty.call(state, _key) && state[_key] !== value) {
-				(state[_key] as string | number) = value;
+		Object.entries(currentControl).forEach(([_key, value]) => {
+			const key = _key as keyof TextElement;
+			if (['string', 'number'].includes(typeof value)) {
+				state[key] = value;
+			} else if (state[key]) {
+				state[key] = {
+					...value
+				};
 			}
 		});
-		console.log(currentControl);
 		if (currentControl.textDecoration === 'underline') {
 			state.underline = true;
 		}
@@ -108,29 +98,52 @@
 				currentControl.fontStyle = state.italic ? 'italic' : 'normal';
 				update = true;
 			}
-			if (typeof state.topPadding === 'number' && currentControl?.topPadding !== state.topPadding) {
-				currentControl.topPadding = state.topPadding;
+			if (
+				typeof state.padding.top === 'number' &&
+				currentControl?.padding.top !== state.padding.top
+			) {
+				currentControl.padding.top = state.padding.top;
 				update = true;
 			}
 			if (
-				typeof state.rightPadding === 'number' &&
-				currentControl?.rightPadding !== state.rightPadding
+				typeof state.padding.right === 'number' &&
+				currentControl?.padding.right !== state.padding.right
 			) {
-				currentControl.rightPadding = state.rightPadding;
+				currentControl.padding.right = state.padding.right;
 				update = true;
 			}
 			if (
-				typeof state.bottomPadding === 'number' &&
-				currentControl?.bottomPadding !== state.bottomPadding
+				typeof state.padding.bottom === 'number' &&
+				currentControl?.padding.bottom !== state.padding.bottom
 			) {
-				currentControl.bottomPadding = state.bottomPadding;
+				currentControl.padding.bottom = state.padding.bottom;
 				update = true;
 			}
 			if (
-				typeof state.leftPadding === 'number' &&
-				currentControl?.leftPadding !== state.leftPadding
+				typeof state.padding.left === 'number' &&
+				currentControl?.padding.left !== state.padding.left
 			) {
-				currentControl.leftPadding = state.leftPadding;
+				currentControl.padding.left = state.padding.left;
+				update = true;
+			}
+			if (
+				!Object.keys(currentControl.borderWidth).every(
+					(key) =>
+						currentControl?.borderWidth[key as keyof typeof currentControl.borderWidth] ===
+						state.borderWidth[key as keyof typeof state.borderWidth]
+				)
+			) {
+				currentControl.borderWidth = state.borderWidth;
+				update = true;
+			}
+			if (
+				!Object.keys(currentControl.borderRadius).every(
+					(key) =>
+						currentControl?.borderRadius[key as keyof typeof currentControl.borderRadius] ===
+						state.borderRadius[key as keyof typeof state.borderRadius]
+				)
+			) {
+				currentControl.borderRadius = state.borderRadius;
 				update = true;
 			}
 
@@ -139,6 +152,8 @@
 				count.set(currentCount + 1);
 				textElements.set(_textElements);
 			}
+		} else {
+			console.log(`currentCount: ${currentCount}`);
 		}
 	}
 
@@ -226,7 +241,7 @@
 					type="number"
 					id={`text-element-${id}-padding-top`}
 					step="0.01"
-					bind:value={state.topPadding}
+					bind:value={state.padding.top}
 				/>
 			</div>
 			<div class="flex column">
@@ -235,7 +250,7 @@
 					type="number"
 					id={`text-element-${id}-padding-right`}
 					step="0.01"
-					bind:value={state.rightPadding}
+					bind:value={state.padding.right}
 				/>
 			</div>
 			<div class="flex column">
@@ -244,7 +259,7 @@
 					type="number"
 					id={`text-element-${id}-padding-bottom`}
 					step="0.01"
-					bind:value={state.bottomPadding}
+					bind:value={state.padding.bottom}
 				/>
 			</div>
 			<div class="flex column">
@@ -253,8 +268,94 @@
 					type="number"
 					id={`text-element-${id}-padding-left`}
 					step="0.01"
-					bind:value={state.leftPadding}
+					bind:value={state.padding.left}
 				/>
+			</div>
+		</div>
+	</fieldset>
+	<fieldset class="flex column">
+		<legend>Border Width</legend>
+		<div class="flex row">
+			<div class="flex column">
+				<label for={`text-element-${id}-border-width-top`}>Top</label>
+				<input
+					type="number"
+					id={`text-element-${id}-border-width-top`}
+					step="0.01"
+					bind:value={state.borderWidth.top}
+				/>
+			</div>
+			<div class="flex column">
+				<label for={`text-element-${id}-border-width-right`}>Right</label>
+				<input
+					type="number"
+					id={`text-element-${id}-border-width-right`}
+					step="0.01"
+					bind:value={state.borderWidth.right}
+				/>
+			</div>
+			<div class="flex column">
+				<label for={`text-element-${id}-border-width-bottom`}>Bottom</label>
+				<input
+					type="number"
+					id={`text-element-${id}-border-width-bottom`}
+					step="0.01"
+					bind:value={state.borderWidth.bottom}
+				/>
+			</div>
+			<div class="flex column">
+				<label for={`text-element-${id}-border-width-left`}>Left</label>
+				<input
+					type="number"
+					id={`text-element-${id}-border-width-left`}
+					step="0.01"
+					bind:value={state.borderWidth.left}
+				/>
+			</div>
+		</div>
+	</fieldset>
+	<fieldset class="flex column">
+		<legend>Border Radius</legend>
+		<div class="flex row">
+			<div class="flex column">
+				<div class="flex column">
+					<label for={`card-template-border-radius-top`}>Top Left</label>
+					<input
+						type="number"
+						id={`card-template-border-radius-top`}
+						step="0.01"
+						bind:value={state.borderRadius.topLeft}
+					/>
+				</div>
+				<div class="flex column">
+					<label for={`card-template-border-radius-left`}>Bottom Left</label>
+					<input
+						type="number"
+						id={`card-template-border-radius-left`}
+						step="0.01"
+						bind:value={state.borderRadius.bottomLeft}
+					/>
+				</div>
+			</div>
+			<div class="flex column">
+				<div class="flex column">
+					<label for={`card-template-border-radius-right`}>Top Right</label>
+					<input
+						type="number"
+						id={`card-template-border-radius-right`}
+						step="0.01"
+						bind:value={state.borderRadius.topRight}
+					/>
+				</div>
+				<div class="flex column">
+					<label for={`card-template-border-radius-bottom`}>Bottom Right</label>
+					<input
+						type="number"
+						id={`card-template-border-radius-bottom`}
+						step="0.01"
+						bind:value={state.borderRadius.bottomRight}
+					/>
+				</div>
 			</div>
 		</div>
 	</fieldset>

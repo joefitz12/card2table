@@ -82,9 +82,10 @@ fieldset {
 
 legend {
 	padding: 0;
+	font-weight: 600;
 }
 
-.padding input {
+fieldset input {
 	max-width: 3rem;
 }
 
