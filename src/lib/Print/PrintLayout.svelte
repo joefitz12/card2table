@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CardState } from '$lib/Template/types';
+	import type { CardState } from '$lib/types';
 	import {
 		cards,
 		height,
@@ -9,16 +9,13 @@
 		borderRadius,
 		borderWidth,
 		backgroundColor,
-		topPadding,
-		rightPadding,
-		bottomPadding,
-		leftPadding,
 		textElements,
 		title,
 		unit,
 		pageHeight,
 		pageWidth,
-		columnGap
+		columnGap,
+		padding
 	} from '$lib/store';
 	import { derived } from 'svelte/store';
 
@@ -26,17 +23,14 @@
 	let cardState: CardState = {
 		unit: 'in',
 		borderColor: undefined,
-		borderWidth: undefined,
-		borderRadius: undefined,
+		padding: { top: 0, right: 0, bottom: 0, left: 0 },
+		borderWidth: { top: 0, right: 0, bottom: 0, left: 0 },
+		borderRadius: { topLeft: 5, topRight: 5, bottomRight: 5, bottomLeft: 5 },
 		width: undefined,
 		height: undefined,
 		backgroundColor: undefined,
 		color: undefined,
-		textElements: [],
-		topPadding: 0,
-		rightPadding: 0,
-		bottomPadding: 0,
-		leftPadding: 0
+		textElements: []
 	};
 	let printState = {
 		pageHeight: 8.5,
@@ -54,10 +48,7 @@
 	textElements.subscribe((value) => (cardState.textElements = value));
 	borderColor.subscribe((value) => (cardState.borderColor = value));
 	borderWidth.subscribe((value) => (cardState.borderWidth = value));
-	topPadding.subscribe((value) => (cardState.topPadding = value));
-	rightPadding.subscribe((value) => (cardState.rightPadding = value));
-	bottomPadding.subscribe((value) => (cardState.bottomPadding = value));
-	leftPadding.subscribe((value) => (cardState.leftPadding = value));
+	padding.subscribe((value) => (cardState.padding = value));
 	unit.subscribe((value) => (cardState.unit = value));
 	// Page
 	pageHeight.subscribe((value) => (printState.pageHeight = value));
@@ -91,17 +82,26 @@
 					style="--card-height: {(cardState.height || 3.43) + (cardState.unit || 'in')}; 
                         --card-width: {(cardState.width || 2.44) + (cardState.unit || 'in')}; 
                         --card-border-color: {cardState.borderColor}; 
-                        --card-border-width: {(cardState.borderWidth || 0) +
+						--card-border-top-width: {(cardState.borderWidth.top || 0) + (cardState.unit || 'in')};
+						--card-border-right-width: {(cardState.borderWidth.right || 0) + (cardState.unit || 'in')};
+						--card-border-bottom-width: {(cardState.borderWidth.bottom || 0) + (cardState.unit || 'in')};
+						--card-border-left-width: {(cardState.borderWidth.left || 0) + (cardState.unit || 'in')};
+                        --card-border-top-left-radius: {(cardState.borderRadius.topLeft || 0) +
 						(cardState.unit || 'in')}; 
-                        --card-border-radius: {cardState.borderRadius}%; 
+						--card-border-top-right-radius: {(cardState.borderRadius.topRight || 0) +
+						(cardState.unit || 'in')}; 
+						--card-border-bottom-right-radius: {(cardState.borderRadius.bottomRight || 0) +
+						(cardState.unit || 'in')};
+						--card-border-bottom-left-radius: {(cardState.borderRadius.bottomLeft || 0) +
+						(cardState.unit || 'in')};
                         --card-background-color: {cardState.backgroundColor}; 
-                        --card-top-padding: {(cardState.topPadding || 0) +
+                        --card-top-padding: {(cardState.padding.top || 0) +
 						(cardState.unit || 'in')};
-                        --card-right-padding: {(cardState.rightPadding || 0) +
+                        --card-right-padding: {(cardState.padding.right || 0) +
 						(cardState.unit || 'in')};
-                        --card-bottom-padding: {(cardState.bottomPadding || 0) +
+                        --card-bottom-padding: {(cardState.padding.bottom || 0) +
 						(cardState.unit || 'in')};
-                        --card-left-padding: {(cardState.leftPadding || 0) +
+                        --card-left-padding: {(cardState.padding.left || 0) +
 						(cardState.unit || 'in')};
                         "
 				>
@@ -120,13 +120,26 @@
                                 --font-weight: {textElement.fontWeight};
                                 --font-style: {textElement.fontStyle || 'normal'};
                                 --text-decoration: {textElement.textDecoration || 'normal'};
-                                --top-padding: {textElement.topPadding + (cardState.unit || 'in')};
-                                --right-padding: {textElement.rightPadding +
+                                --top-padding: {(textElement.padding.top || 0) +
 								(cardState.unit || 'in')};
-                                --bottom-padding: {textElement.bottomPadding +
+                                --right-padding: {(textElement.padding.right || 0) +
 								(cardState.unit || 'in')};
-                                --left-padding: {textElement.leftPadding * 96}px;
-                                "
+                                --bottom-padding: {(textElement.padding.bottom || 0) +
+								(cardState.unit || 'in')};
+                                --left-padding: {(textElement.padding.left || 0) +
+								(cardState.unit || 'in')};
+                                --border-top-width: {(textElement.borderWidth.top || 0) +
+								(cardState.unit || 'in')};
+								--border-right-width: {(textElement.borderWidth.right || 0) + (cardState.unit || 'in')};
+								--border-bottom-width: {(textElement.borderWidth.bottom || 0) + (cardState.unit || 'in')};
+								--border-left-width: {(textElement.borderWidth.left || 0) + (cardState.unit || 'in')};
+								--border-top-left-radius: {(textElement.borderRadius.topLeft || 0) + (cardState.unit || 'in')}; 
+								--border-top-right-radius: {(textElement.borderRadius.topRight || 0) + (cardState.unit || 'in')}; 
+								--border-bottom-right-radius: {(textElement.borderRadius.bottomRight || 0) +
+								(cardState.unit || 'in')};
+								--border-bottom-left-radius: {(textElement.borderRadius.bottomLeft || 0) +
+								(cardState.unit || 'in')};
+								"
 						>
 							<span class="text-element"
 								>{card[textElement.title.toLowerCase().split(' ').join('-')]}</span
@@ -194,7 +207,10 @@
 		position: relative;
 		height: var(--card-height);
 		width: var(--card-width);
-		border-radius: var(--card-border-radius);
+		border-top-left-radius: var(--card-border-top-left-radius);
+		border-top-right-radius: var(--card-border-top-right-radius);
+		border-bottom-right-radius: var(--card-border-bottom-right-radius);
+		border-bottom-left-radius: var(--card-border-bottom-left-radius);
 		background-color: var(--card-background-color);
 		transform-origin: top left;
 		overflow: hidden;
@@ -213,18 +229,35 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-		border: var(--card-border-width) solid var(--card-border-color);
+		border-style: solid;
+		border-color: var(--card-border-color);
+		border-top-width: var(--card-border-top-width);
+		border-right-width: var(--card-border-right-width);
+		border-bottom-width: var(--card-border-bottom-width);
+		border-left-width: var(--card-border-left-width);
 		box-sizing: border-box;
-		border-radius: var(--card-border-radius);
+		border-top-left-radius: var(--card-border-top-left-radius);
+		border-top-right-radius: var(--card-border-top-right-radius);
+		border-bottom-right-radius: var(--card-border-bottom-right-radius);
+		border-bottom-left-radius: var(--card-border-bottom-left-radius);
 	}
 
 	.text-element-container {
 		color: var(--color);
 		font-size: var(--font-size);
-		border: 1px solid transparent;
 		cursor: move;
 		padding: var(--top-padding) var(--right-padding) var(--bottom-padding) var(--left-padding);
-		width: calc(100% - var(--right-padding) - var(--left-padding));
+		width: var(--card-width) - calc(var(--card-left-padding) + var(--card-right-padding));
+		box-sizing: border-box;
+		border: solid var(--color);
+		border-top-width: var(--border-top-width);
+		border-right-width: var(--border-right-width);
+		border-bottom-width: var(--border-bottom-width);
+		border-left-width: var(--border-left-width);
+		border-top-left-radius: var(--border-top-left-radius);
+		border-top-right-radius: var(--border-top-right-radius);
+		border-bottom-right-radius: var(--border-bottom-right-radius);
+		border-bottom-left-radius: var(--border-bottom-left-radius);
 	}
 	.text-element-container.positioned {
 		position: absolute;

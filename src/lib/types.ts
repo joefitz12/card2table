@@ -10,38 +10,57 @@ type Padding = {
 	leftPadding: number
 }
 
-type Border = {
-	borderColor: string;
-	borderRadius: number;
-	borderWidth: number;
+export type PositionalProps = {
+	top?: number,
+	right?: number,
+	bottom?: number,
+	left?: number,
+	topLeft?: number,
+	topRight?: number,
+	bottomRight?: number,
+	bottomLeft?: number
 }
 
-type Font = {
+type BorderWidth = Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>;
+type BorderRadius = Pick<PositionalProps, 'topLeft' | 'topRight' | 'bottomRight' | 'bottomLeft'>;
+
+type Border = {
+	borderColor: string;
+	borderRadius: BorderRadius;
+	borderWidth: BorderWidth;
+}
+
+export type Font = {
 	fontSize: number;
 	fontStyle: string;
 	fontWeight: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
 }
 
-export type CardState = Partial<Padding> & {
+export type CardState = {
 	title?: string;
 	unit?: Unit;
 	width?: number;
 	height?: number;
+	padding: PositionalProps;
 	backgroundColor?: string;
 	color?: string;
 	borderColor?: string;
-	borderRadius?: number;
-	borderWidth?: number;
+	borderRadius: BorderRadius;
+	borderWidth: BorderWidth;
 	textElements: TextElement[];
 };
 
 
 
-export type TextElement = Font & Padding & {
+export type TextElement = Font & {
 	id: string;
 	title: string;
 	color: string;
 	textDecoration: string;
+	borderWidth: BorderWidth;
+	borderColor: string;
+	borderRadius: BorderRadius;
+	padding: PositionalProps;
 	leftTransform?: number;
 	topTransform?: number;
 };
