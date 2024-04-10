@@ -1,6 +1,5 @@
 <div class="flex menu-container">
-	<button>xy</button>
-	<button>border</button>
+	<button>card</button>
 	<button>colors</button>
 	<button>text</button>
 </div>
