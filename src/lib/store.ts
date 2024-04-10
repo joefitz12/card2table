@@ -25,8 +25,8 @@ textElements.subscribe(value => {
     if (value.length > 0) {
         textElementTemplateId.set(parseInt(value[value.length - 1].id) + 1);
     }
-})
-// textElements.subscribe(value => console.log(value))
+});
+textElements.subscribe(value => console.log(value))
 
 export let cards = writable<{ [x: string]: string }[]>();
 
@@ -42,3 +42,19 @@ cards.subscribe((value) => {
 export let pageHeight = writable<number>(8.5);
 export let pageWidth = writable<number>(11);
 export let columnGap = writable<number>(0.5);
+
+type Sidebar = {
+    collapsed: boolean,
+    activeMenu: 'card' | 'color' | 'text'
+}
+
+type State = {
+    sidebar: Sidebar
+}
+
+export let state = writable<State>({
+    sidebar: {
+        collapsed: false,
+        activeMenu: 'card'
+    }
+});

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CardState, PositionalProps } from '../types';
+	import type { CardState, PositionalProps } from '../../types';
 	import {
 		backgroundColor,
 		borderColor,
@@ -11,7 +11,8 @@
 		width,
 		borderRadius,
 		padding
-	} from '../store';
+	} from '../../store';
+	import { onMount } from 'svelte';
 
 	export let cardState: CardState = {
 		title: undefined,
@@ -131,80 +132,128 @@
 		// Set the dropEffect to move
 		e.dataTransfer.dropEffect = 'move';
 	}
+
+	// convert to pixels
+	let cardContainer: HTMLDivElement;
+	let cardHeight: number;
+	let cardWidth: number;
+	let relativeUnit: number;
+	onMount(() => {
+		handleSize();
+	});
+
+	$: {
+		console.log({
+			cardHeight,
+			cardWidth
+		});
+	}
+
+	const handleSize = () => {
+		console.dir(cardContainer);
+		if (!cardContainer) {
+			return;
+		}
+		let maxCardHeight = cardContainer.clientHeight - 2 * 48;
+		let maxCardWidth = cardContainer.clientWidth - 2 * 16;
+
+		relativeUnit = Math.floor(maxCardHeight / (cardState.height || 3.43));
+
+		if (relativeUnit * (cardState.width || 2.44) > maxCardWidth) {
+			relativeUnit = Math.floor(maxCardWidth / (cardState.width || 2.44));
+		}
+	};
 </script>
 
-<div class="template-container">
+<svelte:window on:resize={handleSize} />
+
+<div class="flex column template-container">
 	<div class="title">
 		<button type="button">&#9776;</button>
 		<input id="card-title" type="text" bind:value={cardState.title} use:focus />
 	</div>
-	<div
-		id="card-template"
-		style="--card-height: {(cardState.height || 3.43) * 96}px; 
-			--card-width: {(cardState.width || 2.44) * 96}px; 
-			--card-border-color: {cardState.borderColor}; 
-			--card-border-top-width: {(cardState.borderWidth.top || 0) * 96}px; 
-			--card-border-right-width: {(cardState.borderWidth.right || 0) * 96}px; 
-			--card-border-bottom-width: {(cardState.borderWidth.bottom || 0) * 96}px; 
-			--card-border-left-width: {(cardState.borderWidth.left || 0) * 96}px; 
-			--card-border-top-left-radius: {(cardState.borderRadius.topLeft || 0) * 96}px;  
-			--card-border-top-right-radius: {(cardState.borderRadius.topRight || 0) * 96}px; 
-			--card-border-bottom-right-radius: {(cardState.borderRadius.bottomRight || 0) * 96}px;  
-			--card-border-bottom-left-radius: {(cardState.borderRadius.bottomLeft || 0) * 96}px; 
-			--card-background-color: {cardState.backgroundColor}; 
-			--card-top-padding: {(cardState.padding.top || 0) * 96}px;
-			--card-right-padding: {(cardState.padding.right || 0) * 96}px;
-			--card-bottom-padding: {(cardState.padding.bottom || 0) * 96}px;
-			--card-left-padding: {(cardState.padding.left || 0) * 96}px;
-			"
-		on:drop={handleDrop}
-		on:dragover={handleDragover}
-	>
-		<div class="overlay" />
-		{#each cardState.textElements as textElement}
-			<div
-				class="text-element-container"
-				class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
-				draggable="true"
-				on:dragstart={handleDragStart}
-				id={textElement.id}
-				style="--color: {textElement.color}; 
-					--font-size: {(textElement.fontSize || 0.22) * 96}px; 
-					--transform-left: {textElement.leftTransform || 0}px; 
-					--transform-top: {textElement.topTransform || 0}px;
-					--font-weight: {textElement.fontWeight};
-					--font-style: {textElement.fontStyle || 'normal'};
-					--text-decoration: {textElement.textDecoration || 'normal'};
-					--top-padding: {(textElement.padding.top || 0) * 96}px;
-					--right-padding: {(textElement.padding.right || 0) * 96}px;
-					--bottom-padding: {(textElement.padding.bottom || 0) * 96}px;
-					--left-padding: {(textElement.padding.left || 0) * 96}px;
-					--border-top-width: {(textElement.borderWidth.top || 0) * 96}px;
-					--border-right-width: {(textElement.borderWidth.right || 0) * 96}px;
-					--border-bottom-width: {(textElement.borderWidth.bottom || 0) * 96}px;
-					--border-left-width: {(textElement.borderWidth.left || 0) * 96}px;
-					--border-top-left-radius: {(textElement.borderRadius.topLeft || 0) * 96}px;
-					--border-top-right-radius: {(textElement.borderRadius.topRight || 0) * 96}px; 
-					--border-bottom-right-radius: {(textElement.borderRadius.bottomRight || 0) * 96}px; 
-					--border-bottom-left-radius: {(textElement.borderRadius.bottomLeft || 0) * 96}px; 
-					"
-			>
-				<span>&#123;</span><span class="text-element"
-					>{textElement.title.toLowerCase().split(' ').join('-')}</span
-				><span>&#125;</span>
-			</div>
-		{/each}
+	<div class="flex card-container" bind:this={cardContainer}>
+		<div
+			class="card"
+			style="--card-height: {(cardState.height || 3.43) * relativeUnit}px; 
+				--card-width: {(cardState.width || 2.44) * relativeUnit}px; 
+				--card-border-color: {cardState.borderColor}; 
+				--card-border-top-width: {(cardState.borderWidth.top || 0) * relativeUnit}px; 
+				--card-border-right-width: {(cardState.borderWidth.right || 0) * relativeUnit}px; 
+				--card-border-bottom-width: {(cardState.borderWidth.bottom || 0) * relativeUnit}px; 
+				--card-border-left-width: {(cardState.borderWidth.left || 0) * relativeUnit}px; 
+				--card-border-top-left-radius: {(cardState.borderRadius.topLeft || 0) * relativeUnit}px;  
+				--card-border-top-right-radius: {(cardState.borderRadius.topRight || 0) * relativeUnit}px; 
+				--card-border-bottom-right-radius: {(cardState.borderRadius.bottomRight || 0) * relativeUnit}px;  
+				--card-border-bottom-left-radius: {(cardState.borderRadius.bottomLeft || 0) * relativeUnit}px; 
+				--card-background-color: {cardState.backgroundColor}; 
+				--card-top-padding: {(cardState.padding.top || 0) * relativeUnit}px;
+				--card-right-padding: {(cardState.padding.right || 0) * relativeUnit}px;
+				--card-bottom-padding: {(cardState.padding.bottom || 0) * relativeUnit}px;
+				--card-left-padding: {(cardState.padding.left || 0) * relativeUnit}px;
+				"
+			on:drop={handleDrop}
+			on:dragover={handleDragover}
+		>
+			<div class="overlay" />
+			{#each cardState.textElements as textElement}
+				<div
+					class="text-element-container"
+					class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
+					draggable="true"
+					on:dragstart={handleDragStart}
+					id={textElement.id}
+					style="--color: {textElement.color}; 
+						--font-size: {(textElement.fontSize || 0.22) * relativeUnit}px; 
+						--transform-left: {textElement.leftTransform || 0}px; 
+						--transform-top: {textElement.topTransform || 0}px;
+						--font-weight: {textElement.fontWeight};
+						--font-style: {textElement.fontStyle || 'normal'};
+						--text-decoration: {textElement.textDecoration || 'normal'};
+						--padding-top: {(textElement.padding.top || 0) * relativeUnit}px;
+						--padding-right: {(textElement.padding.right || 0) * relativeUnit}px;
+						--padding-bottom: {(textElement.padding.bottom || 0) * relativeUnit}px;
+						--padding-left: {(textElement.padding.left || 0) * relativeUnit}px;
+						--margin-top: {typeof textElement.margin.top === 'number'
+						? `${(textElement.margin.top || 0) * relativeUnit}px`
+						: textElement.margin.top};
+						--margin-right: {typeof textElement.margin.right === 'number'
+						? `${(textElement.margin.right || 0) * relativeUnit}px`
+						: textElement.margin.right};
+						--margin-bottom: {typeof textElement.margin.bottom === 'number'
+						? `${(textElement.margin.bottom || 0) * relativeUnit}px`
+						: textElement.margin.bottom};
+						--margin-left: {typeof textElement.margin.left === 'number'
+						? `${(textElement.margin.left || 0) * relativeUnit}px`
+						: textElement.margin.left};
+						--border-top-width: {(textElement.borderWidth.top || 0) * relativeUnit}px;
+						--border-right-width: {(textElement.borderWidth.right || 0) * relativeUnit}px;
+						--border-bottom-width: {(textElement.borderWidth.bottom || 0) * relativeUnit}px;
+						--border-left-width: {(textElement.borderWidth.left || 0) * relativeUnit}px;
+						--border-top-left-radius: {(textElement.borderRadius.topLeft || 0) * relativeUnit}px;
+						--border-top-right-radius: {(textElement.borderRadius.topRight || 0) * relativeUnit}px; 
+						--border-bottom-right-radius: {(textElement.borderRadius.bottomRight || 0) * relativeUnit}px; 
+						--border-bottom-left-radius: {(textElement.borderRadius.bottomLeft || 0) * relativeUnit}px;
+						"
+				>
+					<span>&#123;</span><span class="text-element"
+						>{textElement.title.toLowerCase().split(' ').join('-')}</span
+					><span>&#125;</span>
+				</div>
+			{/each}
+		</div>
 	</div>
 </div>
 
 <style>
 	.template-container {
-		padding: 1rem;
+		--padding: 1rem;
+		padding: var(--padding);
 		position: sticky;
 		top: 3rem;
+		height: calc(100% - 2 * var(--padding));
 	}
 	.title {
-		margin: 0 0 16px 0;
 		display: flex;
 		align-items: center;
 		column-gap: 8px;
@@ -221,9 +270,16 @@
 		border: none;
 		outline: none !important;
 	}
-	#card-template {
-		margin: 0 auto;
+
+	.card-container {
+		flex-grow: 1;
+	}
+
+	.card {
+		margin: auto auto 3rem;
 		position: relative;
+		display: flex;
+		flex-direction: column;
 		height: var(--card-height);
 		width: var(--card-width);
 		border-top-left-radius: var(--card-border-top-left-radius);
@@ -244,7 +300,7 @@
 		box-sizing: border-box;
 	}
 
-	#card-template .overlay {
+	.card .overlay {
 		position: absolute;
 		height: 100%;
 		width: 100%;
@@ -272,7 +328,8 @@
 		font-size: var(--font-size);
 		cursor: move;
 		transition: border-color 75ms ease-in-out;
-		padding: var(--top-padding) var(--right-padding) var(--bottom-padding) var(--left-padding);
+		padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
+		margin: var(--margin-top) var(--margin-right) var(--margin-bottom) var(--margin-left);
 		width: var(--card-width) - calc(var(--card-left-padding) + var(--card-right-padding));
 		box-sizing: border-box;
 		border: solid var(--color);

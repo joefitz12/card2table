@@ -1,7 +1,8 @@
-import { type PositionalProps } from "$lib/types";
+import type { Margin, PositionalProps } from "$lib/types";
 
 interface Props {
     id: string,
+    title?: string,
     color?: string,
     borderColor?: string
 }
@@ -14,13 +15,14 @@ export class TextElement {
     fontWeight: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
     fontStyle: string;
     textDecoration: string;
-    padding: PositionalProps;
+    padding: Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>;
     borderWidth: Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>;
     borderRadius: Pick<PositionalProps, 'topLeft' | 'topRight' | 'bottomRight' | 'bottomLeft'>;
     borderColor: string;
-    constructor({ id, color, borderColor }: Props) {
+    margin: Margin;
+    constructor({ id, title, color, borderColor }: Props) {
         this.id = id;
-        this.title = `Text Element ${id}`
+        this.title = title || `Text Element ${id}`
         this.color = color || '#000000';
         this.borderColor = borderColor || '#000000'
         this.fontSize = 0.22;
@@ -30,5 +32,6 @@ export class TextElement {
         this.padding = { top: 0, right: 0, bottom: 0, left: 0 };
         this.borderWidth = { top: 0, right: 0, bottom: 0, left: 0 };
         this.borderRadius = { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 };
+        this.margin = { top: 0, right: 0, bottom: 0, left: 0 };
     }
 }

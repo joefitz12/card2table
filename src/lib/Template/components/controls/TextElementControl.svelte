@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { TextElement } from '$lib/utils/textElement';
-	import { count, textElements } from '../store';
+	import { count, textElements } from '../../../store';
 	export let id: string;
 	export let handleRemove: () => void;
 
@@ -11,10 +11,33 @@
 		lineThrough: false
 	};
 
+	let ui = {
+		margin: {
+			top: {
+				auto: false
+			},
+			right: {
+				auto: false
+			},
+			bottom: {
+				auto: false
+			},
+			left: {
+				auto: false
+			}
+		}
+	};
+
 	let _textElements: TextElement[];
 	let currentControl: TextElement | undefined;
+	let currentCount = 0;
+	count.subscribe((value) => (currentCount = value));
 
 	textElements.subscribe(($textElements) => {
+		if (currentCount > 50) {
+			console.log('blowing up');
+			return;
+		}
 		_textElements = $textElements;
 		currentControl = $textElements.find((textElement) => id == textElement.id);
 		if (!currentControl) {
@@ -23,13 +46,32 @@
 		Object.entries(currentControl).forEach(([_key, value]) => {
 			const key = _key as keyof TextElement;
 			if (['string', 'number'].includes(typeof value)) {
+				// @TODO: find strategy for updating state to avoid error
+				// @ts-ignore-next-line
 				state[key] = value;
+			} else if (key === 'margin') {
+				console.log('margin value', value);
+				console.log('state.margin', state.margin);
+				state.margin = {
+					top: value.top === 'auto' ? state.margin.top : value.top,
+					right: value.right === 'auto' ? state.margin.right : value.right,
+					bottom: value.bottom === 'auto' ? state.margin.bottom : value.bottom,
+					left: value.left === 'auto' ? state.margin.left : value.left
+				};
+				console.log('after update', state.margin);
 			} else if (state[key]) {
+				console.log(key);
+				console.log(state[key]);
+				console.log(value);
+				// @TODO: find strategy for updating state to avoid error
+				// @ts-ignore-next-line
 				state[key] = {
 					...value
 				};
 			}
 		});
+		currentCount = currentCount + 1;
+
 		if (currentControl.textDecoration === 'underline') {
 			state.underline = true;
 		}
@@ -40,9 +82,6 @@
 			state.italic = true;
 		}
 	});
-
-	let currentCount = 0;
-	count.subscribe((value) => (currentCount = value));
 
 	$: {
 		if (!currentControl) {
@@ -99,41 +138,13 @@
 				update = true;
 			}
 			if (
-				typeof state.padding.top === 'number' &&
-				currentControl?.padding.top !== state.padding.top
-			) {
-				currentControl.padding.top = state.padding.top;
-				update = true;
-			}
-			if (
-				typeof state.padding.right === 'number' &&
-				currentControl?.padding.right !== state.padding.right
-			) {
-				currentControl.padding.right = state.padding.right;
-				update = true;
-			}
-			if (
-				typeof state.padding.bottom === 'number' &&
-				currentControl?.padding.bottom !== state.padding.bottom
-			) {
-				currentControl.padding.bottom = state.padding.bottom;
-				update = true;
-			}
-			if (
-				typeof state.padding.left === 'number' &&
-				currentControl?.padding.left !== state.padding.left
-			) {
-				currentControl.padding.left = state.padding.left;
-				update = true;
-			}
-			if (
-				!Object.keys(currentControl.borderWidth).every(
+				!Object.keys(currentControl.padding).every(
 					(key) =>
-						currentControl?.borderWidth[key as keyof typeof currentControl.borderWidth] ===
-						state.borderWidth[key as keyof typeof state.borderWidth]
+						currentControl?.padding[key as keyof typeof currentControl.padding] ===
+						state.padding[key as keyof typeof state.padding]
 				)
 			) {
-				currentControl.borderWidth = state.borderWidth;
+				currentControl.padding = state.padding;
 				update = true;
 			}
 			if (
@@ -144,6 +155,16 @@
 				)
 			) {
 				currentControl.borderRadius = state.borderRadius;
+				update = true;
+			}
+			if (
+				!Object.keys(currentControl.margin).every(
+					(key) =>
+						currentControl?.margin[key as keyof typeof currentControl.margin] ===
+						state.margin[key as keyof typeof state.margin]
+				)
+			) {
+				currentControl.margin = state.margin;
 				update = true;
 			}
 
@@ -159,6 +180,39 @@
 
 	function focus(input: HTMLInputElement) {
 		input.focus();
+	}
+
+	$: {
+		let update = false;
+
+		Object.keys(currentControl?.margin || {}).forEach((_key) => {
+			if (!currentControl) {
+				return;
+			}
+			const key = _key as keyof typeof currentControl.margin;
+			if (currentControl.margin[key] === 'auto' && ui.margin[key].auto) {
+				// console.log('first return');
+				// console.log('currentControl.margin[key]', currentControl.margin[key]);
+				// console.log('ui.margin[key].auto', ui.margin[key].auto);
+				return;
+			}
+			if (currentControl.margin[key] !== 'auto' && !ui.margin[key].auto) {
+				// console.log('second return');
+				// console.log('currentControl.margin[key]', currentControl.margin[key]);
+				// console.log('ui.margin[key].auto', ui.margin[key].auto);
+				return;
+			}
+			currentControl.margin[key] = ui.margin[key].auto ? 'auto' : 0;
+
+			update = true;
+		});
+
+		if (update && currentCount < 30) {
+			// if (update) {
+			console.log('updating');
+			count.set(currentCount + 1);
+			textElements.set(_textElements);
+		}
 	}
 </script>
 
@@ -198,7 +252,7 @@
 			</select>
 		</div>
 	</div>
-	<div class="flex row formatting">
+	<div class="flex row wrap formatting">
 		<!-- <label class="flex row"><input type="checkbox" /><span class="bold">bold</span></label> -->
 		<label class="flex row"
 			><input
@@ -232,7 +286,68 @@
 			/><span class="strikethrough">strikethrough</span></label
 		>
 	</div>
-	<fieldset class="flex column padding">
+	<fieldset class="flex column container">
+		<legend>Margin</legend>
+		<div class="flex row wrap">
+			<div class="flex column">
+				<fieldset class="flex row">
+					<legend>Top</legend>
+
+					<label class="flex row">
+						<input type="checkbox" bind:checked={ui.margin.top.auto} />
+						<span>Auto</span>
+					</label>
+
+					<input id={`text-element-${id}-margin-top`} step="0.01" bind:value={state.margin.top} />
+				</fieldset>
+			</div>
+			<div class="flex column">
+				<fieldset class="flex row">
+					<legend>Right</legend>
+
+					<label class="flex row">
+						<input type="checkbox" bind:checked={ui.margin.right.auto} />
+						<span>Auto</span>
+					</label>
+
+					<input
+						id={`text-element-${id}-margin-right`}
+						step="0.01"
+						bind:value={state.margin.right}
+					/>
+				</fieldset>
+			</div>
+			<div class="flex column">
+				<fieldset class="flex row">
+					<legend>Bottom</legend>
+
+					<label class="flex row">
+						<input type="checkbox" bind:checked={ui.margin.bottom.auto} />
+						<span>Auto</span>
+					</label>
+
+					<input
+						id={`text-element-${id}-margin-bottom`}
+						step="0.01"
+						bind:value={state.margin.bottom}
+					/>
+				</fieldset>
+			</div>
+			<div class="flex column">
+				<fieldset class="flex row">
+					<legend>Left</legend>
+
+					<label class="flex row">
+						<input type="checkbox" bind:checked={ui.margin.left.auto} />
+						<span>Auto</span>
+					</label>
+
+					<input id={`text-element-${id}-margin-Left`} step="0.01" bind:value={state.margin.left} />
+				</fieldset>
+			</div>
+		</div>
+	</fieldset>
+	<fieldset class="flex column container">
 		<legend>Padding</legend>
 		<div class="flex row">
 			<div class="flex column">
@@ -273,7 +388,7 @@
 			</div>
 		</div>
 	</fieldset>
-	<fieldset class="flex column">
+	<fieldset class="flex column container">
 		<legend>Border Width</legend>
 		<div class="flex row">
 			<div class="flex column">
@@ -314,7 +429,7 @@
 			</div>
 		</div>
 	</fieldset>
-	<fieldset class="flex column">
+	<fieldset class="flex column container">
 		<legend>Border Radius</legend>
 		<div class="flex row">
 			<div class="flex column">

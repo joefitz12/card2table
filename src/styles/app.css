@@ -57,11 +57,13 @@ button {
 .column {
 	flex-direction: column;
 	gap: 0.25rem;
+	min-height: 0;
 }
 
 .row {
 	flex-direction: row;
 	gap: 0.5rem;
+	min-width: 0;
 }
 
 .wrap {
