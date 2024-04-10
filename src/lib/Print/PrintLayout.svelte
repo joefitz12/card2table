@@ -120,13 +120,13 @@
                                 --font-weight: {textElement.fontWeight};
                                 --font-style: {textElement.fontStyle || 'normal'};
                                 --text-decoration: {textElement.textDecoration || 'normal'};
-                                --top-padding: {(textElement.padding.top || 0) +
+                                --padding-top: {(textElement.padding.top || 0) +
 								(cardState.unit || 'in')};
-                                --right-padding: {(textElement.padding.right || 0) +
+                                --padding-right: {(textElement.padding.right || 0) +
 								(cardState.unit || 'in')};
-                                --bottom-padding: {(textElement.padding.bottom || 0) +
+                                --padding-bottom: {(textElement.padding.bottom || 0) +
 								(cardState.unit || 'in')};
-                                --left-padding: {(textElement.padding.left || 0) +
+                                --padding-left: {(textElement.padding.left || 0) +
 								(cardState.unit || 'in')};
                                 --border-top-width: {(textElement.borderWidth.top || 0) +
 								(cardState.unit || 'in')};
@@ -205,6 +205,8 @@
 	.card-template {
 		margin: auto;
 		position: relative;
+		display: flex;
+		flex-direction: column;
 		height: var(--card-height);
 		width: var(--card-width);
 		border-top-left-radius: var(--card-border-top-left-radius);
@@ -246,7 +248,7 @@
 		color: var(--color);
 		font-size: var(--font-size);
 		cursor: move;
-		padding: var(--top-padding) var(--right-padding) var(--bottom-padding) var(--left-padding);
+		padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
 		width: var(--card-width) - calc(var(--card-left-padding) + var(--card-right-padding));
 		box-sizing: border-box;
 		border: solid var(--color);

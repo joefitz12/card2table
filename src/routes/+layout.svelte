@@ -60,6 +60,8 @@
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
+		max-width: 100vw;
+		overflow-x: clip;
 	}
 	nav {
 		view-transition-name: header-nav;

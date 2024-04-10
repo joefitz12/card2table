@@ -30,6 +30,10 @@ type Border = {
 	borderWidth: BorderWidth;
 }
 
+export type Margin = {
+	top: number | 'auto', right: number | 'auto', bottom: number | 'auto', left: number | 'auto'
+}
+
 export type Font = {
 	fontSize: number;
 	fontStyle: string;
@@ -52,17 +56,15 @@ export type CardState = {
 
 
 
-export type TextElement = Font & {
+export type TextElement = Font & Border & {
 	id: string;
 	title: string;
 	color: string;
 	textDecoration: string;
-	borderWidth: BorderWidth;
-	borderColor: string;
-	borderRadius: BorderRadius;
 	padding: PositionalProps;
 	leftTransform?: number;
 	topTransform?: number;
+	margin: Margin;
 };
 
 export type ViewerState = {
