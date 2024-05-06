@@ -6,6 +6,7 @@ body {
 	margin: 0;
 	overflow: scroll;
 	scrollbar-width: thin;
+	scroll-behavior: smooth;
 }
 
 body,
@@ -68,6 +69,14 @@ button {
 
 .wrap {
 	flex-wrap: wrap;
+}
+
+.align-center {
+	align-items: center;
+}
+
+.justify-center {
+	justify-content: center;
 }
 
 .container {

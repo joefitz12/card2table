@@ -1,0 +1,37 @@
+header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+h1 {
+    margin: 0;
+    font-weight: normal;
+}
+
+header a {
+    font-size: 1.5rem;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+header button {
+    background: transparent;
+    font-size: 1.5rem;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: none;
+}
+
+header a:hover,
+header button:hover {
+    background-color: whitesmoke;
+}

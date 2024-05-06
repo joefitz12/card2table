@@ -1,24 +1,6 @@
 <script lang="ts">
-	import './controls.css';
-	import { backgroundColor, color } from '$lib/store';
-	import type { CardState } from '$lib/types';
-
-	let cardState: Pick<CardState, 'backgroundColor' | 'color'> = {
-		backgroundColor: undefined,
-		color: undefined
-	};
-
-	backgroundColor.subscribe((value) => (cardState.backgroundColor = value));
-	color.subscribe((value) => (cardState.color = value));
-
-	$: {
-		if (cardState.backgroundColor) {
-			backgroundColor.set(cardState.backgroundColor);
-		}
-		if (cardState.color) {
-			color.set(cardState.color);
-		}
-	}
+	import '../../../../styles/controls.css';
+	import { state } from '$lib/store';
 </script>
 
 <div class="flex column">
@@ -32,12 +14,12 @@
 				<input
 					type="color"
 					id="card-template-background-color"
-					bind:value={cardState.backgroundColor}
+					bind:value={$state.template.backgroundColor}
 				/>
 			</div>
 			<div class="flex column">
 				<label for="card-template-color">Text</label>
-				<input type="color" id="card-template-color" bind:value={cardState.color} />
+				<input type="color" id="card-template-color" bind:value={$state.template.color} />
 			</div>
 		</div>
 	</div>

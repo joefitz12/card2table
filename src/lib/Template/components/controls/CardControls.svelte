@@ -1,87 +1,6 @@
 <script lang="ts">
-	import './controls.css';
-	import {
-		backgroundColor,
-		borderColor,
-		borderRadius,
-		borderWidth,
-		color,
-		height,
-		padding,
-		title,
-		unit,
-		width
-	} from '$lib/store';
-	import type { CardState } from '$lib/types';
-
-	let cardState: Pick<
-		CardState,
-		| 'title'
-		| 'unit'
-		| 'borderRadius'
-		| 'borderColor'
-		| 'borderWidth'
-		| 'backgroundColor'
-		| 'padding'
-		| 'width'
-		| 'height'
-		| 'color'
-	> = {
-		title: undefined,
-		unit: undefined,
-		borderRadius: { topLeft: 5, topRight: 5, bottomRight: 5, bottomLeft: 5 },
-		borderWidth: { top: 0, right: 0, bottom: 0, left: 0 },
-		padding: { top: 0, right: 0, bottom: 0, left: 0 },
-		width: undefined,
-		height: undefined,
-		backgroundColor: undefined,
-		color: undefined,
-		borderColor: undefined
-	};
-
-	title.subscribe((value) => (cardState.title = value));
-	unit.subscribe((value) => (cardState.unit = value));
-	height.subscribe((value) => (cardState.height = value));
-	width.subscribe((value) => (cardState.width = value));
-	backgroundColor.subscribe((value) => (cardState.backgroundColor = value));
-	color.subscribe((value) => (cardState.color = value));
-	borderColor.subscribe((value) => (cardState.borderColor = value));
-	borderWidth.subscribe((value) => (cardState.borderWidth = value));
-	borderRadius.subscribe((value) => (cardState.borderRadius = value));
-	padding.subscribe((value) => (cardState.padding = value));
-
-	$: {
-		if (cardState.title) {
-			title.set(cardState.title);
-		}
-		if (cardState.unit) {
-			unit.set(cardState.unit);
-		}
-		if (cardState.width) {
-			width.set(cardState.width);
-		}
-		if (cardState.height) {
-			height.set(cardState.height);
-		}
-		if (cardState.backgroundColor) {
-			backgroundColor.set(cardState.backgroundColor);
-		}
-		if (cardState.borderColor) {
-			borderColor.set(cardState.borderColor);
-		}
-		if (cardState.borderRadius) {
-			borderRadius.set(cardState.borderRadius);
-		}
-		if (cardState.color) {
-			color.set(cardState.color);
-		}
-		if (cardState.borderWidth) {
-			borderWidth.set(cardState.borderWidth);
-		}
-		if (cardState.padding) {
-			padding.set(cardState.padding);
-		}
-	}
+	import '../../../../styles/controls.css';
+	import { state } from '$lib/store';
 </script>
 
 <div class="flex column">
@@ -92,7 +11,7 @@
 		<div class="flex row">
 			<div class="flex column">
 				<label for="card-template-unit">Unit</label>
-				<select id="card-template-unit" bind:value={cardState.unit}>
+				<select id="card-template-unit" bind:value={$state.template.unit}>
 					<option selected>in</option>
 					<option>cm</option>
 				</select>
@@ -101,11 +20,23 @@
 		<div class="flex row">
 			<div class="flex column">
 				<label for="card-template-width">Width</label>
-				<input type="number" id="card-template-width" step="0.01" bind:value={cardState.width} />
+				<input
+					type="number"
+					id="card-template-width"
+					step="0.01"
+					min="0"
+					bind:value={$state.template.width}
+				/>
 			</div>
 			<div class="flex column">
 				<label for="card-template-height">Height</label>
-				<input type="number" id="card-template-height" step="0.01" bind:value={cardState.height} />
+				<input
+					type="number"
+					id="card-template-height"
+					step="0.01"
+					min="0"
+					bind:value={$state.template.height}
+				/>
 			</div>
 		</div>
 		<fieldset class="flex column padding">
@@ -117,7 +48,8 @@
 						type="number"
 						id={`card-template-padding-top`}
 						step="0.01"
-						bind:value={cardState.padding.top}
+						min="0"
+						bind:value={$state.template.padding.top}
 					/>
 				</div>
 				<div class="flex column">
@@ -126,7 +58,8 @@
 						type="number"
 						id={`card-template-padding-right`}
 						step="0.01"
-						bind:value={cardState.padding.right}
+						min="0"
+						bind:value={$state.template.padding.right}
 					/>
 				</div>
 				<div class="flex column">
@@ -135,7 +68,8 @@
 						type="number"
 						id={`card-template-padding-bottom`}
 						step="0.01"
-						bind:value={cardState.padding.bottom}
+						min="0"
+						bind:value={$state.template.padding.bottom}
 					/>
 				</div>
 				<div class="flex column">
@@ -144,7 +78,8 @@
 						type="number"
 						id={`card-template-padding-left`}
 						step="0.01"
-						bind:value={cardState.padding.left}
+						min="0"
+						bind:value={$state.template.padding.left}
 					/>
 				</div>
 			</div>
@@ -153,7 +88,7 @@
 </div>
 <div class="flex column">
 	<div class="flex row header">
-		<input type="color" id={`border-color`} bind:value={cardState.borderColor} />
+		<input type="color" id={`border-color`} bind:value={$state.template.border.color} />
 		<h3>Border</h3>
 	</div>
 	<div class="flex column container">
@@ -166,7 +101,8 @@
 						type="number"
 						id={`card-template-border-width-top`}
 						step="0.01"
-						bind:value={cardState.borderWidth.top}
+						min="0"
+						bind:value={$state.template.border.width.top}
 					/>
 				</div>
 				<div class="flex column">
@@ -175,7 +111,8 @@
 						type="number"
 						id={`card-template-border-width-right`}
 						step="0.01"
-						bind:value={cardState.borderWidth.right}
+						min="0"
+						bind:value={$state.template.border.width.right}
 					/>
 				</div>
 				<div class="flex column">
@@ -184,7 +121,8 @@
 						type="number"
 						id={`card-template-border-width-bottom`}
 						step="0.01"
-						bind:value={cardState.borderWidth.bottom}
+						min="0"
+						bind:value={$state.template.border.width.bottom}
 					/>
 				</div>
 				<div class="flex column">
@@ -193,7 +131,8 @@
 						type="number"
 						id={`card-template-border-width-left`}
 						step="0.01"
-						bind:value={cardState.borderWidth.left}
+						min="0"
+						bind:value={$state.template.border.width.left}
 					/>
 				</div>
 			</div>
@@ -208,7 +147,8 @@
 							type="number"
 							id={`card-template-border-radius-top`}
 							step="0.01"
-							bind:value={cardState.borderRadius.topLeft}
+							min="0"
+							bind:value={$state.template.border.radius.topLeft}
 						/>
 					</div>
 					<div class="flex column">
@@ -217,7 +157,8 @@
 							type="number"
 							id={`card-template-border-radius-left`}
 							step="0.01"
-							bind:value={cardState.borderRadius.bottomLeft}
+							min="0"
+							bind:value={$state.template.border.radius.bottomLeft}
 						/>
 					</div>
 				</div>
@@ -228,7 +169,8 @@
 							type="number"
 							id={`card-template-border-radius-right`}
 							step="0.01"
-							bind:value={cardState.borderRadius.topRight}
+							min="0"
+							bind:value={$state.template.border.radius.topRight}
 						/>
 					</div>
 					<div class="flex column">
@@ -237,7 +179,8 @@
 							type="number"
 							id={`card-template-border-radius-bottom`}
 							step="0.01"
-							bind:value={cardState.borderRadius.bottomRight}
+							min="0"
+							bind:value={$state.template.border.radius.bottomRight}
 						/>
 					</div>
 				</div>

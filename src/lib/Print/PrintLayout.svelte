@@ -1,171 +1,147 @@
 <script lang="ts">
-	import type { CardState } from '$lib/types';
-	import {
-		cards,
-		height,
-		width,
-		color,
-		borderColor,
-		borderRadius,
-		borderWidth,
-		backgroundColor,
-		textElements,
-		title,
-		unit,
-		pageHeight,
-		pageWidth,
-		columnGap,
-		padding
-	} from '$lib/store';
-	import { derived } from 'svelte/store';
+	import { state, type State } from '$lib/store';
+	import { Sidebar } from './components';
 
-	let uploadedCards: Array<{ [x: string]: string }>;
-	let cardState: CardState = {
-		unit: 'in',
-		borderColor: undefined,
-		padding: { top: 0, right: 0, bottom: 0, left: 0 },
-		borderWidth: { top: 0, right: 0, bottom: 0, left: 0 },
-		borderRadius: { topLeft: 5, topRight: 5, bottomRight: 5, bottomLeft: 5 },
-		width: undefined,
-		height: undefined,
-		backgroundColor: undefined,
-		color: undefined,
-		textElements: []
-	};
-	let printState = {
-		pageHeight: 8.5,
-		pageWidth: 11,
-		rowsPerPage: 2,
-		columnGap: 0.5
-	};
+	let selectedTemplate: State['template'] | undefined;
+	let rowsPerPage: Number;
 
-	cards.subscribe((value) => (uploadedCards = value));
-	borderRadius.subscribe((value) => (cardState.borderRadius = value));
-	height.subscribe((value) => (cardState.height = value));
-	width.subscribe((value) => (cardState.width = value));
-	backgroundColor.subscribe((value) => (cardState.backgroundColor = value));
-	color.subscribe((value) => (cardState.color = value));
-	textElements.subscribe((value) => (cardState.textElements = value));
-	borderColor.subscribe((value) => (cardState.borderColor = value));
-	borderWidth.subscribe((value) => (cardState.borderWidth = value));
-	padding.subscribe((value) => (cardState.padding = value));
-	unit.subscribe((value) => (cardState.unit = value));
-	// Page
-	pageHeight.subscribe((value) => (printState.pageHeight = value));
-	pageWidth.subscribe((value) => (printState.pageWidth = value));
-	columnGap.subscribe((value) => (printState.columnGap = value));
-
-	let rowsPerPage = derived([height, pageHeight], ([$height, $pageHeight]) =>
-		Math.floor($pageHeight / $height)
-	);
-
-	rowsPerPage.subscribe((value) => (printState.rowsPerPage = value));
+	$: {
+		selectedTemplate =
+			$state.templates && $state.templates.get
+				? $state.templates?.get($state.print.selectedTemplate)
+				: undefined;
+		rowsPerPage = selectedTemplate ? Math.floor($state.print.height / selectedTemplate.height) : 0;
+	}
 
 	// let columnGap = 0.5;
 	let rowGap = 0.5;
+
+	state.subscribe(($state) => {
+		const { print, csvs } = $state;
+		if ((!print.selectedCsv && csvs.length) || !print.selectedTemplate) {
+			state.update(($state) => {
+				return {
+					...$state,
+					print: {
+						...$state.print,
+						// automatically select main template
+						...(!print.selectedTemplate && { selectedTemplate: $state.template.id }),
+						// automatically select first csv
+						...(!print.selectedCsv && csvs.length && { selectedCsv: $state.csvs[0].id }),
+					},
+				};
+			});
+		}
+	});
 </script>
 
 <div class="flex row print-container">
-	<div
-		class="preview"
-		style="--column-gap: {printState.columnGap + (cardState.unit || 'in')}; 
-            --row-gap: {rowGap + (cardState.unit || 'in')}; 
-            --card-width: {(cardState.width || 2.44) + (cardState.unit || 'in')};
-            --page-height: {printState.pageHeight + (cardState.unit || 'in')};
-            --page-width: {printState.pageWidth + (cardState.unit || 'in')};
-            --rows-per-page: {printState.rowsPerPage};"
-	>
-		{#if uploadedCards}
-			{#each uploadedCards as card}
-				<div
-					class="card-template"
-					style="--card-height: {(cardState.height || 3.43) + (cardState.unit || 'in')}; 
-                        --card-width: {(cardState.width || 2.44) + (cardState.unit || 'in')}; 
-                        --card-border-color: {cardState.borderColor}; 
-						--card-border-top-width: {(cardState.borderWidth.top || 0) + (cardState.unit || 'in')};
-						--card-border-right-width: {(cardState.borderWidth.right || 0) + (cardState.unit || 'in')};
-						--card-border-bottom-width: {(cardState.borderWidth.bottom || 0) + (cardState.unit || 'in')};
-						--card-border-left-width: {(cardState.borderWidth.left || 0) + (cardState.unit || 'in')};
-                        --card-border-top-left-radius: {(cardState.borderRadius.topLeft || 0) +
-						(cardState.unit || 'in')}; 
-						--card-border-top-right-radius: {(cardState.borderRadius.topRight || 0) +
-						(cardState.unit || 'in')}; 
-						--card-border-bottom-right-radius: {(cardState.borderRadius.bottomRight || 0) +
-						(cardState.unit || 'in')};
-						--card-border-bottom-left-radius: {(cardState.borderRadius.bottomLeft || 0) +
-						(cardState.unit || 'in')};
-                        --card-background-color: {cardState.backgroundColor}; 
-                        --card-top-padding: {(cardState.padding.top || 0) +
-						(cardState.unit || 'in')};
-                        --card-right-padding: {(cardState.padding.right || 0) +
-						(cardState.unit || 'in')};
-                        --card-bottom-padding: {(cardState.padding.bottom || 0) +
-						(cardState.unit || 'in')};
-                        --card-left-padding: {(cardState.padding.left || 0) +
-						(cardState.unit || 'in')};
+	{#if selectedTemplate}
+		<div
+			class="preview"
+			class:empty={$state.print.width < selectedTemplate.width ||
+				$state.print.height < selectedTemplate.height}
+			style="--column-gap: {$state.print.columnGap + (selectedTemplate.unit || 'in')}; 
+            --row-gap: {rowGap + (selectedTemplate.unit || 'in')}; 
+            --card-width: {(selectedTemplate.width || 2.44) + (selectedTemplate.unit || 'in')};
+            --page-height: {$state.print.height + (selectedTemplate.unit || 'in')};
+            --page-width: {$state.print.width + (selectedTemplate.unit || 'in')};
+            --rows-per-page: {rowsPerPage};"
+		>
+			{#if $state.print.width < selectedTemplate.width || $state.print.height < selectedTemplate.height}
+				<div class="flex column align-center"><span>Page too small =(</span></div>
+			{/if}
+			{#if $state.csvs.length && !($state.print.width < selectedTemplate.width || $state.print.height < selectedTemplate.height)}
+				{#each $state.csvs.find((csv) => csv.id === $state.print.selectedTemplate)?.cards || $state.csvs[0].cards as card}
+					<div
+						class="card-template"
+						style="--card-height: {(selectedTemplate.height || 3.43) +
+							(selectedTemplate.unit || 'in')}; 
+                        --card-width: {(selectedTemplate.width || 2.44) +
+							(selectedTemplate.unit || 'in')}; 
+                        --card-border-color: {selectedTemplate.border.color}; 
+						--card-border-top-width: {(selectedTemplate.border.width.top || 0) +
+							(selectedTemplate.unit || 'in')};
+						--card-border-right-width: {(selectedTemplate.border.width.right || 0) +
+							(selectedTemplate.unit || 'in')};
+						--card-border-bottom-width: {(selectedTemplate.border.width.bottom || 0) +
+							(selectedTemplate.unit || 'in')};
+						--card-border-left-width: {(selectedTemplate.border.width.left || 0) +
+							(selectedTemplate.unit || 'in')};
+                        --card-border-top-left-radius: {(selectedTemplate.border.radius.topLeft ||
+							0) + (selectedTemplate.unit || 'in')}; 
+						--card-border-top-right-radius: {(selectedTemplate.border.radius.topRight || 0) +
+							(selectedTemplate.unit || 'in')}; 
+						--card-border-bottom-right-radius: {(selectedTemplate.border.radius.bottomRight || 0) +
+							(selectedTemplate.unit || 'in')};
+						--card-border-bottom-left-radius: {(selectedTemplate.border.radius.bottomLeft || 0) +
+							(selectedTemplate.unit || 'in')};
+                        --card-background-color: {selectedTemplate.backgroundColor}; 
+                        --card-top-padding: {(selectedTemplate.padding.top || 0) +
+							(selectedTemplate.unit || 'in')};
+                        --card-right-padding: {(selectedTemplate.padding.right || 0) +
+							(selectedTemplate.unit || 'in')};
+                        --card-bottom-padding: {(selectedTemplate.padding.bottom || 0) +
+							(selectedTemplate.unit || 'in')};
+                        --card-left-padding: {(selectedTemplate.padding.left || 0) +
+							(selectedTemplate.unit || 'in')};
                         "
-				>
-					<div class="overlay" />
-					{#each cardState.textElements as textElement}
-						<div
-							class="text-element-container"
-							class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
-							style="--color: {textElement.color}; 
+					>
+						<div class="overlay" />
+						{#if selectedTemplate.textElements}
+							{#each selectedTemplate.textElements as textElement}
+								<div
+									class="text-element-container"
+									class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
+									style="--color: {textElement.color}; 
                                 --font-size: {(textElement.fontSize || 0.22) +
-								(cardState.unit || 'in')}; 
-                                --transform-left: {(textElement.leftTransform || 0) / 96 +
-								(cardState.unit || 'in')};
-                                --transform-top: {(textElement.topTransform || 0) / 96 +
-								(cardState.unit || 'in')};
+										(selectedTemplate.unit || 'in')}; 
+                                --transform-left: {(textElement.leftTransform || 0) /
+										selectedTemplate.relativeUnit +
+										(selectedTemplate.unit || 'in')};
+                                --transform-top: {(textElement.topTransform || 0) /
+										selectedTemplate.relativeUnit +
+										(selectedTemplate.unit || 'in')};
                                 --font-weight: {textElement.fontWeight};
                                 --font-style: {textElement.fontStyle || 'normal'};
                                 --text-decoration: {textElement.textDecoration || 'normal'};
                                 --padding-top: {(textElement.padding.top || 0) +
-								(cardState.unit || 'in')};
+										(selectedTemplate.unit || 'in')};
                                 --padding-right: {(textElement.padding.right || 0) +
-								(cardState.unit || 'in')};
+										(selectedTemplate.unit || 'in')};
                                 --padding-bottom: {(textElement.padding.bottom || 0) +
-								(cardState.unit || 'in')};
+										(selectedTemplate.unit || 'in')};
                                 --padding-left: {(textElement.padding.left || 0) +
-								(cardState.unit || 'in')};
-                                --border-top-width: {(textElement.borderWidth.top || 0) +
-								(cardState.unit || 'in')};
-								--border-right-width: {(textElement.borderWidth.right || 0) + (cardState.unit || 'in')};
-								--border-bottom-width: {(textElement.borderWidth.bottom || 0) + (cardState.unit || 'in')};
-								--border-left-width: {(textElement.borderWidth.left || 0) + (cardState.unit || 'in')};
-								--border-top-left-radius: {(textElement.borderRadius.topLeft || 0) + (cardState.unit || 'in')}; 
-								--border-top-right-radius: {(textElement.borderRadius.topRight || 0) + (cardState.unit || 'in')}; 
-								--border-bottom-right-radius: {(textElement.borderRadius.bottomRight || 0) +
-								(cardState.unit || 'in')};
-								--border-bottom-left-radius: {(textElement.borderRadius.bottomLeft || 0) +
-								(cardState.unit || 'in')};
+										(selectedTemplate.unit || 'in')};
+                                --border-top-width: {(textElement.border.width.top || 0) +
+										(selectedTemplate.unit || 'in')};
+								--border-right-width: {(textElement.border.width.right || 0) + (selectedTemplate.unit || 'in')};
+								--border-bottom-width: {(textElement.border.width.bottom || 0) + (selectedTemplate.unit || 'in')};
+								--border-left-width: {(textElement.border.width.left || 0) + (selectedTemplate.unit || 'in')};
+								--border-top-left-radius: {(textElement.border.radius.topLeft || 0) +
+										(selectedTemplate.unit || 'in')}; 
+								--border-top-right-radius: {(textElement.border.radius.topRight || 0) +
+										(selectedTemplate.unit || 'in')}; 
+								--border-bottom-right-radius: {(textElement.border.radius.bottomRight || 0) +
+										(selectedTemplate.unit || 'in')};
+								--border-bottom-left-radius: {(textElement.border.radius.bottomLeft || 0) +
+										(selectedTemplate.unit || 'in')};
 								"
-						>
-							<span class="text-element"
-								>{card[textElement.title.toLowerCase().split(' ').join('-')]}</span
-							>
-						</div>
-					{/each}
-				</div>
-			{/each}
-		{/if}
-	</div>
-	<div class="container flex row print-layout">
-		<div class="flex column">
-			<h3>Print Layout</h3>
-			<div class="flex column">
-				<label for="page-width">Page width</label>
-				<input id="page-width" type="number" bind:value={printState.pageWidth} step="0.1" />
-			</div>
-			<div class="flex column">
-				<label for="page-height">Page height</label>
-				<input id="page-height" type="number" bind:value={printState.pageHeight} step="0.1" />
-			</div>
-			<div class="flex column">
-				<label for="column-gap">Column gap</label>
-				<input id="column-gap" type="number" bind:value={printState.columnGap} step="0.1" />
-			</div>
+								>
+									<span class="text-element"
+										>{card[textElement.title.toLowerCase().split(' ').join('-')]}</span
+									>
+								</div>
+							{/each}
+						{/if}
+					</div>
+				{/each}
+			{/if}
 		</div>
+	{/if}
+
+	<div class="sidebar">
+		<Sidebar />
 	</div>
 </div>
 
@@ -174,7 +150,7 @@
 		position: relative;
 		gap: 0;
 	}
-	.print-layout {
+	/* .print-layout {
 		position: sticky;
 		top: 0;
 		right: 0;
@@ -182,8 +158,15 @@
 		margin-bottom: auto;
 		background-color: white;
 		filter: drop-shadow(-1px 2px 2px RGBA(0, 0, 0, 0.24));
+	} */
+	.sidebar {
+		border-radius: 4px;
+		overflow: hidden;
+		z-index: 0;
+		position: absolute;
+		right: 0;
 	}
-	.preview {
+	.preview:not(.empty) {
 		max-width: var(--page-width);
 		min-width: var(--page-width);
 		display: grid;

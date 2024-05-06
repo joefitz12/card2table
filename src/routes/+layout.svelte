@@ -1,8 +1,6 @@
 <script lang="ts">
 	import '../styles/app.css';
-	import PapaParse from 'papaparse';
 	import { onNavigate } from '$app/navigation';
-	import { cards } from '$lib/store';
 
 	interface ExtendedDocument extends Document {
 		startViewTransition: any;
@@ -19,20 +17,12 @@
 		});
 	});
 
-	const handleFileUpload = (e: Event) => {
-		const input = e.target as HTMLInputElement;
-		const file = input.files ? input.files[0] : null;
-		if (!file) {
-			return;
-		}
-
-		PapaParse.parse(file, {
-			header: true,
-			complete: (results) => {
-				cards.set(results.data as { [x: string]: string }[]);
-			}
-		});
-	};
+	// const handleFileUpload = (e: Event) => {
+	// 	const input = e.target as HTMLInputElement;
+	// 	const file = input.files ? input.files[0] : null;
+	// 	if (!file) {
+	// 		return;
+	// 	}
 </script>
 
 <div class="main-container">
@@ -41,14 +31,16 @@
 			<li>
 				<a href="/">Home</a>
 			</li>
+			<!-- <li>
+				<a href="/collection">Collections</a>
+			</li> -->
 			<li>
-				<a href="/template">+ Template</a>
+				<a href="/template">Templates</a>
 			</li>
 			<li>
 				<a href="/print">Print</a>
 			</li>
 		</ul>
-		<input type="file" accept="text/csv" on:change={handleFileUpload} />
 	</nav>
 	<main class="flex column">
 		<slot />

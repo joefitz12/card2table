@@ -5,7 +5,7 @@
 	import TextElementControls from './controls/TextElementControls.svelte';
 
 	let collapsed: boolean;
-	let activeMenu: 'card' | 'color' | 'text' = 'card';
+	let activeMenu: 'card' | 'color' | 'text' | 'image' | 'print' = 'text';
 	$: sidebarClass = collapsed ? 'collapsed' : 'expanded';
 	const updateSidebar = (sidebarUpdates: { collapsed?: boolean; activeMenu?: typeof activeMenu }) =>
 		state.update(
@@ -14,8 +14,8 @@
 					...value,
 					sidebar: {
 						...value.sidebar,
-						...sidebarUpdates
-					}
+						...sidebarUpdates,
+					},
 				})
 		);
 	state.subscribe((value) => {
@@ -30,6 +30,7 @@
 		<button on:click={() => updateSidebar({ activeMenu: 'card' })}>card</button>
 		<button on:click={() => updateSidebar({ activeMenu: 'color' })}>color</button>
 		<button on:click={() => updateSidebar({ activeMenu: 'text' })}>text</button>
+		<button on:click={() => updateSidebar({ activeMenu: 'image' })}>image</button>
 	</div>
 	<div class="collapsible {sidebarClass}">
 		<div class="controls-container {activeMenu}">
@@ -52,6 +53,7 @@
 		gap: 0.5rem;
 		animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
 		position: relative;
+		background-color: rgba(255, 255, 255, 0.5);
 	}
 	.sidebar::after {
 		content: ' ';
@@ -59,7 +61,6 @@
 		height: 100%;
 		right: 0;
 		width: 1rem;
-		background-image: linear-gradient(to right, transparent 0%, white 75%);
 	}
 	.collapsible {
 		overflow: visible;

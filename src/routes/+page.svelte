@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { state } from '$lib/store';
+
 	/** @type {import('./$types').PageData} */
 	// export let data: any[] = [];
 </script>
 
-<h1>card 2 table</h1>
+<h1>card2table</h1>
 <div class="container">
 	<h3>How to use:</h3>
 	<ol>

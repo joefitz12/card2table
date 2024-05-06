@@ -1,57 +1,95 @@
 <script lang="ts">
-	import './controls.css';
-	import { color, borderColor, textElementTemplateId, textElements } from '$lib/store';
-	import type { CardState } from '$lib/types';
-	import { TextElement } from '$lib/utils/textElement';
+	import '../../../../styles/controls.css';
+	import { state } from '$lib/store';
 	import TextElementControl from './TextElementControl.svelte';
+	import { db } from '$lib/db';
+	import { TextElement } from '$lib/api/TextElement.ts/TextElement';
+	import { UITextElement } from '$lib/utils/uiTextElement';
 
-	let cardState: Pick<CardState, 'borderColor' | 'color' | 'textElements'> = {
-		borderColor: undefined,
-		color: undefined,
-		textElements: []
-	};
+	function createTextElement() {
+		const templateId = parseInt($state.template.id);
 
-	let currentId: number;
-	color.subscribe((value) => (cardState.color = value));
-	borderColor.subscribe((value) => (cardState.borderColor = value));
-	textElementTemplateId.subscribe((value) => (currentId = value));
-	textElements.subscribe((value) => (cardState.textElements = value));
+		db.open((db) => {
+			// Init add Card Template transaction
+			const transaction = db.transaction(['textElement'], 'readwrite');
+			const textElements = transaction.objectStore('textElement');
 
-	$: {
-		if (cardState.textElements) {
-			textElements.set(cardState.textElements);
-		}
+			// get text elements
+			const getTextElement = textElements.get(templateId);
+
+			getTextElement.onsuccess = () => {
+				console.log(getTextElement);
+
+				if (!getTextElement.result) {
+					// Create new record on object store
+					const transaction = db.transaction(['textElement'], 'readwrite');
+					const textElements = transaction.objectStore('textElement');
+					const addTextElement = textElements.add([new TextElement()], templateId);
+					addTextElement.onsuccess = () => {
+						// Get all text elements and set to state
+						const transaction = db.transaction(['textElement']);
+						const textElements = transaction.objectStore('textElement');
+						const getTextElements = textElements.get(templateId);
+
+						getTextElements.onsuccess = () => {
+							state.update(($state) => {
+								return {
+									...$state,
+									template: {
+										...$state.template,
+										textElements: getTextElements.result.map(
+											(element: InstanceType<typeof TextElement>, i: number) =>
+												new UITextElement({ ...element, id: i.toString() })
+										),
+									},
+								};
+							});
+						};
+					};
+				} else {
+					// Update existing record
+					const transaction = db.transaction(['textElement'], 'readwrite');
+					const textElements = transaction.objectStore('textElement');
+					const putTextElement = textElements.put(
+						[...getTextElement.result, new TextElement()],
+						templateId
+					);
+
+					putTextElement.onsuccess = () => {
+						// Get all text elements and set to state
+						const transaction = db.transaction(['textElement']);
+						const textElements = transaction.objectStore('textElement');
+						const getTextElements = textElements.get(templateId);
+
+						getTextElements.onsuccess = () => {
+							state.update(($state) => {
+								return {
+									...$state,
+									template: {
+										...$state.template,
+										textElements: getTextElements.result.map(
+											(element: InstanceType<typeof TextElement>, i: number) =>
+												new UITextElement({ ...element, id: i.toString() })
+										),
+									},
+								};
+							});
+						};
+					};
+				}
+			};
+		});
 	}
 </script>
 
 <div class="flex column">
 	<div class="flex row header">
 		<h3>Text Elements</h3>
-		<button
-			type="button"
-			class="create"
-			on:click={() => {
-				cardState.textElements.push(
-					new TextElement({
-						id: currentId.toString(),
-						color: cardState.color,
-						borderColor: cardState.borderColor
-					})
-				);
-				cardState.textElements = cardState.textElements;
-			}}>+</button
-		>
+		<button type="button" class="create" on:click={() => createTextElement()}>+</button>
 	</div>
-	{#each cardState.textElements as textElement, i}
-		{@const handleRemove = () => {
-			cardState.textElements.splice(
-				cardState.textElements.findIndex(
-					(cardStateTextElement) => textElement.id === cardStateTextElement.id
-				),
-				1
-			);
-			cardState.textElements = cardState.textElements;
-		}}
-		<TextElementControl id={textElement.id} {handleRemove} />
-	{/each}
+	{#if $state.template}
+		{#each $state.template.textElements as textElement, i}
+			<TextElementControl id={i.toString()} />
+		{/each}
+	{/if}
 </div>

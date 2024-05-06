@@ -3,13 +3,6 @@ export type FontSizes = {
 	[x: string]: number;
 };
 
-type Padding = {
-	topPadding: number,
-	rightPadding: number,
-	bottomPadding: number,
-	leftPadding: number
-}
-
 export type PositionalProps = {
 	top?: number,
 	right?: number,
@@ -25,13 +18,16 @@ type BorderWidth = Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>;
 type BorderRadius = Pick<PositionalProps, 'topLeft' | 'topRight' | 'bottomRight' | 'bottomLeft'>;
 
 type Border = {
-	borderColor: string;
-	borderRadius: BorderRadius;
-	borderWidth: BorderWidth;
+	color: string;
+	radius: BorderRadius;
+	width: BorderWidth;
 }
 
 export type Margin = {
-	top: number | 'auto', right: number | 'auto', bottom: number | 'auto', left: number | 'auto'
+	top: number | 'auto',
+	right: number | 'auto',
+	bottom: number | 'auto',
+	left: number | 'auto'
 }
 
 export type Font = {
@@ -48,23 +44,36 @@ export type CardState = {
 	padding: PositionalProps;
 	backgroundColor?: string;
 	color?: string;
-	borderColor?: string;
-	borderRadius: BorderRadius;
-	borderWidth: BorderWidth;
+	border?: {
+		color?: string;
+		radius?: BorderRadius;
+		width?: BorderWidth;
+	}
 	textElements: TextElement[];
 };
 
 
 
-export type TextElement = Font & Border & {
+export type TextElement = Font & {
 	id: string;
 	title: string;
 	color: string;
 	textDecoration: string;
+	border: Border;
 	padding: PositionalProps;
 	leftTransform?: number;
 	topTransform?: number;
 	margin: Margin;
+	onMouseover: () => void;
+	onMouseleave: () => void;
+	delete: () => void;
+	template: {
+		onDragstart: (e: DragEvent) => void;
+		id: string;
+	};
+	control: {
+		id: string;
+	}
 };
 
 export type ViewerState = {

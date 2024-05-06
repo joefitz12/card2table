@@ -1,229 +1,124 @@
 <script lang="ts">
-	import { TextElement } from '$lib/utils/textElement';
-	import { count, textElements } from '../../../store';
+	import type { TextElement as ITextElement } from '$lib/types';
+	import { onMount } from 'svelte';
+	import { count, state } from '../../../store';
 	export let id: string;
-	export let handleRemove: () => void;
 
-	let state = {
-		...new TextElement({ id }),
+	let textElementState = {
 		italic: false,
 		underline: false,
-		lineThrough: false
+		lineThrough: false,
 	};
 
 	let ui = {
 		margin: {
 			top: {
-				auto: false
+				auto: false,
+				value: 0,
 			},
 			right: {
-				auto: false
+				auto: false,
+				value: 0,
 			},
 			bottom: {
-				auto: false
+				auto: false,
+				value: 0,
 			},
 			left: {
-				auto: false
-			}
-		}
+				auto: false,
+				value: 0,
+			},
+		},
 	};
 
-	let _textElements: TextElement[];
-	let currentControl: TextElement | undefined;
 	let currentCount = 0;
 	count.subscribe((value) => (currentCount = value));
+	$: controlIndex = $state.template.textElements.findIndex((element) => element.id == id);
+	$: currentControl = $state.template.textElements[controlIndex];
 
-	textElements.subscribe(($textElements) => {
-		if (currentCount > 50) {
-			console.log('blowing up');
-			return;
-		}
-		_textElements = $textElements;
-		currentControl = $textElements.find((textElement) => id == textElement.id);
-		if (!currentControl) {
-			return;
-		}
-		Object.entries(currentControl).forEach(([_key, value]) => {
-			const key = _key as keyof TextElement;
-			if (['string', 'number'].includes(typeof value)) {
-				// @TODO: find strategy for updating state to avoid error
-				// @ts-ignore-next-line
-				state[key] = value;
-			} else if (key === 'margin') {
-				console.log('margin value', value);
-				console.log('state.margin', state.margin);
-				state.margin = {
-					top: value.top === 'auto' ? state.margin.top : value.top,
-					right: value.right === 'auto' ? state.margin.right : value.right,
-					bottom: value.bottom === 'auto' ? state.margin.bottom : value.bottom,
-					left: value.left === 'auto' ? state.margin.left : value.left
-				};
-				console.log('after update', state.margin);
-			} else if (state[key]) {
-				console.log(key);
-				console.log(state[key]);
-				console.log(value);
-				// @TODO: find strategy for updating state to avoid error
-				// @ts-ignore-next-line
-				state[key] = {
-					...value
-				};
-			}
-		});
-		currentCount = currentCount + 1;
-
-		if (currentControl.textDecoration === 'underline') {
-			state.underline = true;
-		}
-		if (currentControl.textDecoration === 'line-through') {
-			state.lineThrough = true;
-		}
-		if (currentControl.fontStyle === 'italic') {
-			state.italic = true;
-		}
-	});
+	console.log({ controlIndex });
 
 	$: {
-		if (!currentControl) {
-			console.log('id', id);
-			console.log('_textElements', _textElements);
-		}
-		let update = false;
-
-		// if (currentControl && currentCount < 30) {
-		if (currentControl) {
-			if (state.color && currentControl?.color !== state.color) {
-				currentControl.color = state.color;
-				update = true;
-			}
-			if (state.fontSize && currentControl?.fontSize !== state.fontSize) {
-				currentControl.fontSize = state.fontSize;
-				update = true;
-			}
-			if (state.fontStyle && currentControl?.fontStyle !== state.fontStyle) {
-				currentControl.fontStyle = state.fontStyle;
-				update = true;
-			}
-			if (state.fontWeight && currentControl?.fontWeight !== state.fontWeight) {
-				currentControl.fontWeight = state.fontWeight;
-				update = true;
-			}
-			if (state.textDecoration && currentControl?.textDecoration !== state.textDecoration) {
-				currentControl.textDecoration = state.textDecoration;
-				update = true;
-			}
-			if (typeof state.title === 'string' && currentControl?.title !== state.title) {
-				currentControl.title = state.title;
-				update = true;
-			}
-			if (
-				(state.lineThrough && currentControl?.textDecoration !== 'line-through') ||
-				(!state.lineThrough && currentControl?.textDecoration === 'line-through')
-			) {
-				currentControl.textDecoration = state.lineThrough ? 'line-through' : 'normal';
-				update = true;
-			}
-			if (
-				(state.underline && currentControl?.textDecoration !== 'underline') ||
-				(!state.underline && currentControl?.textDecoration === 'underline')
-			) {
-				currentControl.textDecoration = state.underline ? 'underline' : 'normal';
-				update = true;
-			}
-			if (
-				(state.italic && currentControl?.fontStyle !== 'italic') ||
-				(!state.italic && currentControl?.fontStyle === 'italic')
-			) {
-				currentControl.fontStyle = state.italic ? 'italic' : 'normal';
-				update = true;
-			}
-			if (
-				!Object.keys(currentControl.padding).every(
-					(key) =>
-						currentControl?.padding[key as keyof typeof currentControl.padding] ===
-						state.padding[key as keyof typeof state.padding]
-				)
-			) {
-				currentControl.padding = state.padding;
-				update = true;
-			}
-			if (
-				!Object.keys(currentControl.borderRadius).every(
-					(key) =>
-						currentControl?.borderRadius[key as keyof typeof currentControl.borderRadius] ===
-						state.borderRadius[key as keyof typeof state.borderRadius]
-				)
-			) {
-				currentControl.borderRadius = state.borderRadius;
-				update = true;
-			}
-			if (
-				!Object.keys(currentControl.margin).every(
-					(key) =>
-						currentControl?.margin[key as keyof typeof currentControl.margin] ===
-						state.margin[key as keyof typeof state.margin]
-				)
-			) {
-				currentControl.margin = state.margin;
-				update = true;
-			}
-
-			if (update) {
-				console.log('updating');
-				count.set(currentCount + 1);
-				textElements.set(_textElements);
-			}
-		} else {
-			console.log(`currentCount: ${currentCount}`);
-		}
+		state.update(($state) => {
+			return {
+				...$state,
+				template: {
+					...$state.template,
+					textElements: [...$state.template.textElements].toSpliced(controlIndex, 1, {
+						...$state.template.textElements[controlIndex],
+						fontStyle: textElementState.italic ? 'italic' : 'normal',
+						textDecoration:
+							(textElementState.underline && 'underline') ||
+							(textElementState.lineThrough && 'line-through') ||
+							'none',
+					}),
+				},
+			};
+		});
 	}
 
 	function focus(input: HTMLInputElement) {
 		input.focus();
 	}
 
-	$: {
-		let update = false;
-
-		Object.keys(currentControl?.margin || {}).forEach((_key) => {
-			if (!currentControl) {
-				return;
-			}
-			const key = _key as keyof typeof currentControl.margin;
-			if (currentControl.margin[key] === 'auto' && ui.margin[key].auto) {
-				// console.log('first return');
-				// console.log('currentControl.margin[key]', currentControl.margin[key]);
-				// console.log('ui.margin[key].auto', ui.margin[key].auto);
-				return;
-			}
-			if (currentControl.margin[key] !== 'auto' && !ui.margin[key].auto) {
-				// console.log('second return');
-				// console.log('currentControl.margin[key]', currentControl.margin[key]);
-				// console.log('ui.margin[key].auto', ui.margin[key].auto);
-				return;
-			}
-			currentControl.margin[key] = ui.margin[key].auto ? 'auto' : 0;
-
-			update = true;
+	function deleteTextElement() {
+		console.log({ controlIndex });
+		state.update((state) => {
+			return {
+				...state,
+				template: {
+					...state.template,
+					textElements: state.template.textElements.toSpliced(controlIndex, 1),
+				},
+			};
 		});
-
-		if (update && currentCount < 30) {
-			// if (update) {
-			console.log('updating');
-			count.set(currentCount + 1);
-			textElements.set(_textElements);
-		}
 	}
+
+	onMount(() => {
+		console.log({
+			currentControl,
+			controlIndex,
+			id,
+		});
+	});
 </script>
 
-<div class="flex column container">
+<!-- @TODO: Find way to ensure correct interaction without ignoring error -->
+<!--svelte-ignore a11y-no-noninteractive-tabindex -->
+<div
+	class="flex column container"
+	id={`text-element-${id}-control`}
+	tabindex="0"
+	on:keypress={() => currentControl?.onMouseover()}
+	on:mousedown={() => currentControl?.onMouseover()}
+	on:mouseover={() => currentControl?.onMouseover()}
+	on:mouseleave={() => currentControl?.onMouseleave()}
+	on:focus={() => currentControl?.onMouseover()}
+	on:focusin={() => currentControl?.onMouseover()}
+	on:focusout={() => currentControl?.onMouseleave()}
+>
 	<div class="flex row header">
-		<input type="color" id={`text-element-${id}-color`} bind:value={state.color} />
-		<input type="text" bind:value={state.title} class="title" use:focus />
+		<!-- {console.log({ controlIndex })}
+		{console.log(
+			'$state.template.textElements[controlIndex]',
+			$state.template.textElements[controlIndex]
+		)}
+		{console.log('$state.template.textElements', $state.template.textElements)} -->
+		<input
+			type="color"
+			id={`text-element-${id}-color`}
+			bind:value={$state.template.textElements[controlIndex].color}
+		/>
+		<input
+			type="text"
+			bind:value={$state.template.textElements[controlIndex].title}
+			class="title"
+			use:focus
+		/>
 		<button
 			type="button"
-			on:click={handleRemove}
-			aria-label={`Remove ${state.title}`}
+			on:click={() => deleteTextElement()}
+			aria-label={`Remove ${$state.template.textElements[controlIndex].title}`}
 			class="delete">&#10005;</button
 		>
 	</div>
@@ -234,12 +129,16 @@
 				type="number"
 				id={`text-element-${id}-font-size`}
 				step="0.01"
-				bind:value={state.fontSize}
+				min="0"
+				bind:value={$state.template.textElements[controlIndex].fontSize}
 			/>
 		</div>
 		<div class="flex column">
 			<label for={`text-element-${id}-font-weight`}>Weight</label>
-			<select id={`text-element-${id}-font-weight`} bind:value={state.fontWeight}>
+			<select
+				id={`text-element-${id}-font-weight`}
+				bind:value={$state.template.textElements[controlIndex].fontWeight}
+			>
 				<option>100</option>
 				<option>200</option>
 				<option>300</option>
@@ -257,36 +156,36 @@
 		<label class="flex row"
 			><input
 				type="checkbox"
-				on:change={(e) => (state.italic = !state.italic)}
-				bind:checked={state.italic}
+				on:change={(e) => (textElementState.italic = !textElementState.italic)}
+				bind:checked={textElementState.italic}
 			/><span class="italic">italic</span></label
 		>
 		<label class="flex row"
 			><input
 				type="checkbox"
 				on:change={(e) => {
-					state.underline = !state.underline;
-					if (state.underline) {
-						state.lineThrough = false;
+					textElementState.underline = !textElementState.underline;
+					if (textElementState.underline) {
+						textElementState.lineThrough = false;
 					}
 				}}
-				bind:checked={state.underline}
+				bind:checked={textElementState.underline}
 			/><span class="underline">underline</span></label
 		>
 		<label class="flex row"
 			><input
 				type="checkbox"
 				on:change={(e) => {
-					state.lineThrough = !state.lineThrough;
-					if (state.lineThrough) {
-						state.underline = false;
+					textElementState.lineThrough = !textElementState.lineThrough;
+					if (textElementState.lineThrough) {
+						textElementState.underline = false;
 					}
 				}}
-				bind:checked={state.lineThrough}
+				bind:checked={textElementState.lineThrough}
 			/><span class="strikethrough">strikethrough</span></label
 		>
 	</div>
-	<fieldset class="flex column container">
+	<!-- <fieldset class="flex column container">
 		<legend>Margin</legend>
 		<div class="flex row wrap">
 			<div class="flex column">
@@ -298,7 +197,14 @@
 						<span>Auto</span>
 					</label>
 
-					<input id={`text-element-${id}-margin-top`} step="0.01" bind:value={state.margin.top} />
+					<input
+						type="number"
+						id={`text-element-${id}-margin-top`}
+						step="0.01"
+						min="0"
+						bind:value={ui.margin.top.value}
+						disabled={ui.margin.top.auto}
+					/>
 				</fieldset>
 			</div>
 			<div class="flex column">
@@ -311,9 +217,12 @@
 					</label>
 
 					<input
+						type="number"
 						id={`text-element-${id}-margin-right`}
 						step="0.01"
-						bind:value={state.margin.right}
+						min="0"
+						bind:value={ui.margin.right.value}
+						disabled={ui.margin.right.auto}
 					/>
 				</fieldset>
 			</div>
@@ -327,9 +236,12 @@
 					</label>
 
 					<input
+						type="number"
 						id={`text-element-${id}-margin-bottom`}
 						step="0.01"
-						bind:value={state.margin.bottom}
+						min="0"
+						bind:value={ui.margin.bottom.value}
+						disabled={ui.margin.bottom.auto}
 					/>
 				</fieldset>
 			</div>
@@ -342,11 +254,18 @@
 						<span>Auto</span>
 					</label>
 
-					<input id={`text-element-${id}-margin-Left`} step="0.01" bind:value={state.margin.left} />
+					<input
+						type="number"
+						id={`text-element-${id}-margin-Left`}
+						step="0.01"
+						min="0"
+						bind:value={ui.margin.left.value}
+						disabled={ui.margin.left.auto}
+					/>
 				</fieldset>
 			</div>
 		</div>
-	</fieldset>
+	</fieldset> -->
 	<fieldset class="flex column container">
 		<legend>Padding</legend>
 		<div class="flex row">
@@ -356,7 +275,8 @@
 					type="number"
 					id={`text-element-${id}-padding-top`}
 					step="0.01"
-					bind:value={state.padding.top}
+					min="0"
+					bind:value={$state.template.textElements[controlIndex].padding.top}
 				/>
 			</div>
 			<div class="flex column">
@@ -365,7 +285,8 @@
 					type="number"
 					id={`text-element-${id}-padding-right`}
 					step="0.01"
-					bind:value={state.padding.right}
+					min="0"
+					bind:value={$state.template.textElements[controlIndex].padding.right}
 				/>
 			</div>
 			<div class="flex column">
@@ -374,7 +295,8 @@
 					type="number"
 					id={`text-element-${id}-padding-bottom`}
 					step="0.01"
-					bind:value={state.padding.bottom}
+					min="0"
+					bind:value={$state.template.textElements[controlIndex].padding.bottom}
 				/>
 			</div>
 			<div class="flex column">
@@ -383,7 +305,8 @@
 					type="number"
 					id={`text-element-${id}-padding-left`}
 					step="0.01"
-					bind:value={state.padding.left}
+					min="0"
+					bind:value={$state.template.textElements[controlIndex].padding.left}
 				/>
 			</div>
 		</div>
@@ -397,7 +320,8 @@
 					type="number"
 					id={`text-element-${id}-border-width-top`}
 					step="0.01"
-					bind:value={state.borderWidth.top}
+					min="0"
+					bind:value={$state.template.textElements[controlIndex].border.width.top}
 				/>
 			</div>
 			<div class="flex column">
@@ -406,7 +330,8 @@
 					type="number"
 					id={`text-element-${id}-border-width-right`}
 					step="0.01"
-					bind:value={state.borderWidth.right}
+					min="0"
+					bind:value={$state.template.textElements[controlIndex].border.width.right}
 				/>
 			</div>
 			<div class="flex column">
@@ -415,7 +340,8 @@
 					type="number"
 					id={`text-element-${id}-border-width-bottom`}
 					step="0.01"
-					bind:value={state.borderWidth.bottom}
+					min="0"
+					bind:value={$state.template.textElements[controlIndex].border.width.bottom}
 				/>
 			</div>
 			<div class="flex column">
@@ -424,7 +350,8 @@
 					type="number"
 					id={`text-element-${id}-border-width-left`}
 					step="0.01"
-					bind:value={state.borderWidth.left}
+					min="0"
+					bind:value={$state.template.textElements[controlIndex].border.width.left}
 				/>
 			</div>
 		</div>
@@ -439,7 +366,8 @@
 						type="number"
 						id={`card-template-border-radius-top`}
 						step="0.01"
-						bind:value={state.borderRadius.topLeft}
+						min="0"
+						bind:value={$state.template.textElements[controlIndex].border.radius.topLeft}
 					/>
 				</div>
 				<div class="flex column">
@@ -448,7 +376,8 @@
 						type="number"
 						id={`card-template-border-radius-left`}
 						step="0.01"
-						bind:value={state.borderRadius.bottomLeft}
+						min="0"
+						bind:value={$state.template.textElements[controlIndex].border.radius.bottomLeft}
 					/>
 				</div>
 			</div>
@@ -459,7 +388,8 @@
 						type="number"
 						id={`card-template-border-radius-right`}
 						step="0.01"
-						bind:value={state.borderRadius.topRight}
+						min="0"
+						bind:value={$state.template.textElements[controlIndex].border.radius.topRight}
 					/>
 				</div>
 				<div class="flex column">
@@ -468,7 +398,8 @@
 						type="number"
 						id={`card-template-border-radius-bottom`}
 						step="0.01"
-						bind:value={state.borderRadius.bottomRight}
+						min="0"
+						bind:value={$state.template.textElements[controlIndex].border.radius.bottomRight}
 					/>
 				</div>
 			</div>
@@ -488,7 +419,6 @@
 		cursor: pointer;
 	}
 	input.title {
-		border: none;
 		font-size: 1rem;
 		flex-grow: 1;
 	}
