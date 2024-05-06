@@ -1,274 +1,172 @@
 <script lang="ts">
-	import type { CardState, PositionalProps } from '../../types';
-	import {
-		backgroundColor,
-		borderColor,
-		borderWidth,
-		color,
-		height,
-		textElements,
-		title,
-		width,
-		borderRadius,
-		padding
-	} from '../../store';
+	import '../../../styles/new.css';
+	import { state } from '../../store';
 	import { onMount } from 'svelte';
-
-	export let cardState: CardState = {
-		title: undefined,
-		// unit: undefined,
-		padding: { top: 0, right: 0, bottom: 0, left: 0 },
-		borderColor: undefined,
-		borderWidth: { top: 0, right: 0, bottom: 0, left: 0 },
-		borderRadius: { topLeft: 0.15, topRight: 0.15, bottomRight: 0.15, bottomLeft: 0.15 },
-		width: undefined,
-		height: undefined,
-		backgroundColor: undefined,
-		color: undefined,
-		textElements: []
-	};
-
-	title.subscribe((value) => (cardState.title = value));
-	// unit.subscribe((value) => (cardState.unit = value));
-	height.subscribe((value) => (cardState.height = value));
-	width.subscribe((value) => (cardState.width = value));
-	backgroundColor.subscribe((value) => (cardState.backgroundColor = value));
-	color.subscribe((value) => (cardState.color = value));
-	textElements.subscribe((value) => (cardState.textElements = value));
-	borderColor.subscribe((value) => (cardState.borderColor = value));
-	borderWidth.subscribe((value) => (cardState.borderWidth = value));
-	borderRadius.subscribe((value) => (cardState.borderRadius = value));
-	padding.subscribe((value) => (cardState.padding = value));
-
-	$: {
-		if (cardState.title) {
-			title.set(cardState.title);
-		}
-	}
 
 	function focus(input: HTMLInputElement) {
 		input.focus();
 	}
 
-	// drag & drop
-	let isDragInProgress: boolean;
-	let dragId: string;
-
-	let offsetLeft: number;
-	let offsetTop: number;
-
-	function handleDragStart(e: DragEvent) {
-		e.stopPropagation();
-
-		document.getElementById('drag-preview')?.remove();
-		if (!e.dataTransfer || !(e.target instanceof HTMLElement)) {
-			return;
-		}
-		offsetLeft = e.offsetX;
-		offsetTop = e.offsetY;
-		isDragInProgress = true;
-		// WIP create and use separate preview image
-		// const dragImage = e.target.cloneNode(true) as HTMLElement;
-		// dragImage.setAttribute('id', 'drag-preview');
-		// document.body.appendChild(dragImage);
-
-		// e.dataTransfer.setDragImage(dragImage, offsetLeft, offsetTop);
-
-		dragId = (e.target as HTMLElement).id;
-		dragId = dragId;
-		e.dataTransfer.setData('text/plain', dragId);
-	}
-
-	function handleDrop(e: DragEvent) {
-		e.stopPropagation();
-		if (!(e.target instanceof HTMLElement)) {
-			return;
-		}
-
-		if (!e.dataTransfer) {
-			return;
-		}
-
-		isDragInProgress = false;
-		const textElementId = e.dataTransfer.getData('text');
-		const textElement = cardState.textElements.find((element) => element.id == textElementId);
-		if (!textElement) {
-			return;
-		}
-
-		// @TODO: find replacement for layerX / layerY
-		// this is needed to capture offset from card
-		// if user drops text element on top of another text element,
-		// e.offsetX / e.offsetY references the offset on that text element (not the card)
-		// Remove ts-ignore
-		const cardOffset = {
-			// @ts-ignore
-			offsetX: e.target.nodeName === 'SPAN' ? e.layerX || e.offsetX : e.offsetX,
-			// @ts-ignore
-			offsetY: e.target.nodeName === 'SPAN' ? e.layerY || e.offsetX : e.offsetY
-		};
-
-		if (!Math.abs(cardOffset.offsetX - offsetLeft) || !Math.abs(cardOffset.offsetY - offsetTop)) {
-			return;
-		}
-
-		textElement.leftTransform = cardOffset.offsetX - offsetLeft;
-		textElement.topTransform = cardOffset.offsetY - offsetTop;
-
-		dragId = '';
-
-		cardState.textElements = cardState.textElements;
-	}
-
-	function handleDragover(e: DragEvent) {
-		if (!(e.target instanceof HTMLElement)) {
-			return;
-		}
-		e.preventDefault();
-		e.stopPropagation();
-		if (!e.dataTransfer) {
-			return;
-		}
-		// Set the dropEffect to move
-		e.dataTransfer.dropEffect = 'move';
-	}
-
 	// convert to pixels
 	let cardContainer: HTMLDivElement;
-	let cardHeight: number;
-	let cardWidth: number;
-	let relativeUnit: number;
+
 	onMount(() => {
-		handleSize();
+		setRelativeUnit();
 	});
 
 	$: {
-		console.log({
-			cardHeight,
-			cardWidth
-		});
+		if ($state.template?.width || $state.template?.height) {
+			setRelativeUnit();
+		}
 	}
 
-	const handleSize = () => {
-		console.dir(cardContainer);
+	const setRelativeUnit = () => {
 		if (!cardContainer) {
 			return;
 		}
 		let maxCardHeight = cardContainer.clientHeight - 2 * 48;
 		let maxCardWidth = cardContainer.clientWidth - 2 * 16;
 
-		relativeUnit = Math.floor(maxCardHeight / (cardState.height || 3.43));
-
-		if (relativeUnit * (cardState.width || 2.44) > maxCardWidth) {
-			relativeUnit = Math.floor(maxCardWidth / (cardState.width || 2.44));
-		}
+		state.update((state) => {
+			if (state.template.relativeUnit * (state.template.width || 2.44) > maxCardWidth) {
+				return {
+					...state,
+					template: {
+						...state.template,
+						relativeUnit: Math.floor(maxCardWidth / ($state.template.width || 2.44)),
+					},
+				};
+			} else {
+				return {
+					...state,
+					template: {
+						...state.template,
+						relativeUnit: Math.floor(maxCardHeight / ($state.template.height || 3.43)),
+					},
+				};
+			}
+		});
 	};
+	// @todo -- check if this is unnecessary
+	$: {
+		if ($state.template) {
+			state.update(($state) => {
+				return {
+					...$state,
+					templates:
+						$state.templates && $state.templates.set
+							? $state.templates.set($state.template.id, $state.template)
+							: new Map([[$state.template.id, $state.template]]),
+				};
+			});
+		}
+	}
 </script>
 
-<svelte:window on:resize={handleSize} />
+<svelte:window on:resize={setRelativeUnit} />
 
-<div class="flex column template-container">
-	<div class="title">
-		<button type="button">&#9776;</button>
-		<input id="card-title" type="text" bind:value={cardState.title} use:focus />
-	</div>
-	<div class="flex card-container" bind:this={cardContainer}>
-		<div
-			class="card"
-			style="--card-height: {(cardState.height || 3.43) * relativeUnit}px; 
-				--card-width: {(cardState.width || 2.44) * relativeUnit}px; 
-				--card-border-color: {cardState.borderColor}; 
-				--card-border-top-width: {(cardState.borderWidth.top || 0) * relativeUnit}px; 
-				--card-border-right-width: {(cardState.borderWidth.right || 0) * relativeUnit}px; 
-				--card-border-bottom-width: {(cardState.borderWidth.bottom || 0) * relativeUnit}px; 
-				--card-border-left-width: {(cardState.borderWidth.left || 0) * relativeUnit}px; 
-				--card-border-top-left-radius: {(cardState.borderRadius.topLeft || 0) * relativeUnit}px;  
-				--card-border-top-right-radius: {(cardState.borderRadius.topRight || 0) * relativeUnit}px; 
-				--card-border-bottom-right-radius: {(cardState.borderRadius.bottomRight || 0) * relativeUnit}px;  
-				--card-border-bottom-left-radius: {(cardState.borderRadius.bottomLeft || 0) * relativeUnit}px; 
-				--card-background-color: {cardState.backgroundColor}; 
-				--card-top-padding: {(cardState.padding.top || 0) * relativeUnit}px;
-				--card-right-padding: {(cardState.padding.right || 0) * relativeUnit}px;
-				--card-bottom-padding: {(cardState.padding.bottom || 0) * relativeUnit}px;
-				--card-left-padding: {(cardState.padding.left || 0) * relativeUnit}px;
+{#if $state.template}
+	<div class="flex column template-container">
+		<div class="title">
+			<button type="button">&#9776;</button>
+			<input id="card-title" type="text" bind:value={$state.template.title} use:focus />
+		</div>
+		<div class="flex card-container" bind:this={cardContainer}>
+			<div
+				class="card"
+				style="--card-height: {$state.template.height * $state.template.relativeUnit}px; 
+				--card-width: {$state.template.width * $state.template.relativeUnit}px; 
+				--card-border-color: {$state.template.border.color}; 
+				--card-border-top-width: {($state.template.border.width.top || 0) *
+					$state.template.relativeUnit}px; 
+				--card-border-right-width: {($state.template.border.width.right || 0) *
+					$state.template.relativeUnit}px; 
+				--card-border-bottom-width: {($state.template.border.width.bottom || 0) *
+					$state.template.relativeUnit}px; 
+				--card-border-left-width: {($state.template.border.width.left || 0) *
+					$state.template.relativeUnit}px; 
+				--card-border-top-left-radius: {($state.template.border.radius.topLeft || 0) *
+					$state.template.relativeUnit}px;  
+				--card-border-top-right-radius: {($state.template.border.radius.topRight || 0) *
+					$state.template.relativeUnit}px; 
+				--card-border-bottom-right-radius: {($state.template.border.radius.bottomRight || 0) *
+					$state.template.relativeUnit}px;  
+				--card-border-bottom-left-radius: {($state.template.border.radius.bottomLeft || 0) *
+					$state.template.relativeUnit}px; 
+				--card-background-color: {$state.template.backgroundColor}; 
+				--card-top-padding: {($state.template.padding.top || 0) * $state.template.relativeUnit}px;
+				--card-right-padding: {($state.template.padding.right || 0) * $state.template.relativeUnit}px;
+				--card-bottom-padding: {($state.template.padding.bottom || 0) * $state.template.relativeUnit}px;
+				--card-left-padding: {($state.template.padding.left || 0) * $state.template.relativeUnit}px;
 				"
-			on:drop={handleDrop}
-			on:dragover={handleDragover}
-		>
-			<div class="overlay" />
-			{#each cardState.textElements as textElement}
-				<div
-					class="text-element-container"
-					class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
-					draggable="true"
-					on:dragstart={handleDragStart}
-					id={textElement.id}
-					style="--color: {textElement.color}; 
-						--font-size: {(textElement.fontSize || 0.22) * relativeUnit}px; 
+				on:drop={$state.template.handleDrop}
+				on:dragover={$state.template.handleDragover}
+			>
+				<div class="overlay" />
+				{#each $state.template.textElements as textElement}
+					<div
+						class="text-element-container"
+						class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
+						draggable="true"
+						on:dragstart={(e) => {
+							console.log(textElement);
+							textElement.template.onDragstart(e);
+						}}
+						on:mouseover={textElement.onMouseover}
+						on:mouseleave={textElement.onMouseleave}
+						on:focus={() => console.log('focus')}
+						id={`text-element-${textElement.id}-template`}
+						style="--color: {textElement.color}; 
+						--font-size: {(textElement.fontSize || 0.22) * $state.template.relativeUnit}px; 
 						--transform-left: {textElement.leftTransform || 0}px; 
 						--transform-top: {textElement.topTransform || 0}px;
 						--font-weight: {textElement.fontWeight};
 						--font-style: {textElement.fontStyle || 'normal'};
 						--text-decoration: {textElement.textDecoration || 'normal'};
-						--padding-top: {(textElement.padding.top || 0) * relativeUnit}px;
-						--padding-right: {(textElement.padding.right || 0) * relativeUnit}px;
-						--padding-bottom: {(textElement.padding.bottom || 0) * relativeUnit}px;
-						--padding-left: {(textElement.padding.left || 0) * relativeUnit}px;
+						--padding-top: {(textElement.padding.top || 0) * $state.template.relativeUnit}px;
+						--padding-right: {(textElement.padding.right || 0) * $state.template.relativeUnit}px;
+						--padding-bottom: {(textElement.padding.bottom || 0) * $state.template.relativeUnit}px;
+						--padding-left: {(textElement.padding.left || 0) * $state.template.relativeUnit}px;
 						--margin-top: {typeof textElement.margin.top === 'number'
-						? `${(textElement.margin.top || 0) * relativeUnit}px`
-						: textElement.margin.top};
+							? `${(textElement.margin.top || 0) * $state.template.relativeUnit}px`
+							: textElement.margin.top};
 						--margin-right: {typeof textElement.margin.right === 'number'
-						? `${(textElement.margin.right || 0) * relativeUnit}px`
-						: textElement.margin.right};
+							? `${(textElement.margin.right || 0) * $state.template.relativeUnit}px`
+							: textElement.margin.right};
 						--margin-bottom: {typeof textElement.margin.bottom === 'number'
-						? `${(textElement.margin.bottom || 0) * relativeUnit}px`
-						: textElement.margin.bottom};
+							? `${(textElement.margin.bottom || 0) * $state.template.relativeUnit}px`
+							: textElement.margin.bottom};
 						--margin-left: {typeof textElement.margin.left === 'number'
-						? `${(textElement.margin.left || 0) * relativeUnit}px`
-						: textElement.margin.left};
-						--border-top-width: {(textElement.borderWidth.top || 0) * relativeUnit}px;
-						--border-right-width: {(textElement.borderWidth.right || 0) * relativeUnit}px;
-						--border-bottom-width: {(textElement.borderWidth.bottom || 0) * relativeUnit}px;
-						--border-left-width: {(textElement.borderWidth.left || 0) * relativeUnit}px;
-						--border-top-left-radius: {(textElement.borderRadius.topLeft || 0) * relativeUnit}px;
-						--border-top-right-radius: {(textElement.borderRadius.topRight || 0) * relativeUnit}px; 
-						--border-bottom-right-radius: {(textElement.borderRadius.bottomRight || 0) * relativeUnit}px; 
-						--border-bottom-left-radius: {(textElement.borderRadius.bottomLeft || 0) * relativeUnit}px;
+							? `${(textElement.margin.left || 0) * $state.template.relativeUnit}px`
+							: textElement.margin.left};
+						--border-top-width: {(textElement.border.width.top || 0) * $state.template.relativeUnit}px;
+						--border-right-width: {(textElement.border.width.right || 0) * $state.template.relativeUnit}px;
+						--border-bottom-width: {(textElement.border.width.bottom || 0) * $state.template.relativeUnit}px;
+						--border-left-width: {(textElement.border.width.left || 0) * $state.template.relativeUnit}px;
+						--border-top-left-radius: {(textElement.border.radius.topLeft || 0) *
+							$state.template.relativeUnit}px;
+						--border-top-right-radius: {(textElement.border.radius.topRight || 0) *
+							$state.template.relativeUnit}px; 
+						--border-bottom-right-radius: {(textElement.border.radius.bottomRight || 0) *
+							$state.template.relativeUnit}px; 
+						--border-bottom-left-radius: {(textElement.border.radius.bottomLeft || 0) *
+							$state.template.relativeUnit}px;
 						"
-				>
-					<span>&#123;</span><span class="text-element"
-						>{textElement.title.toLowerCase().split(' ').join('-')}</span
-					><span>&#125;</span>
-				</div>
-			{/each}
+					>
+						<span>&#123;</span><span class="text-element"
+							>{textElement.title?.toLowerCase().split(' ').join('-')}</span
+						><span>&#125;</span>
+					</div>
+				{/each}
+			</div>
 		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	.template-container {
 		--padding: 1rem;
-		padding: var(--padding);
-		position: sticky;
-		top: 3rem;
 		height: calc(100% - 2 * var(--padding));
-	}
-	.title {
-		display: flex;
-		align-items: center;
-		column-gap: 8px;
-	}
-	.title button {
-		border: none;
-		background-color: transparent;
-		font-size: 1.5rem;
-	}
-	.title input {
-		font-size: 2rem;
-		font-weight: 400;
-		padding: 0;
-		border: none;
-		outline: none !important;
 	}
 
 	.card-container {

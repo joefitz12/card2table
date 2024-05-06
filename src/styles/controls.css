@@ -10,14 +10,16 @@ input[type='number'] {
     max-width: 3rem;
 }
 
-/* .container .column {
-} */
 h3 {
     margin: 0;
 }
 
 label {
     font-size: 1rem;
+}
+
+fieldset label {
+    font-weight: 600;
 }
 
 button.create {
@@ -39,4 +41,8 @@ button.create:hover {
 
 fieldset input {
     max-width: 3rem;
+}
+
+fieldset input[type="file"] {
+    max-width: 100%;
 }
