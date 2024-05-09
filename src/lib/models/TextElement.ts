@@ -15,13 +15,16 @@ export class TextElement {
         color: string
     }
     margin: Margin;
-    constructor() {
+    leftTransform: number;
+    topTransform: number;
+    templateId: number;
+    constructor({ templateId }: { templateId: number }) {
         this.title = `Text Element`
         this.color = '#000000';
         this.fontSize = 0.22;
         this.fontWeight = '400';
         this.fontStyle = '';
-        this.textDecoration = '';
+        this.textDecoration = 'none';
         this.padding = { top: 0, right: 0, bottom: 0, left: 0 };
         this.border = {
             color: '#000000',
@@ -29,5 +32,8 @@ export class TextElement {
             radius: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 },
         }
         this.margin = { top: 0, right: 0, bottom: 0, left: 0 };
+        this.leftTransform = 0;
+        this.topTransform = 0;
+        this.templateId = templateId;
     }
 }

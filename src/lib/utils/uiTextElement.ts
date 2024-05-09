@@ -1,41 +1,7 @@
+import { TextElement } from "$lib/models/TextElement";
 import { state } from "$lib/store";
-import type { Margin, PositionalProps } from "$lib/types";
 
-interface Props {
-    id: string;
-    title: string;
-    color: string;
-    fontSize: number;
-    fontWeight: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
-    fontStyle: string;
-    textDecoration: string;
-    padding: Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>;
-    border: {
-        width: Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>,
-        radius:
-        Pick<PositionalProps, 'topLeft' | 'topRight' | 'bottomRight' | 'bottomLeft'>;
-        color: string
-    }
-    margin: Margin;
-}
-
-export class UITextElement {
-    id: string;
-    title: string;
-    color: string;
-    fontSize: number;
-    fontWeight: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
-    fontStyle: string;
-    textDecoration: string;
-    padding: Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>;
-    border: {
-        width: Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>,
-        radius:
-        Pick<PositionalProps, 'topLeft' | 'topRight' | 'bottomRight' | 'bottomLeft'>;
-        color: string
-    }
-    margin: Margin;
-    delete: () => void;
+export class UITextElement extends TextElement {
     onMouseover: () => void;
     onMouseleave: () => void;
     getControl: () => HTMLElement | null;
@@ -47,22 +13,28 @@ export class UITextElement {
     control: {
         id: string;
     }
-    constructor({ id, title, color, fontSize, fontWeight, fontStyle, textDecoration, border, padding, margin }: Props) {
-        this.id = id;
-        this.title = title || `Text Element ${id}`
-        this.color = color || '#000000';
-        this.fontSize = fontSize || 0.22;
-        this.fontWeight = fontWeight || '400';
-        this.fontStyle = fontStyle || '';
-        this.textDecoration = textDecoration || '';
-        this.padding = padding || { top: 0, right: 0, bottom: 0, left: 0 };
-        this.border = border || {
-            color: '#000000',
-            width: { top: 0, right: 0, bottom: 0, left: 0 },
-            radius: { topLeft: 0, topRight: 0, bottomRight: 0, bottomLeft: 0 },
-        }
-        this.margin = margin || { top: 0, right: 0, bottom: 0, left: 0 };
-
+    constructor({
+        templateId,
+        title,
+        color,
+        fontSize,
+        fontWeight,
+        fontStyle,
+        textDecoration,
+        border,
+        padding,
+        margin
+    }: InstanceType<typeof TextElement>) {
+        super(({ templateId }));
+        this.title = title;
+        this.color = color;
+        this.fontSize = fontSize;
+        this.fontWeight = fontWeight;
+        this.fontStyle = fontStyle;
+        this.textDecoration = textDecoration;
+        this.padding = padding;
+        this.border = border;
+        this.margin = margin;
         this.onMouseover = () => {
             state.update(state => {
                 return {
@@ -89,8 +61,8 @@ export class UITextElement {
                 }
             })
         }
-        this.getControl = () => document.getElementById(`text-element-${id}-control`);
-        this.getTemplate = () => document.getElementById(`text-element-${id}-template`);
+        this.getControl = () => document.getElementById(`text-element-${templateId}-control`);
+        this.getTemplate = () => document.getElementById(`text-element-${templateId}-template`);
         this.template = {
             onDragstart: (e: DragEvent) => {
                 e.stopPropagation();
@@ -130,24 +102,11 @@ export class UITextElement {
                 // e.dataTransfer.setDragImage(dragImage, offsetLeft, offsetTop);
                 e.dataTransfer.setData('text/plain', update.elementId);
             },
-            id: `text-element-${id}-template`
+            id: `text-element-${templateId}-template`
         };
         this.control = {
-            id: `text-element-${id}-color`
+            id: `text-element-${templateId}-color`
         };
-        this.delete = () => {
-            state.update((state) => {
-                return {
-                    ...state,
-                    template: {
-                        ...state.template,
-                        textElements: state.template.textElements.toSpliced(
-                            state.template.textElements.findIndex((element) => this.id === element.id),
-                            1
-                        ),
-                    },
-                };
-            });
-        }
+
     }
-}
+};

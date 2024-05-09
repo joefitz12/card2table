@@ -1,7 +1,5 @@
-export function load({ params }) {
-    return {
-        id: params.id,
-    };
+import { cardTemplate } from "$lib/api/cardTemplate";
 
-    // error(404, 'Not found');
+export function load({ params }) {
+    cardTemplate.getById({ id: params.id });
 }

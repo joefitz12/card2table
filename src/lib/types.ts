@@ -1,3 +1,5 @@
+import { UITextElement } from "./utils/uiTextElement";
+
 export type Unit = 'in' | 'cm';
 export type FontSizes = {
 	[x: string]: number;
@@ -49,7 +51,7 @@ export type CardState = {
 		radius?: BorderRadius;
 		width?: BorderWidth;
 	}
-	textElements: TextElement[];
+	textElements: UITextElement[];
 };
 
 
@@ -66,7 +68,6 @@ export type TextElement = Font & {
 	margin: Margin;
 	onMouseover: () => void;
 	onMouseleave: () => void;
-	delete: () => void;
 	template: {
 		onDragstart: (e: DragEvent) => void;
 		id: string;

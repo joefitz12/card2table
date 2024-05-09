@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../../../styles/new.css';
-	import { state } from '../../store';
-	import { onMount } from 'svelte';
+	import { uiTextElements, state } from '$lib/store';
+	import { afterUpdate } from 'svelte';
 
 	function focus(input: HTMLInputElement) {
 		input.focus();
@@ -10,7 +10,7 @@
 	// convert to pixels
 	let cardContainer: HTMLDivElement;
 
-	onMount(() => {
+	afterUpdate(() => {
 		setRelativeUnit();
 	});
 
@@ -103,7 +103,7 @@
 				on:dragover={$state.template.handleDragover}
 			>
 				<div class="overlay" />
-				{#each $state.template.textElements as textElement}
+				{#each Array.from($uiTextElements) as [id, textElement]}
 					<div
 						class="text-element-container"
 						class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
@@ -115,7 +115,7 @@
 						on:mouseover={textElement.onMouseover}
 						on:mouseleave={textElement.onMouseleave}
 						on:focus={() => console.log('focus')}
-						id={`text-element-${textElement.id}-template`}
+						id={`text-element-${id}-template`}
 						style="--color: {textElement.color}; 
 						--font-size: {(textElement.fontSize || 0.22) * $state.template.relativeUnit}px; 
 						--transform-left: {textElement.leftTransform || 0}px; 
