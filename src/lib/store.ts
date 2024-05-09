@@ -1,12 +1,36 @@
-import { derived, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 import { browser } from "$app/environment"
-import type { PositionalProps, TextElement } from './types';
-import { db } from './db';
+import type { PositionalProps } from './types';
 import { UITextElement } from './utils/uiTextElement';
+import { cardTemplate } from './api/cardTemplate';
+import { textElement } from './api/textElement';
+import { db } from './db';
+import { TextElement } from './models/TextElement';
+import { UICardTemplate } from './utils/uiCardTemplate';
 
 export let count = writable<number>(0);
 
 export const dbTemplates = writable<Map<number, any>>(new Map());
+
+export const uiTemplates = derived(dbTemplates, $dbTemplates => {
+
+    return new Map(Array.from($dbTemplates).map(([key, cardTemplate]) => [key, new UICardTemplate(cardTemplate)]
+    ))
+})
+
+export const dbTextElements = writable<Map<number, TextElement>>(new Map());
+
+export const uiTextElements = derived(dbTextElements, ($dbTextElements) => {
+    console.log('updating!');
+    console.log({ $dbTextElements });
+    const newTextElements = new Map(Array.from($dbTextElements).map(([key, textElement]) => {
+        console.log({ key, textElement })
+        return [key, new UITextElement(textElement)]
+    }
+    ));
+    console.log({ newTextElements });
+    return newTextElements;
+});
 
 export type CardTemplateState = {
     id: string,
@@ -23,7 +47,6 @@ export type CardTemplateState = {
         radius: Pick<PositionalProps, 'topLeft' | 'topRight' | 'bottomRight' | 'bottomLeft'>
     },
     relativeUnit: number;
-    textElements: TextElement[],
     textElementId: string,
     handleDrop: (e: DragEvent) => void,
     handleDragover: (e: DragEvent) => void
@@ -119,6 +142,7 @@ export let state = writable<State>((browser && localStorage.getItem('card') && J
         selectedTemplate: ''
     }
 });
+
 // export let state = writable<State>({
 //     cards: [],
 //     csvs: [],
@@ -162,77 +186,30 @@ template.subscribe(($template) => {
     if (!$template) {
         return;
     }
-    const { handleDrop, handleDragover, id, textElements, textElementId, ...template } = $template;
+    const { handleDrop, handleDragover, id, textElementId, ...template } = $template;
 
-    db.open(db => {
-        // Init add Card Template transaction
-        const transaction = db.transaction(['template'], 'readwrite');
-        const templateObjectStore = transaction.objectStore('template');
-
-        // Update Card
-        const updateRequest = templateObjectStore.put(template, parseInt(id));
-
-        updateRequest.onsuccess = (event) => {
-            console.log('success!!!', event);
-        };
-        updateRequest.onerror = (event) => {
-            console.log('fail', event);
-        };
-    })
+    cardTemplate.updateById({
+        template,
+        id: parseInt(id)
+    });
 });
 
-const textElements = derived(state, ($state) => {
-    if (!$state.template) {
-        return;
-    }
-    return {
-        templateId: $state.template.id,
-        textElements: $state.template.textElements
-    };
-})
 
-textElements.subscribe(($textElements) => {
-    if (!$textElements) {
+// @todo: remove bonus store
+export const textElementsStore = writable<{ templateId: string, textElements: UITextElement[] }>({ templateId: '', textElements: [] });
+
+textElementsStore.subscribe(($textElements) => {
+    if (!get(state).template) {
         return;
     }
     const {
-        templateId,
-        textElements: _textElements
+        textElements,
     } = $textElements;
 
-    const textElements = _textElements.map(_textElement => {
-        const {
-            // @ts-ignore
-            delete,
-            onMouseover,
-            onMouseleave,
-            getTemplate,
-            getControl,
-            template,
-            control,
-            ...textElement
-        } = _textElement as InstanceType<typeof UITextElement>;
-
-        return textElement;
-    });
-
-    db.open(db => {
-        // Init add Text Element transaction
-        const transaction = db.transaction(['textElement'], 'readwrite');
-        const textElementObjectStore = transaction.objectStore('textElement');
-
-        // Update Text Elements
-        const updateRequest = textElementObjectStore.put(textElements, parseInt(templateId));
-
-        updateRequest.onsuccess = (event) => {
-            console.log('success!!!', event);
-        };
-        updateRequest.onerror = (event) => {
-            console.log('fail', event);
-        };
-    })
-
-
+    if (!textElements.length) {
+        console.log('EMPTY SET!!!!');
+    }
+    // textElement.update({ templateId: parseInt(get(state).template.id), textElements });
 });
 
 state.subscribe((value) => {

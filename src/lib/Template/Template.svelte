@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Canvas, Card, Sidebar } from './components';
+	// import { Canvas, Card, Sidebar } from './components';
+	import { Card, Sidebar } from './components';
 </script>
 
 <div class="flex template-editor">
@@ -10,9 +11,9 @@
 	<div class="sidebar">
 		<Sidebar />
 	</div>
-	<div class="canvas">
+	<!-- <div class="canvas">
 		<Canvas />
-	</div>
+	</div> -->
 </div>
 
 <style>

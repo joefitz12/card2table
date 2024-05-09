@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { TextElement as ITextElement } from '$lib/types';
-	import { onMount } from 'svelte';
-	import { count, state } from '../../../store';
-	export let id: string;
+	import { textElement } from '$lib/api/textElement';
+	import { UITextElement } from '$lib/utils/uiTextElement';
+	import { dbTextElements } from '../../../store';
+	export let id: number;
 
 	let textElementState = {
 		italic: false,
@@ -31,94 +31,57 @@
 		},
 	};
 
-	let currentCount = 0;
-	count.subscribe((value) => (currentCount = value));
-	$: controlIndex = $state.template.textElements.findIndex((element) => element.id == id);
-	$: currentControl = $state.template.textElements[controlIndex];
-
-	console.log({ controlIndex });
+	// $: controlIndex = $textElementsStore.textElements.findIndex((element) => element.id == id);
+	// $: currentControl = template;
+	let template = { ...new UITextElement($dbTextElements.get(id)!) };
 
 	$: {
-		state.update(($state) => {
-			return {
-				...$state,
-				template: {
-					...$state.template,
-					textElements: [...$state.template.textElements].toSpliced(controlIndex, 1, {
-						...$state.template.textElements[controlIndex],
-						fontStyle: textElementState.italic ? 'italic' : 'normal',
-						textDecoration:
-							(textElementState.underline && 'underline') ||
-							(textElementState.lineThrough && 'line-through') ||
-							'none',
-					}),
-				},
-			};
-		});
+		if (template) {
+			console.log('updating');
+		}
+		textElement.update({ id, textElement: template });
 	}
+
+	// $: {
+	// 	textElementsStore.update(($textElementsStore) => {
+	// 		return {
+	// 			...$textElementsStore,
+	// 			textElements: [...$textElementsStore.textElements].toSpliced(controlIndex, 1, {
+	// 				...template,
+	// 				fontStyle: textElementState.italic ? 'italic' : 'normal',
+	// 				textDecoration:
+	// 					(textElementState.underline && 'underline') ||
+	// 					(textElementState.lineThrough && 'line-through') ||
+	// 					'none',
+	// 			}),
+	// 		};
+	// 	});
+	// }
 
 	function focus(input: HTMLInputElement) {
 		input.focus();
 	}
 
-	function deleteTextElement() {
-		console.log({ controlIndex });
-		state.update((state) => {
-			return {
-				...state,
-				template: {
-					...state.template,
-					textElements: state.template.textElements.toSpliced(controlIndex, 1),
-				},
-			};
-		});
-	}
-
-	onMount(() => {
-		console.log({
-			currentControl,
-			controlIndex,
-			id,
-		});
-	});
+	function deleteTextElement() {}
 </script>
 
 <!-- @TODO: Find way to ensure correct interaction without ignoring error -->
 <!--svelte-ignore a11y-no-noninteractive-tabindex -->
-<div
-	class="flex column container"
-	id={`text-element-${id}-control`}
-	tabindex="0"
-	on:keypress={() => currentControl?.onMouseover()}
-	on:mousedown={() => currentControl?.onMouseover()}
-	on:mouseover={() => currentControl?.onMouseover()}
-	on:mouseleave={() => currentControl?.onMouseleave()}
-	on:focus={() => currentControl?.onMouseover()}
-	on:focusin={() => currentControl?.onMouseover()}
-	on:focusout={() => currentControl?.onMouseleave()}
->
+<!-- on:keypress={() => template.onMouseover()}
+on:mousedown={() => currentControl?.onMouseover()}
+on:mouseover={() => currentControl?.onMouseover()}
+on:mouseleave={() => currentControl?.onMouseleave()}
+on:focus={() => currentControl?.onMouseover()}
+on:focusin={() => currentControl?.onMouseover()}
+on:focusout={() => currentControl?.onMouseleave()} -->
+<div class="flex column container" id={`text-element-${id}-control`} tabindex="0">
 	<div class="flex row header">
-		<!-- {console.log({ controlIndex })}
-		{console.log(
-			'$state.template.textElements[controlIndex]',
-			$state.template.textElements[controlIndex]
-		)}
-		{console.log('$state.template.textElements', $state.template.textElements)} -->
-		<input
-			type="color"
-			id={`text-element-${id}-color`}
-			bind:value={$state.template.textElements[controlIndex].color}
-		/>
-		<input
-			type="text"
-			bind:value={$state.template.textElements[controlIndex].title}
-			class="title"
-			use:focus
-		/>
+		<input type="color" id={`text-element-${id}-color`} bind:value={template.color} />
+		<input type="text" bind:value={template.title} class="title" use:focus />
 		<button
 			type="button"
-			on:click={() => deleteTextElement()}
-			aria-label={`Remove ${$state.template.textElements[controlIndex].title}`}
+			on:click={() => textElement.delete({ id })}
+			aria-label={`Remove ${template.title}`}
 			class="delete">&#10005;</button
 		>
 	</div>
@@ -130,15 +93,12 @@
 				id={`text-element-${id}-font-size`}
 				step="0.01"
 				min="0"
-				bind:value={$state.template.textElements[controlIndex].fontSize}
+				bind:value={template.fontSize}
 			/>
 		</div>
 		<div class="flex column">
 			<label for={`text-element-${id}-font-weight`}>Weight</label>
-			<select
-				id={`text-element-${id}-font-weight`}
-				bind:value={$state.template.textElements[controlIndex].fontWeight}
-			>
+			<select id={`text-element-${id}-font-weight`} bind:value={template.fontWeight}>
 				<option>100</option>
 				<option>200</option>
 				<option>300</option>
@@ -276,7 +236,7 @@
 					id={`text-element-${id}-padding-top`}
 					step="0.01"
 					min="0"
-					bind:value={$state.template.textElements[controlIndex].padding.top}
+					bind:value={template.padding.top}
 				/>
 			</div>
 			<div class="flex column">
@@ -286,7 +246,7 @@
 					id={`text-element-${id}-padding-right`}
 					step="0.01"
 					min="0"
-					bind:value={$state.template.textElements[controlIndex].padding.right}
+					bind:value={template.padding.right}
 				/>
 			</div>
 			<div class="flex column">
@@ -296,7 +256,7 @@
 					id={`text-element-${id}-padding-bottom`}
 					step="0.01"
 					min="0"
-					bind:value={$state.template.textElements[controlIndex].padding.bottom}
+					bind:value={template.padding.bottom}
 				/>
 			</div>
 			<div class="flex column">
@@ -306,7 +266,7 @@
 					id={`text-element-${id}-padding-left`}
 					step="0.01"
 					min="0"
-					bind:value={$state.template.textElements[controlIndex].padding.left}
+					bind:value={template.padding.left}
 				/>
 			</div>
 		</div>
@@ -321,7 +281,7 @@
 					id={`text-element-${id}-border-width-top`}
 					step="0.01"
 					min="0"
-					bind:value={$state.template.textElements[controlIndex].border.width.top}
+					bind:value={template.border.width.top}
 				/>
 			</div>
 			<div class="flex column">
@@ -331,7 +291,7 @@
 					id={`text-element-${id}-border-width-right`}
 					step="0.01"
 					min="0"
-					bind:value={$state.template.textElements[controlIndex].border.width.right}
+					bind:value={template.border.width.right}
 				/>
 			</div>
 			<div class="flex column">
@@ -341,7 +301,7 @@
 					id={`text-element-${id}-border-width-bottom`}
 					step="0.01"
 					min="0"
-					bind:value={$state.template.textElements[controlIndex].border.width.bottom}
+					bind:value={template.border.width.bottom}
 				/>
 			</div>
 			<div class="flex column">
@@ -351,7 +311,7 @@
 					id={`text-element-${id}-border-width-left`}
 					step="0.01"
 					min="0"
-					bind:value={$state.template.textElements[controlIndex].border.width.left}
+					bind:value={template.border.width.left}
 				/>
 			</div>
 		</div>
@@ -367,7 +327,7 @@
 						id={`card-template-border-radius-top`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.textElements[controlIndex].border.radius.topLeft}
+						bind:value={template.border.radius.topLeft}
 					/>
 				</div>
 				<div class="flex column">
@@ -377,7 +337,7 @@
 						id={`card-template-border-radius-left`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.textElements[controlIndex].border.radius.bottomLeft}
+						bind:value={template.border.radius.bottomLeft}
 					/>
 				</div>
 			</div>
@@ -389,7 +349,7 @@
 						id={`card-template-border-radius-right`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.textElements[controlIndex].border.radius.topRight}
+						bind:value={template.border.radius.topRight}
 					/>
 				</div>
 				<div class="flex column">
@@ -399,7 +359,7 @@
 						id={`card-template-border-radius-bottom`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.textElements[controlIndex].border.radius.bottomRight}
+						bind:value={template.border.radius.bottomRight}
 					/>
 				</div>
 			</div>

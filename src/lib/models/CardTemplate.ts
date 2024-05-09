@@ -11,7 +11,6 @@ export class CardTemplate {
     border: {
         color: string,
         width: Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>,
-
         radius: Pick<PositionalProps, 'topLeft' | 'topRight' | 'bottomRight' | 'bottomLeft'>,
     }
     relativeUnit: number;
