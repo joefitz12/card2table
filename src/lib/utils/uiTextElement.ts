@@ -14,6 +14,7 @@ export class UITextElement extends TextElement {
         id: string;
     }
     constructor({
+        id,
         templateId,
         title,
         color,
@@ -24,7 +25,7 @@ export class UITextElement extends TextElement {
         border,
         padding,
         margin
-    }: InstanceType<typeof TextElement>) {
+    }: InstanceType<typeof TextElement> & { id: number }) {
         super(({ templateId }));
         this.title = title;
         this.color = color;

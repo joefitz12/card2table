@@ -3,8 +3,6 @@ import { browser } from "$app/environment"
 import type { PositionalProps } from './types';
 import { UITextElement } from './utils/uiTextElement';
 import { cardTemplate } from './api/cardTemplate';
-import { textElement } from './api/textElement';
-import { db } from './db';
 import { TextElement } from './models/TextElement';
 import { UICardTemplate } from './utils/uiCardTemplate';
 
@@ -20,12 +18,14 @@ export const uiTemplates = derived(dbTemplates, $dbTemplates => {
 
 export const dbTextElements = writable<Map<number, TextElement>>(new Map());
 
+dbTextElements.subscribe(() => console.log('updating'));
+
 export const uiTextElements = derived(dbTextElements, ($dbTextElements) => {
     console.log('updating!');
     console.log({ $dbTextElements });
     const newTextElements = new Map(Array.from($dbTextElements).map(([key, textElement]) => {
         console.log({ key, textElement })
-        return [key, new UITextElement(textElement)]
+        return [key, new UITextElement({ ...textElement, id: key })]
     }
     ));
     console.log({ newTextElements });
@@ -91,7 +91,7 @@ type PrintState = {
     width: number;
     columnGap: number;
     selectedCsv: Csv['id'];
-    selectedTemplate: CardTemplateState['id']
+    selectedTemplate: CardTemplateState['id'];
 }
 
 export type State = {
@@ -143,44 +143,19 @@ export let state = writable<State>((browser && localStorage.getItem('card') && J
     }
 });
 
-// export let state = writable<State>({
-//     cards: [],
-//     csvs: [],
-//     drag: {
-//         isInProgress: false,
-//         offsetX: 0,
-//         offsetY: 0,
-//         elementId: ''
-//     },
-//     feedback: {
-//         textElement: {
-//             control: undefined,
-//             template: undefined,
-//             drag: {
-//                 offsetX: 0,
-//                 offsetY: 0,
-//             }
-//         }
-//     },
-//     sidebar: {
-//         collapsed: false,
-//         activeMenu: 'text'
-//     },
-//     template: new CardTemplate(),
-//     templates: new Map(),
-//     templateId: '0',
-//     print: {
-//         height: 8.5,
-//         width: 11,
-//         columnGap: 0.5,
-//         selectedTemplate: '',
-//         selectedCsv: ''
-//     }
-// });
+export let print = writable<PrintState>({
+    height: 8.5,
+    width: 11,
+    columnGap: 0.5,
+    selectedCsv: '',
+    selectedTemplate: ''
+});
+
+export let selectedTextElements = writable<Map<number, TextElement>>();
 
 const template = derived(state, ($state) => {
     return $state.template;
-})
+});
 
 template.subscribe(($template) => {
     if (!$template) {

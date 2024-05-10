@@ -6,7 +6,7 @@ export class TextElement {
     fontSize: number;
     fontWeight: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
     fontStyle: string;
-    textDecoration: string;
+    textDecoration: 'none' | 'underline' | 'line-through';
     padding: Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>;
     border: {
         width: Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>,

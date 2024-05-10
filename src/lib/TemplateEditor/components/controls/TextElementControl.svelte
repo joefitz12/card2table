@@ -1,7 +1,9 @@
 <script lang="ts">
 	import { textElement } from '$lib/api/textElement';
 	import { UITextElement } from '$lib/utils/uiTextElement';
-	import { dbTextElements } from '../../../store';
+	import { isEqual } from 'lodash';
+	import { dbTextElements, uiTextElements } from '../../../store';
+	import { beforeUpdate } from 'svelte';
 	export let id: number;
 
 	let textElementState = {
@@ -10,59 +12,72 @@
 		lineThrough: false,
 	};
 
-	let ui = {
-		margin: {
-			top: {
-				auto: false,
-				value: 0,
-			},
-			right: {
-				auto: false,
-				value: 0,
-			},
-			bottom: {
-				auto: false,
-				value: 0,
-			},
-			left: {
-				auto: false,
-				value: 0,
-			},
-		},
-	};
+	// let ui = {
+	// 	margin: {
+	// 		top: {
+	// 			auto: false,
+	// 			value: 0,
+	// 		},
+	// 		right: {
+	// 			auto: false,
+	// 			value: 0,
+	// 		},
+	// 		bottom: {
+	// 			auto: false,
+	// 			value: 0,
+	// 		},
+	// 		left: {
+	// 			auto: false,
+	// 			value: 0,
+	// 		},
+	// 	},
+	// };
 
-	// $: controlIndex = $textElementsStore.textElements.findIndex((element) => element.id == id);
-	// $: currentControl = template;
-	let template = { ...new UITextElement($dbTextElements.get(id)!) };
+	let template = { ...$uiTextElements.get(id)! };
+
+	beforeUpdate(() => {
+		if (template.fontStyle === 'italic') {
+			textElementState.italic = true;
+		}
+		if (template.textDecoration === 'underline') {
+			textElementState.underline = true;
+		}
+		if (template.textDecoration === 'line-through') {
+			textElementState.lineThrough = true;
+		}
+	});
 
 	$: {
 		if (template) {
 			console.log('updating');
+			template = template;
+			console.log({ template });
+			textElement.update({ id, textElement: template });
 		}
-		textElement.update({ id, textElement: template });
+		// if (textElementState.italic) {
+		// 	template.fontStyle = 'italic';
+		// } else {
+		// 	template.fontStyle = 'normal';
+		// }
+		// if (textElementState.underline) {
+		// 	template.textDecoration = 'underline';
+		// } else if (textElementState.lineThrough) {
+		// 	template.textDecoration = 'line-through';
+		// } else {
+		// 	template.textDecoration = 'none';
+		// }
+		// console.log({
+		// 	padding: template.padding,
+		// 	border: {
+		// 		width: template.border.width,
+		// 		radius: template.border.radius,
+		// 	},
+		// });
 	}
-
-	// $: {
-	// 	textElementsStore.update(($textElementsStore) => {
-	// 		return {
-	// 			...$textElementsStore,
-	// 			textElements: [...$textElementsStore.textElements].toSpliced(controlIndex, 1, {
-	// 				...template,
-	// 				fontStyle: textElementState.italic ? 'italic' : 'normal',
-	// 				textDecoration:
-	// 					(textElementState.underline && 'underline') ||
-	// 					(textElementState.lineThrough && 'line-through') ||
-	// 					'none',
-	// 			}),
-	// 		};
-	// 	});
-	// }
 
 	function focus(input: HTMLInputElement) {
 		input.focus();
 	}
-
-	function deleteTextElement() {}
 </script>
 
 <!-- @TODO: Find way to ensure correct interaction without ignoring error -->
@@ -116,7 +131,13 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 		<label class="flex row"
 			><input
 				type="checkbox"
-				on:change={(e) => (textElementState.italic = !textElementState.italic)}
+				on:change={(e) => {
+					if (!textElementState.italic) {
+						template.fontStyle = 'italic';
+					} else {
+						template.fontStyle = 'normal';
+					}
+				}}
 				bind:checked={textElementState.italic}
 			/><span class="italic">italic</span></label
 		>
@@ -124,9 +145,10 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 			><input
 				type="checkbox"
 				on:change={(e) => {
-					textElementState.underline = !textElementState.underline;
-					if (textElementState.underline) {
-						textElementState.lineThrough = false;
+					if (!textElementState.underline) {
+						template.textDecoration = 'underline';
+					} else {
+						template.textDecoration = 'none';
 					}
 				}}
 				bind:checked={textElementState.underline}
@@ -136,9 +158,10 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 			><input
 				type="checkbox"
 				on:change={(e) => {
-					textElementState.lineThrough = !textElementState.lineThrough;
-					if (textElementState.lineThrough) {
-						textElementState.underline = false;
+					if (!textElementState.lineThrough) {
+						template.textDecoration = 'line-through';
+					} else {
+						template.textDecoration = 'none';
 					}
 				}}
 				bind:checked={textElementState.lineThrough}
@@ -228,7 +251,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 	</fieldset> -->
 	<fieldset class="flex column container">
 		<legend>Padding</legend>
-		<div class="flex row">
+		<div class="flex row wrap">
 			<div class="flex column">
 				<label for={`text-element-${id}-padding-top`}>Top</label>
 				<input
@@ -272,98 +295,108 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 		</div>
 	</fieldset>
 	<fieldset class="flex column container">
-		<legend>Border Width</legend>
-		<div class="flex row">
-			<div class="flex column">
-				<label for={`text-element-${id}-border-width-top`}>Top</label>
-				<input
-					type="number"
-					id={`text-element-${id}-border-width-top`}
-					step="0.01"
-					min="0"
-					bind:value={template.border.width.top}
-				/>
-			</div>
-			<div class="flex column">
-				<label for={`text-element-${id}-border-width-right`}>Right</label>
-				<input
-					type="number"
-					id={`text-element-${id}-border-width-right`}
-					step="0.01"
-					min="0"
-					bind:value={template.border.width.right}
-				/>
-			</div>
-			<div class="flex column">
-				<label for={`text-element-${id}-border-width-bottom`}>Bottom</label>
-				<input
-					type="number"
-					id={`text-element-${id}-border-width-bottom`}
-					step="0.01"
-					min="0"
-					bind:value={template.border.width.bottom}
-				/>
-			</div>
-			<div class="flex column">
-				<label for={`text-element-${id}-border-width-left`}>Left</label>
-				<input
-					type="number"
-					id={`text-element-${id}-border-width-left`}
-					step="0.01"
-					min="0"
-					bind:value={template.border.width.left}
-				/>
-			</div>
+		<div class="flex row header">
+			<input
+				type="color"
+				id={`text-element-${id}-border-color`}
+				bind:value={template.border.color}
+			/>
+			<legend>Border</legend>
 		</div>
-	</fieldset>
-	<fieldset class="flex column container">
-		<legend>Border Radius</legend>
-		<div class="flex row">
-			<div class="flex column">
+		<fieldset class="flex column container">
+			<legend>Width</legend>
+			<div class="flex row wrap">
 				<div class="flex column">
-					<label for={`card-template-border-radius-top`}>Top Left</label>
+					<label for={`text-element-${id}-border-width-top`}>Top</label>
 					<input
 						type="number"
-						id={`card-template-border-radius-top`}
+						id={`text-element-${id}-border-width-top`}
 						step="0.01"
 						min="0"
-						bind:value={template.border.radius.topLeft}
+						bind:value={template.border.width.top}
 					/>
 				</div>
 				<div class="flex column">
-					<label for={`card-template-border-radius-left`}>Bottom Left</label>
+					<label for={`text-element-${id}-border-width-right`}>Right</label>
 					<input
 						type="number"
-						id={`card-template-border-radius-left`}
+						id={`text-element-${id}-border-width-right`}
 						step="0.01"
 						min="0"
-						bind:value={template.border.radius.bottomLeft}
-					/>
-				</div>
-			</div>
-			<div class="flex column">
-				<div class="flex column">
-					<label for={`card-template-border-radius-right`}>Top Right</label>
-					<input
-						type="number"
-						id={`card-template-border-radius-right`}
-						step="0.01"
-						min="0"
-						bind:value={template.border.radius.topRight}
+						bind:value={template.border.width.right}
 					/>
 				</div>
 				<div class="flex column">
-					<label for={`card-template-border-radius-bottom`}>Bottom Right</label>
+					<label for={`text-element-${id}-border-width-bottom`}>Bottom</label>
 					<input
 						type="number"
-						id={`card-template-border-radius-bottom`}
+						id={`text-element-${id}-border-width-bottom`}
 						step="0.01"
 						min="0"
-						bind:value={template.border.radius.bottomRight}
+						bind:value={template.border.width.bottom}
+					/>
+				</div>
+				<div class="flex column">
+					<label for={`text-element-${id}-border-width-left`}>Left</label>
+					<input
+						type="number"
+						id={`text-element-${id}-border-width-left`}
+						step="0.01"
+						min="0"
+						bind:value={template.border.width.left}
 					/>
 				</div>
 			</div>
-		</div>
+		</fieldset>
+		<fieldset class="flex column container">
+			<legend>Radius</legend>
+			<div class="flex row">
+				<div class="flex column">
+					<div class="flex column">
+						<label for={`card-template-border-radius-top`}>Top Left</label>
+						<input
+							type="number"
+							id={`card-template-border-radius-top`}
+							step="0.01"
+							min="0"
+							bind:value={template.border.radius.topLeft}
+						/>
+					</div>
+					<div class="flex column">
+						<label for={`card-template-border-radius-left`}>Bottom Left</label>
+						<input
+							type="number"
+							id={`card-template-border-radius-left`}
+							step="0.01"
+							min="0"
+							bind:value={template.border.radius.bottomLeft}
+						/>
+					</div>
+				</div>
+				<div class="flex column">
+					<div class="flex column">
+						<label for={`card-template-border-radius-right`}>Top Right</label>
+						<input
+							type="number"
+							id={`card-template-border-radius-right`}
+							step="0.01"
+							min="0"
+							bind:value={template.border.radius.topRight}
+						/>
+					</div>
+					<div class="flex column">
+						<label for={`card-template-border-radius-bottom`}>Bottom Right</label>
+						<input
+							type="number"
+							id={`card-template-border-radius-bottom`}
+							step="0.01"
+							min="0"
+							bind:value={template.border.radius.bottomRight}
+						/>
+					</div>
+				</div>
+			</div>
+		</fieldset>
 	</fieldset>
 </div>
 
