@@ -101,7 +101,6 @@ const cardTemplate = {
             // Init template transaction
             const transaction = db.transaction('template');
             const templates = transaction.objectStore('template');
-            let templatesMap = new Map();
 
             // Get all cards
             const openCursorRequest = templates.openCursor();
@@ -114,7 +113,6 @@ const cardTemplate = {
                 }
 
                 // Update the collection (`dbTemplates`) with the data from the cursor
-                templatesMap.set(cursor.key.toString(), cursor.value);
                 dbTemplates.update(($dbTemplates) => $dbTemplates.set(parseInt(cursor.key.toString()), cursor.value));
 
                 cursor.continue()

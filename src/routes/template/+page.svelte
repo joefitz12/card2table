@@ -1,12 +1,7 @@
 <script lang="ts">
 	import { dbTemplates } from '$lib/store';
 	import '../../styles/list.css';
-	import { onMount } from 'svelte';
 	import { cardTemplate } from '$lib/api/cardTemplate';
-
-	onMount(() => {
-		cardTemplate.getAll();
-	});
 </script>
 
 <header>

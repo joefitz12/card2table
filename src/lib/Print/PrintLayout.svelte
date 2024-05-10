@@ -1,58 +1,82 @@
 <script lang="ts">
-	import { state, type State } from '$lib/store';
+	import { textElement } from '$lib/api/textElement';
+	import { print, state, uiTemplates, uiTextElements } from '$lib/store';
+	import type { UICardTemplate } from '$lib/utils/uiCardTemplate';
+	import type { UITextElement } from '$lib/utils/uiTextElement';
 	import { Sidebar } from './components';
 
-	let selectedTemplate: State['template'] | undefined;
+	let selectedTemplate: UICardTemplate | undefined;
+	let textElements: Map<number, UITextElement>;
 	let rowsPerPage: Number;
 
 	$: {
-		selectedTemplate =
-			$state.templates && $state.templates.get
-				? $state.templates?.get($state.print.selectedTemplate)
-				: undefined;
-		rowsPerPage = selectedTemplate ? Math.floor($state.print.height / selectedTemplate.height) : 0;
+		rowsPerPage = selectedTemplate ? Math.floor($print.height / selectedTemplate.height) : 0;
 	}
+
+	// uiTemplates.subscribe(($uiTemplates) => {
+	// 	selectedTemplate =
+	// 		$uiTemplates && $uiTemplates.get
+	// 			? $uiTemplates.get(parseInt($print.selectedTemplate))
+	// 			: undefined;
+	// 	if (selectedTemplate) {
+	// 		textElement.getAllByTemplateId({
+	// 			templateId: parseInt($print.selectedTemplate),
+	// 		});
+	// 	}
+	// });
 
 	// let columnGap = 0.5;
 	let rowGap = 0.5;
 
-	state.subscribe(($state) => {
-		const { print, csvs } = $state;
-		if ((!print.selectedCsv && csvs.length) || !print.selectedTemplate) {
-			state.update(($state) => {
-				return {
-					...$state,
-					print: {
-						...$state.print,
-						// automatically select main template
-						...(!print.selectedTemplate && { selectedTemplate: $state.template.id }),
-						// automatically select first csv
-						...(!print.selectedCsv && csvs.length && { selectedCsv: $state.csvs[0].id }),
-					},
-				};
-			});
+	print.subscribe(($print) => {
+		if ($print.selectedTemplate) {
+			selectedTemplate = $uiTemplates.get(parseInt($print.selectedTemplate));
+			textElement.getAllByTemplateId({ templateId: parseInt($print.selectedTemplate) });
 		}
 	});
+
+	uiTextElements.subscribe(($uiTextElements) => {
+		textElements = $uiTextElements;
+		console.log('WE ARE UPDATING!!!!!');
+		console.log(textElements);
+	});
+
+	// state.subscribe(($state) => {
+	// 	const { print, csvs } = $state;
+	// 	if ((!print.selectedCsv && csvs.length) || (!print.selectedTemplate && $state.template?.id)) {
+	// 		state.update(($state) => {
+	// 			return {
+	// 				...$state,
+	// 				print: {
+	// 					...$print,
+	// 					// automatically select main template
+	// 					...(!print.selectedTemplate && { selectedTemplate: $state.template.id }),
+	// 					// automatically select first csv
+	// 					...(!print.selectedCsv && csvs.length && { selectedCsv: $state.csvs[0].id }),
+	// 				},
+	// 			};
+	// 		});
+	// 	}
+	// });
 </script>
 
 <div class="flex row print-container">
 	{#if selectedTemplate}
 		<div
 			class="preview"
-			class:empty={$state.print.width < selectedTemplate.width ||
-				$state.print.height < selectedTemplate.height}
-			style="--column-gap: {$state.print.columnGap + (selectedTemplate.unit || 'in')}; 
+			class:empty={$print.width < selectedTemplate.width || $print.height < selectedTemplate.height}
+			style="--column-gap: {$print.columnGap + (selectedTemplate.unit || 'in')}; 
             --row-gap: {rowGap + (selectedTemplate.unit || 'in')}; 
             --card-width: {(selectedTemplate.width || 2.44) + (selectedTemplate.unit || 'in')};
-            --page-height: {$state.print.height + (selectedTemplate.unit || 'in')};
-            --page-width: {$state.print.width + (selectedTemplate.unit || 'in')};
+            --page-height: {$print.height + (selectedTemplate.unit || 'in')};
+            --page-width: {$print.width + (selectedTemplate.unit || 'in')};
             --rows-per-page: {rowsPerPage};"
 		>
-			{#if $state.print.width < selectedTemplate.width || $state.print.height < selectedTemplate.height}
+			{#if $print.width < selectedTemplate.width || $print.height < selectedTemplate.height}
 				<div class="flex column align-center"><span>Page too small =(</span></div>
 			{/if}
-			{#if $state.csvs.length && !($state.print.width < selectedTemplate.width || $state.print.height < selectedTemplate.height)}
-				{#each $state.csvs.find((csv) => csv.id === $state.print.selectedTemplate)?.cards || $state.csvs[0].cards as card}
+			{#if $state.csvs.length && !($print.width < selectedTemplate.width || $print.height < selectedTemplate.height)}
+				{#each $state.csvs.find((csv) => csv.id === $print.selectedTemplate)?.cards || $state.csvs[0].cards as card}
 					<div
 						class="card-template"
 						style="--card-height: {(selectedTemplate.height || 3.43) +
@@ -88,45 +112,40 @@
                         "
 					>
 						<div class="overlay" />
-						{#if selectedTemplate.textElements}
-							{#each selectedTemplate.textElements as textElement}
+						{#if selectedTemplate}
+							{#each Array.from(textElements) as [key, textElement]}
 								<div
 									class="text-element-container"
 									class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
 									style="--color: {textElement.color}; 
-                                --font-size: {(textElement.fontSize || 0.22) +
+                                	--font-size: {(textElement.fontSize || 0.22) +
 										(selectedTemplate.unit || 'in')}; 
-                                --transform-left: {(textElement.leftTransform || 0) /
+                                	--transform-left: {(textElement.leftTransform || 0) /
 										selectedTemplate.relativeUnit +
 										(selectedTemplate.unit || 'in')};
-                                --transform-top: {(textElement.topTransform || 0) /
+                               		--transform-top: {(textElement.topTransform || 0) /
 										selectedTemplate.relativeUnit +
 										(selectedTemplate.unit || 'in')};
-                                --font-weight: {textElement.fontWeight};
-                                --font-style: {textElement.fontStyle || 'normal'};
-                                --text-decoration: {textElement.textDecoration || 'normal'};
-                                --padding-top: {(textElement.padding.top || 0) +
-										(selectedTemplate.unit || 'in')};
-                                --padding-right: {(textElement.padding.right || 0) +
-										(selectedTemplate.unit || 'in')};
-                                --padding-bottom: {(textElement.padding.bottom || 0) +
-										(selectedTemplate.unit || 'in')};
-                                --padding-left: {(textElement.padding.left || 0) +
-										(selectedTemplate.unit || 'in')};
-                                --border-top-width: {(textElement.border.width.top || 0) +
-										(selectedTemplate.unit || 'in')};
-								--border-right-width: {(textElement.border.width.right || 0) + (selectedTemplate.unit || 'in')};
-								--border-bottom-width: {(textElement.border.width.bottom || 0) + (selectedTemplate.unit || 'in')};
-								--border-left-width: {(textElement.border.width.left || 0) + (selectedTemplate.unit || 'in')};
-								--border-top-left-radius: {(textElement.border.radius.topLeft || 0) +
+									--font-weight: {textElement.fontWeight};
+									--font-style: {textElement.fontStyle || 'normal'};
+									--text-decoration: {textElement.textDecoration || 'normal'};
+									--padding-top: {(textElement.padding.top || 0) + (selectedTemplate.unit || 'in')};
+									--padding-right: {(textElement.padding.right || 0) + (selectedTemplate.unit || 'in')};
+									--padding-bottom: {(textElement.padding.bottom || 0) + (selectedTemplate.unit || 'in')};
+									--padding-left: {(textElement.padding.left || 0) + (selectedTemplate.unit || 'in')};
+									--border-top-width: {(textElement.border.width.top || 0) + (selectedTemplate.unit || 'in')};
+									--border-right-width: {(textElement.border.width.right || 0) + (selectedTemplate.unit || 'in')};
+									--border-bottom-width: {(textElement.border.width.bottom || 0) + (selectedTemplate.unit || 'in')};
+									--border-left-width: {(textElement.border.width.left || 0) + (selectedTemplate.unit || 'in')};
+									--border-top-left-radius: {(textElement.border.radius.topLeft || 0) +
 										(selectedTemplate.unit || 'in')}; 
-								--border-top-right-radius: {(textElement.border.radius.topRight || 0) +
+									--border-top-right-radius: {(textElement.border.radius.topRight || 0) +
 										(selectedTemplate.unit || 'in')}; 
-								--border-bottom-right-radius: {(textElement.border.radius.bottomRight || 0) +
+									--border-bottom-right-radius: {(textElement.border.radius.bottomRight || 0) +
 										(selectedTemplate.unit || 'in')};
-								--border-bottom-left-radius: {(textElement.border.radius.bottomLeft || 0) +
+									--border-bottom-left-radius: {(textElement.border.radius.bottomLeft || 0) +
 										(selectedTemplate.unit || 'in')};
-								"
+									"
 								>
 									<span class="text-element"
 										>{card[textElement.title.toLowerCase().split(' ').join('-')]}</span

@@ -1,9 +1,8 @@
 import { db } from "$lib/db";
 import { TextElement } from "$lib/models/TextElement";
-import { dbTextElements, state } from "$lib/store";
+import { dbTextElements } from "$lib/store";
 import { UITextElement } from "$lib/utils/uiTextElement";
-import isEqual from "lodash/isEqual";
-import { get } from "svelte/store";
+import { get, type Writable } from "svelte/store";
 
 export const textElement = {
     add: function ({ templateId }: { templateId: number }) {
@@ -42,15 +41,20 @@ export const textElement = {
                 // Open cursor on textElements
                 this.getAllByTemplateId({ templateId: _textElement.templateId });
             }
+
+            updateTextElement.onerror = () => {
+                console.log('error updating text element');
+            }
         });
     },
-    getAllByTemplateId: function ({ templateId }: { templateId: number }) {
+    getAllByTemplateId: function ({ templateId, store }: { templateId: number, store?: Writable<Map<number, TextElement>> }) {
         db.open((db) => {
             // Init textElement transaction
             const transaction = db.transaction('textElement');
             const textElements = transaction.objectStore('textElement');
 
             // Open cursor on textElements
+            // @todo: use binary search here
             const openCursorRequest = textElements.openCursor();
             openCursorRequest.onsuccess = () => {
                 // Retrieve the cursor from the result
@@ -63,11 +67,9 @@ export const textElement = {
 
                 // No template match
                 const isNotTemplateMatch = (cursor.value as TextElement).templateId !== templateId;
-                //   OR
-                // text element in state is equal to db value
-                const requiresNoUpdate = (isEqual(cursor.value, get(dbTextElements).get(parseInt(cursor.key.toString()))))
 
-                if (isNotTemplateMatch || requiresNoUpdate) {
+
+                if (isNotTemplateMatch) {
                     cursor.continue();
                 }
                 else {

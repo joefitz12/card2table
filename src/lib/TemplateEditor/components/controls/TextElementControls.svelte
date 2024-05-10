@@ -11,14 +11,9 @@
 	<div class="flex row header">
 		<h3>Text Elements</h3>
 		<button type="button" class="create" on:click={() => textElement.add({ templateId })}>+</button>
-		<!-- <button
-			type="button"
-			class="create"
-			on:click={() => textElement.getAllByTemplateId({ templateId })}>...</button
-		> -->
 	</div>
 	{#if $dbTextElements}
-		{#each Array.from($dbTextElements) as [key, value], i}
+		{#each Array.from($dbTextElements.keys()) as key}
 			{#key key}
 				<TextElementControl id={key} />
 			{/key}

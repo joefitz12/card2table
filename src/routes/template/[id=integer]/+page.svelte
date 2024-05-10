@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Template from '$lib/Template/Template.svelte';
+	import TemplateEditor from '$lib/TemplateEditor/TemplateEditor.svelte';
 </script>
 
-<Template />
+<TemplateEditor />
