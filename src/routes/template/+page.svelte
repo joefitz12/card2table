@@ -15,7 +15,15 @@
 <div class="flex column">
 	{#if $dbTemplates}
 		{#each [...($dbTemplates.entries() || [])] as [id, template]}
-			<a aria-label={`Edit ${template.title}`} href={`/template/${id}`}>{template.title}</a>
+			<div class="flex">
+				<a aria-label={`Edit ${template.title}`} href={`/template/${id}`}>{template.title}</a>
+				<button
+					type="button"
+					on:click={() => cardTemplate.delete({ id })}
+					aria-label={`Remove ${template.title}`}
+					class="delete">&#10005;</button
+				>
+			</div>
 		{/each}
 	{/if}
 </div>

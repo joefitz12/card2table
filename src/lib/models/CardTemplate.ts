@@ -1,7 +1,7 @@
 import type { PositionalProps } from "$lib/types";
 
 export class CardTemplate {
-    unit: 'in' | 'cm' | 'mm'
+    unit: 'in' | 'cm' | 'mm';
     height: number;
     width: number;
     title: string;

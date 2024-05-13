@@ -1,14 +1,15 @@
 <script lang="ts">
 	import PapaParse from 'papaparse';
-	import { dbTemplates, state, print, selectedTextElements } from '$lib/store';
+	import { dbTemplates, state, print } from '$lib/store';
 	import '../../../styles/controls.css';
-	import { textElement } from '$lib/api/textElement';
 	import { cardTemplate } from '$lib/api/cardTemplate';
+	import { csv } from '$lib/api/csv';
+	import { card } from '$lib/api/card';
+	import { writable } from 'svelte/store';
 
 	let collapsed: boolean;
-	let activeMenu: 'card' | 'color' | 'text' | 'image' | 'print' = 'print';
-	$: sidebarClass = collapsed ? 'collapsed' : 'expanded';
-	const updateSidebar = (sidebarUpdates: { collapsed?: boolean; activeMenu?: typeof activeMenu }) =>
+
+	const updateSidebar = (sidebarUpdates: { collapsed?: boolean }) =>
 		state.update(
 			(value) =>
 				(value = {
@@ -19,16 +20,23 @@
 					},
 				})
 		);
-	state.subscribe((value) => {
-		value.sidebar.collapsed === true ? (collapsed = true) : (collapsed = false);
-		activeMenu = value.sidebar.activeMenu;
-	});
 
 	// on chage
 	print.subscribe(($print) => {
 		if ($print.selectedTemplate) {
-			cardTemplate.getById({ id: $print.selectedTemplate });
+			cardTemplate.getById($print.selectedTemplate);
 		}
+	});
+
+	const csvs = writable<
+		{
+			filename: string;
+			id: number;
+		}[]
+	>([]);
+
+	csv.getAllItems().then((data) => {
+		csvs.set(data);
 	});
 
 	const handleFileUpload = (e: Event) => {
@@ -41,61 +49,52 @@
 		PapaParse.parse(file, {
 			header: true,
 			complete: (results) => {
-				console.log(results);
-				print.update(($print) => {
-					return {
-						...$print,
-						// @todo: generate unique id
-						selectedCsv: file.name,
-					};
-				});
-				state.update(($state) => {
-					return {
-						...$state,
-						print: {
-							...$state.print,
-							// @todo: generate unique id
-							selectedCsv: file.name,
-						},
-						csvs: [
-							...$state.csvs,
-							{
-								// @TODO: generate unique id
-								id: file.name,
-								name: file.name,
-								cards: results.data as { [x: string]: string }[],
-							},
-						],
-					};
-				});
+				const cards = results.data as { [x: string]: string }[];
+				csv
+					.add({
+						filename: file.name,
+					})
+					.then((csvId) => {
+						card.addMany({ csvId, cards });
+					});
 			},
 		});
 	};
 </script>
 
-<div class="flex column sidebar {sidebarClass}">
-	<button on:click={() => updateSidebar({ collapsed: !collapsed })}>{collapsed ? '<' : '>'}</button>
+<div
+	class="flex column sidebar"
+	class:collapsed={$state.sidebar.collapsed}
+	class:expanded={!$state.sidebar.collapsed}
+>
+	<button on:click={() => updateSidebar({ collapsed: !$state.sidebar.collapsed })}
+		>{$state.sidebar.collapsed ? '<' : '>'}</button
+	>
 	<!-- <div class="flex row collapsible">
 		<button on:click={() => updateSidebar({ activeMenu: 'card' })}>card</button>
 		<button on:click={() => updateSidebar({ activeMenu: 'color' })}>color</button>
 		<button on:click={() => updateSidebar({ activeMenu: 'text' })}>text</button>
 		<button on:click={() => updateSidebar({ activeMenu: 'image' })}>image</button>
 	</div> -->
-	<div class="collapsible {sidebarClass}">
-		<div class="flex column controls-container {activeMenu}">
+	<div
+		class="collapsible"
+		class:collapsed={$state.sidebar.collapsed}
+		class:expanded={!$state.sidebar.collapsed}
+	>
+		<div class="flex column controls-container">
 			<fieldset class="flex column container">
 				<legend>Choose CSV</legend>
 				<input type="file" accept="text/csv" on:change={handleFileUpload} />
-				{#each $state.csvs as csv}
+				{#each $csvs as { filename, id }}
 					<div class="flex row">
 						<input
 							bind:group={$print.selectedCsv}
-							value={csv.name}
-							id={`${csv.name}`}
+							value={filename}
+							id={`csv-${id}`}
 							type="radio"
 							name="choose-csv"
 						/>
-						<label for={`${csv.name}`}>{csv.name}</label>
+						<label for={`csv-${id}`}>{filename}</label>
 					</div>
 				{/each}
 			</fieldset>

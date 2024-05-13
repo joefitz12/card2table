@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { csv } from '$lib/api/csv';
 	import { textElement } from '$lib/api/textElement';
 	import { print, state, uiTemplates, uiTextElements } from '$lib/store';
 	import type { UICardTemplate } from '$lib/utils/uiCardTemplate';
@@ -28,17 +29,15 @@
 	// let columnGap = 0.5;
 	let rowGap = 0.5;
 
-	print.subscribe(($print) => {
-		if ($print.selectedTemplate) {
-			selectedTemplate = $uiTemplates.get(parseInt($print.selectedTemplate));
-			textElement.getAllByTemplateId({ templateId: parseInt($print.selectedTemplate) });
-		}
-	});
+	// print.subscribe(($print) => {
+	// 	if ($print.selectedTemplate) {
+	// 		selectedTemplate = $uiTemplates.get(parseInt($print.selectedTemplate));
+	// 		textElement.getAllByTemplateId({ templateId: parseInt($print.selectedTemplate) });
+	// 	}
+	// });
 
 	uiTextElements.subscribe(($uiTextElements) => {
 		textElements = $uiTextElements;
-		console.log('WE ARE UPDATING!!!!!');
-		console.log(textElements);
 	});
 
 	// state.subscribe(($state) => {
@@ -76,7 +75,7 @@
 				<div class="flex column align-center"><span>Page too small =(</span></div>
 			{/if}
 			{#if $state.csvs.length && !($print.width < selectedTemplate.width || $print.height < selectedTemplate.height)}
-				{#each $state.csvs.find((csv) => csv.id === $print.selectedTemplate)?.cards || $state.csvs[0].cards as card}
+				{#each $state.csvs.find((csv) => parseInt(csv.id) === $print.selectedTemplate)?.cards || $state.csvs[0].cards as card}
 					<div
 						class="card-template"
 						style="--card-height: {(selectedTemplate.height || 3.43) +

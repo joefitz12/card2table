@@ -1,14 +1,8 @@
 <script lang="ts">
 	import { uiTextElements, state } from '$lib/store';
-	import { isEqual } from 'lodash';
-	import { afterUpdate, onMount } from 'svelte';
 	export let id: number;
 
 	$: textElement = $uiTextElements.get(id)!;
-
-	afterUpdate(() => {
-		console.log('!!!!!!!update occurred!!!!!!!');
-	});
 </script>
 
 <div

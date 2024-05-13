@@ -2,6 +2,7 @@ import { db } from "$lib/db";
 import { TextElement } from "$lib/models/TextElement";
 import { dbTextElements } from "$lib/store";
 import { UITextElement } from "$lib/utils/uiTextElement";
+import { error } from "@sveltejs/kit";
 import { get, type Writable } from "svelte/store";
 
 export const textElement = {
@@ -14,14 +15,11 @@ export const textElement = {
             const addTextElement = textElements.add(new TextElement({ templateId }));
 
             addTextElement.onsuccess = () => {
-                this.getAllByTemplateId({ templateId })
+                this.getAllByTemplateId(templateId);
             };
         });
     },
-    update: function ({ id, textElement }: {
-        id: number, textElement:
-        UITextElement
-    }) {
+    update: function (textElement: UITextElement) {
         db.open(db => {
             // Init add Text Element transaction
             const transaction = db.transaction(['textElement'], 'readwrite');
@@ -35,11 +33,11 @@ export const textElement = {
                 ..._textElement
             } = textElement;
 
-            const updateTextElement = textElements.put(_textElement, id);
+            const updateTextElement = textElements.put(_textElement);
 
             updateTextElement.onsuccess = () => {
                 // Open cursor on textElements
-                this.getAllByTemplateId({ templateId: _textElement.templateId });
+                this.getAllByTemplateId(_textElement.templateId);
             }
 
             updateTextElement.onerror = () => {
@@ -47,15 +45,20 @@ export const textElement = {
             }
         });
     },
-    getAllByTemplateId: function ({ templateId, store }: { templateId: number, store?: Writable<Map<number, TextElement>> }) {
+    getAllByTemplateId: function (templateId: string | number | undefined) {
+        if (!templateId) {
+            return error(404, {
+                message: 'Empty templateId'
+            })
+        }
+
         db.open((db) => {
             // Init textElement transaction
             const transaction = db.transaction('textElement');
-            const textElements = transaction.objectStore('textElement');
+            const textElements = transaction.objectStore('textElement').index('templateId');
 
             // Open cursor on textElements
-            // @todo: use binary search here
-            const openCursorRequest = textElements.openCursor();
+            const openCursorRequest = textElements.openCursor(typeof templateId === 'string' ? parseInt(templateId) : templateId);
             openCursorRequest.onsuccess = () => {
                 // Retrieve the cursor from the result
                 let cursor = openCursorRequest.result as IDBCursorWithValue;
@@ -69,13 +72,14 @@ export const textElement = {
                 const isNotTemplateMatch = (cursor.value as TextElement).templateId !== templateId;
 
 
-                if (isNotTemplateMatch) {
-                    cursor.continue();
-                }
-                else {
-                    dbTextElements.update($dbTextElements => $dbTextElements.set(parseInt(cursor.key.toString()), cursor.value));
-                    cursor.continue();
-                }
+                // if (isNotTemplateMatch) {
+                //     console.log('not a match!!!');
+                //     cursor.continue();
+                // }
+                // else {
+                dbTextElements.update($dbTextElements => $dbTextElements.set(parseInt(cursor.value.id), cursor.value));
+                cursor.continue();
+                // }
 
             };
             openCursorRequest.onerror = () => {
