@@ -11,29 +11,25 @@ export let count = writable<number>(0);
 export const dbTemplates = writable<Map<number, any>>(new Map());
 
 export const uiTemplates = derived(dbTemplates, $dbTemplates => {
-
-    return new Map(Array.from($dbTemplates).map(([key, cardTemplate]) => [key, new UICardTemplate(cardTemplate)]
+    return new Map(Array.from($dbTemplates).map(([id, cardTemplate]) => [id, new UICardTemplate(cardTemplate)]
     ))
 })
 
-export const dbTextElements = writable<Map<number, TextElement>>(new Map());
+export const dbTextElements = writable<Map<number, TextElement & { id: number }>>(new Map());
 
 dbTextElements.subscribe(() => console.log('updating'));
 
 export const uiTextElements = derived(dbTextElements, ($dbTextElements) => {
-    console.log('updating!');
-    console.log({ $dbTextElements });
-    const newTextElements = new Map(Array.from($dbTextElements).map(([key, textElement]) => {
-        console.log({ key, textElement })
-        return [key, new UITextElement({ ...textElement, id: key })]
+    const newTextElements = new Map(Array.from($dbTextElements).map(([id, textElement]) => {
+        console.log({ id, textElement });
+        return [id, new UITextElement({ ...textElement })];
     }
     ));
-    console.log({ newTextElements });
     return newTextElements;
 });
 
 export type CardTemplateState = {
-    id: string,
+    id: number,
     title: string,
     unit: 'in' | 'cm' | 'mm',
     height: number,
@@ -91,7 +87,7 @@ type PrintState = {
     width: number;
     columnGap: number;
     selectedCsv: Csv['id'];
-    selectedTemplate: CardTemplateState['id'];
+    selectedTemplate?: CardTemplateState['id'];
 }
 
 export type State = {
@@ -148,7 +144,6 @@ export let print = writable<PrintState>({
     width: 11,
     columnGap: 0.5,
     selectedCsv: '',
-    selectedTemplate: ''
 });
 
 export let selectedTextElements = writable<Map<number, TextElement>>();
@@ -161,11 +156,10 @@ template.subscribe(($template) => {
     if (!$template) {
         return;
     }
-    const { handleDrop, handleDragover, id, textElementId, ...template } = $template;
+    const { handleDrop, handleDragover, textElementId, ...template } = $template;
 
     cardTemplate.updateById({
         template,
-        id: parseInt(id)
     });
 });
 

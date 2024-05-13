@@ -4,7 +4,7 @@ import { CardTemplate } from "$lib/models/CardTemplate";
 import { TextElement } from "$lib/models/TextElement";
 
 export class UICardTemplate extends CardTemplate {
-    id: string;
+    id: number;
     textElementId: string;
     handleDrop: (e: DragEvent) => void;
     handleDragover: (e: DragEvent) => void;
@@ -18,9 +18,8 @@ export class UICardTemplate extends CardTemplate {
         backgroundColor,
         padding,
         border,
-        textElements
     }: InstanceType<typeof CardTemplate> & {
-        id: string,
+        id: number,
         textElements: InstanceType<typeof TextElement>[]
     }) {
         super();
@@ -47,7 +46,7 @@ export class UICardTemplate extends CardTemplate {
 
             textElementsStore.update(($textElementsStore) => {
                 const textElement = $textElementsStore.textElements.find(
-                    (element) => element.id == textElementId
+                    (element) => element.id == parseInt(textElementId)
                 );
                 const textElementIndex = $textElementsStore.textElements.findIndex(
                     (element) => element.template.id == textElementId

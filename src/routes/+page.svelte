@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { state } from '$lib/store';
-
 	/** @type {import('./$types').PageData} */
 	// export let data: any[] = [];
 </script>

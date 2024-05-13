@@ -4,10 +4,11 @@ import { CardTemplate } from "$lib/models/CardTemplate";
 import { dbTemplates, dbTextElements, state } from "$lib/store";
 import { processCursor } from "$lib/utils/processCursor";
 import { UICardTemplate } from "$lib/utils/uiCardTemplate";
+import { error } from "@sveltejs/kit";
 import { textElement } from "./textElement";
 
 const cardTemplate = {
-    add: () => {
+    add: function () {
         let templateId: IDBValidKey;
 
         db.open((db) => {
@@ -44,6 +45,7 @@ const cardTemplate = {
                     })
                         .then(() => {
                             dbTemplates.set(templates);
+                            console.log('NAVIGATING');
                             goto(`/template/${templateId}`);
                         })
                         .catch((error) => {
@@ -60,16 +62,22 @@ const cardTemplate = {
             };
         });
     },
-    getById: ({ id }: { id: string }) => {
+    getById: function (id: string | number | undefined) {
+        if (!id) {
+            return error(404, {
+                message: 'Not found'
+            })
+        }
         db.open((db) => {
             const transaction = db.transaction(['template']);
             const templates = transaction.objectStore('template');
-            const getTemplate = templates.get(parseInt(id));
+            const getTemplate = templates.get(typeof id === 'string' ? parseInt(id) : id);
 
             getTemplate.onsuccess = () => {
                 const template = getTemplate.result;
 
                 if (!template) {
+                    console.log('did not find');
                     return;
                 }
 
@@ -79,7 +87,6 @@ const cardTemplate = {
                         template: {
                             ...new UICardTemplate({
                                 ...template,
-                                id,
                             }),
                         },
                     };
@@ -92,12 +99,17 @@ const cardTemplate = {
                     return $dbTextElements;
                 });
 
-                textElement.getAllByTemplateId({ templateId: parseInt(id) });
+                textElement.getAllByTemplateId(id);
             };
         });
     },
-    getAll: () => {
+    getAll: function () {
         db.open((db) => {
+            dbTemplates.update($dbTemplates => {
+                $dbTemplates.clear();
+                return $dbTemplates;
+            });
+
             // Init template transaction
             const transaction = db.transaction('template');
             const templates = transaction.objectStore('template');
@@ -113,20 +125,23 @@ const cardTemplate = {
                 }
 
                 // Update the collection (`dbTemplates`) with the data from the cursor
-                dbTemplates.update(($dbTemplates) => $dbTemplates.set(parseInt(cursor.key.toString()), cursor.value));
+                dbTemplates.update(($dbTemplates) => $dbTemplates.set(cursor.value.id, cursor.value));
 
                 cursor.continue()
             };
         });
     },
-    updateById: ({ id, template }: { id: number, template: InstanceType<typeof CardTemplate> }) => {
+    updateById: function ({ template }: { template: InstanceType<typeof CardTemplate> & { id: string | number | undefined } }) {
+        if (!template.id) {
+            return error(404, { message: 'Cannot update, no ID' });
+        }
         db.open(db => {
             // Init add Card Template transaction
             const transaction = db.transaction(['template'], 'readwrite');
             const templateObjectStore = transaction.objectStore('template');
 
             // Update Card
-            const updateRequest = templateObjectStore.put(template, id);
+            const updateRequest = templateObjectStore.put(template);
 
             updateRequest.onsuccess = (event) => {
                 // console.log('success!!!', event);
@@ -134,6 +149,22 @@ const cardTemplate = {
             updateRequest.onerror = (event) => {
                 console.log('fail', event);
             };
+        })
+    },
+    delete: function ({ id }: { id: number }) {
+        db.open(db => {
+            // Init add Card Template transaction
+            const transaction = db.transaction(['template'], 'readwrite');
+            const templateObjectStore = transaction.objectStore('template');
+
+            const deleteRequest = templateObjectStore.delete(id);
+
+            deleteRequest.onsuccess = () => {
+                this.getAll();
+            }
+            deleteRequest.onerror = () => {
+                console.error({ deleteRequest });
+            }
         })
     }
 };

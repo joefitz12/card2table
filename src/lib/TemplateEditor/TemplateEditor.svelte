@@ -1,5 +1,4 @@
 <script lang="ts">
-	// import { Canvas, Card, Sidebar } from './components';
 	import { Card, Sidebar } from './components';
 </script>
 
@@ -33,12 +32,12 @@
 		position: absolute;
 		right: 0;
 	}
-	.canvas {
+	/* .canvas {
 		position: absolute;
 		height: 100%;
 		width: 100%;
 		pointer-events: none;
-	}
+	} */
 	@media screen and (min-width: 680px) {
 		.template-editor {
 			display: flex;

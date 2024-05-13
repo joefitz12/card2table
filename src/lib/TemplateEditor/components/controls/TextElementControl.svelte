@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { textElement } from '$lib/api/textElement';
-	import { UITextElement } from '$lib/utils/uiTextElement';
-	import { isEqual } from 'lodash';
-	import { dbTextElements, uiTextElements } from '../../../store';
+	import { uiTextElements } from '../../../store';
 	import { beforeUpdate } from 'svelte';
 	export let id: number;
 
@@ -49,34 +47,13 @@
 
 	$: {
 		if (template) {
-			console.log('updating');
-			template = template;
-			console.log({ template });
-			textElement.update({ id, textElement: template });
+			// template = template;
+			textElement.update(template);
 		}
-		// if (textElementState.italic) {
-		// 	template.fontStyle = 'italic';
-		// } else {
-		// 	template.fontStyle = 'normal';
-		// }
-		// if (textElementState.underline) {
-		// 	template.textDecoration = 'underline';
-		// } else if (textElementState.lineThrough) {
-		// 	template.textDecoration = 'line-through';
-		// } else {
-		// 	template.textDecoration = 'none';
-		// }
-		// console.log({
-		// 	padding: template.padding,
-		// 	border: {
-		// 		width: template.border.width,
-		// 		radius: template.border.radius,
-		// 	},
-		// });
 	}
 
 	function focus(input: HTMLInputElement) {
-		input.focus();
+		// input.focus();
 	}
 </script>
 

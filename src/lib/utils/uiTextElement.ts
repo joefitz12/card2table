@@ -2,6 +2,7 @@ import { TextElement } from "$lib/models/TextElement";
 import { state } from "$lib/store";
 
 export class UITextElement extends TextElement {
+    id: number;
     onMouseover: () => void;
     onMouseleave: () => void;
     getControl: () => HTMLElement | null;
@@ -27,6 +28,7 @@ export class UITextElement extends TextElement {
         margin
     }: InstanceType<typeof TextElement> & { id: number }) {
         super(({ templateId }));
+        this.id = id;
         this.title = title;
         this.color = color;
         this.fontSize = fontSize;
