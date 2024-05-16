@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { csv } from '$lib/api/csv';
-	import { textElement } from '$lib/api/textElement';
-	import { print, state, uiTemplates, uiTextElements } from '$lib/store';
+	import { print, state, uiTextElements } from '$lib/store';
 	import type { UICardTemplate } from '$lib/utils/uiCardTemplate';
 	import type { UITextElement } from '$lib/utils/uiTextElement';
 	import { Sidebar } from './components';
@@ -14,49 +12,12 @@
 		rowsPerPage = selectedTemplate ? Math.floor($print.height / selectedTemplate.height) : 0;
 	}
 
-	// uiTemplates.subscribe(($uiTemplates) => {
-	// 	selectedTemplate =
-	// 		$uiTemplates && $uiTemplates.get
-	// 			? $uiTemplates.get(parseInt($print.selectedTemplate))
-	// 			: undefined;
-	// 	if (selectedTemplate) {
-	// 		textElement.getAllByTemplateId({
-	// 			templateId: parseInt($print.selectedTemplate),
-	// 		});
-	// 	}
-	// });
-
 	// let columnGap = 0.5;
 	let rowGap = 0.5;
-
-	// print.subscribe(($print) => {
-	// 	if ($print.selectedTemplate) {
-	// 		selectedTemplate = $uiTemplates.get(parseInt($print.selectedTemplate));
-	// 		textElement.getAllByTemplateId({ templateId: parseInt($print.selectedTemplate) });
-	// 	}
-	// });
 
 	uiTextElements.subscribe(($uiTextElements) => {
 		textElements = $uiTextElements;
 	});
-
-	// state.subscribe(($state) => {
-	// 	const { print, csvs } = $state;
-	// 	if ((!print.selectedCsv && csvs.length) || (!print.selectedTemplate && $state.template?.id)) {
-	// 		state.update(($state) => {
-	// 			return {
-	// 				...$state,
-	// 				print: {
-	// 					...$print,
-	// 					// automatically select main template
-	// 					...(!print.selectedTemplate && { selectedTemplate: $state.template.id }),
-	// 					// automatically select first csv
-	// 					...(!print.selectedCsv && csvs.length && { selectedCsv: $state.csvs[0].id }),
-	// 				},
-	// 			};
-	// 		});
-	// 	}
-	// });
 </script>
 
 <div class="flex row print-container">

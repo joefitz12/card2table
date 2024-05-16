@@ -4,7 +4,7 @@ import { CardTemplate } from "$lib/models/CardTemplate";
 import { TextElement } from "$lib/models/TextElement";
 
 export class UICardTemplate extends CardTemplate {
-    id: number;
+    id: IDBValidKey;
     textElementId: string;
     handleDrop: (e: DragEvent) => void;
     handleDragover: (e: DragEvent) => void;
@@ -19,7 +19,7 @@ export class UICardTemplate extends CardTemplate {
         padding,
         border,
     }: InstanceType<typeof CardTemplate> & {
-        id: number,
+        id: IDBValidKey,
         textElements: InstanceType<typeof TextElement>[]
     }) {
         super();

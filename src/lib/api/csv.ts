@@ -18,12 +18,12 @@ export const csv = {
             });
         });
     },
-    getAllItems: function () {
+    getAll: function () {
         return new Promise<{ filename: string, id: number }[]>((resolve, reject) => {
             db.open(db => {
                 const cursorRequest =
                     db.transaction('csv').objectStore('csv').openCursor();
-                const items: any[] = [];
+                const csvs: any[] = [];
 
                 cursorRequest.onerror = () => {
                     reject('Failed to retrieve items');
@@ -32,11 +32,11 @@ export const csv = {
                 cursorRequest.onsuccess = () => {
                     const cursor = cursorRequest.result;
                     if (cursor) {
-                        items.push(cursor.value);
+                        csvs.push(cursor.value);
                         cursor.continue();
                     } else {
                         // Resolve the promise once the cursor is done
-                        resolve(items);
+                        resolve(csvs);
                     }
                 };
             });

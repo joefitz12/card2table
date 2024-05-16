@@ -1,5 +1,14 @@
 <script lang="ts">
+	import { afterNavigate } from '$app/navigation';
+	import { openedTemplates, template } from '$lib/store';
 	import { Card, Sidebar } from './components';
+
+	afterNavigate((navigation) => {
+		console.log({ navigation });
+		openedTemplates.update(($openedTemplates) =>
+			$openedTemplates.set($template.id, $template.title)
+		);
+	});
 </script>
 
 <div class="flex template-editor">

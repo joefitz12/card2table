@@ -1,7 +1,24 @@
 <script lang="ts">
-	import { dbTemplates } from '$lib/store';
 	import '../../styles/list.css';
+	import { goto, onNavigate } from '$app/navigation';
+	import { cardTemplates } from '$lib/store';
 	import { cardTemplate } from '$lib/api/cardTemplate';
+
+	function addNewCard() {
+		cardTemplate
+			.add()
+			.then((id) => goto(`/template/${id}`))
+			.catch((error) => console.error(error));
+	}
+
+	function deleteCard(id: number) {
+		cardTemplate
+			.delete({ id })
+			.then(() => {
+				return cardTemplate.getAll();
+			})
+			.then(($cardTemplates) => cardTemplates.set($cardTemplates));
+	}
 </script>
 
 <header>
@@ -9,17 +26,19 @@
 	<button
 		aria-label="create new card template"
 		title="create new card template"
-		on:click={() => cardTemplate.add()}>+</button
+		on:click={() => addNewCard()}>+</button
 	>
 </header>
 <div class="flex column">
-	{#if $dbTemplates}
-		{#each [...($dbTemplates.entries() || [])] as [id, template]}
+	{#if $cardTemplates}
+		{#each $cardTemplates as template}
 			<div class="flex">
-				<a aria-label={`Edit ${template.title}`} href={`/template/${id}`}>{template.title}</a>
+				<a aria-label={`Edit ${template.title}`} href={`/template/${template.id}`}
+					>{template.title}</a
+				>
 				<button
 					type="button"
-					on:click={() => cardTemplate.delete({ id })}
+					on:click={() => deleteCard(parseInt(template.id.toString()))}
 					aria-label={`Remove ${template.title}`}
 					class="delete">&#10005;</button
 				>
