@@ -1,6 +1,6 @@
 <script lang="ts">
-	import '../../../../styles/controls.css';
-	import { state } from '$lib/store';
+	import '../../../../../styles/controls.css';
+	import { template } from '$lib/store';
 </script>
 
 <div class="flex column">
@@ -14,12 +14,12 @@
 				<input
 					type="color"
 					id="card-template-background-color"
-					bind:value={$state.template.backgroundColor}
+					bind:value={$template.backgroundColor}
 				/>
 			</div>
 			<div class="flex column">
 				<label for="card-template-color">Text</label>
-				<input type="color" id="card-template-color" bind:value={$state.template.color} />
+				<input type="color" id="card-template-color" bind:value={$template.color} />
 			</div>
 		</div>
 	</div>

@@ -1,8 +1,8 @@
 <script lang="ts">
-	import { uiTextElements, state } from '$lib/store';
+	import { textElements, template } from '$lib/store';
 	export let id: number;
 
-	$: textElement = $uiTextElements.get(id)!;
+	$: textElement = $textElements.get(id)!;
 </script>
 
 <div
@@ -18,41 +18,39 @@
 	on:focus={() => console.log('focus')}
 	id={`text-element-${id}-template`}
 	style="--color: {textElement.color}; 
-	--font-size: {(textElement.fontSize || 0.22) * $state.template.relativeUnit}px; 
+	--font-size: {(textElement.fontSize || 0.22) * $template.relativeUnit}px; 
 	--transform-left: {textElement.leftTransform || 0}px; 
 	--transform-top: {textElement.topTransform || 0}px;
 	--font-weight: {textElement.fontWeight};
 	--font-style: {textElement.fontStyle || 'normal'};
 	--text-decoration: {textElement.textDecoration || 'normal'};
-	--padding-top: {(textElement.padding.top || 0) * $state.template.relativeUnit}px;
-	--padding-right: {(textElement.padding.right || 0) * $state.template.relativeUnit}px;
-	--padding-bottom: {(textElement.padding.bottom || 0) * $state.template.relativeUnit}px;
-	--padding-left: {(textElement.padding.left || 0) * $state.template.relativeUnit}px;
+	--padding-top: {(textElement.padding.top || 0) * $template.relativeUnit}px;
+	--padding-right: {(textElement.padding.right || 0) * $template.relativeUnit}px;
+	--padding-bottom: {(textElement.padding.bottom || 0) * $template.relativeUnit}px;
+	--padding-left: {(textElement.padding.left || 0) * $template.relativeUnit}px;
 	--margin-top: {typeof textElement.margin.top === 'number'
-		? `${(textElement.margin.top || 0) * $state.template.relativeUnit}px`
+		? `${(textElement.margin.top || 0) * $template.relativeUnit}px`
 		: textElement.margin.top};
 	--margin-right: {typeof textElement.margin.right === 'number'
-		? `${(textElement.margin.right || 0) * $state.template.relativeUnit}px`
+		? `${(textElement.margin.right || 0) * $template.relativeUnit}px`
 		: textElement.margin.right};
 	--margin-bottom: {typeof textElement.margin.bottom === 'number'
-		? `${(textElement.margin.bottom || 0) * $state.template.relativeUnit}px`
+		? `${(textElement.margin.bottom || 0) * $template.relativeUnit}px`
 		: textElement.margin.bottom};
 	--margin-left: {typeof textElement.margin.left === 'number'
-		? `${(textElement.margin.left || 0) * $state.template.relativeUnit}px`
+		? `${(textElement.margin.left || 0) * $template.relativeUnit}px`
 		: textElement.margin.left};
 	--border-color: {textElement.border.color};
-	--border-top-width: {(textElement.border.width.top || 0) * $state.template.relativeUnit}px;
-	--border-right-width: {(textElement.border.width.right || 0) * $state.template.relativeUnit}px;
-	--border-bottom-width: {(textElement.border.width.bottom || 0) * $state.template.relativeUnit}px;
-	--border-left-width: {(textElement.border.width.left || 0) * $state.template.relativeUnit}px;
-	--border-top-left-radius: {(textElement.border.radius.topLeft || 0) *
-		$state.template.relativeUnit}px;
-	--border-top-right-radius: {(textElement.border.radius.topRight || 0) *
-		$state.template.relativeUnit}px; 
+	--border-top-width: {(textElement.border.width.top || 0) * $template.relativeUnit}px;
+	--border-right-width: {(textElement.border.width.right || 0) * $template.relativeUnit}px;
+	--border-bottom-width: {(textElement.border.width.bottom || 0) * $template.relativeUnit}px;
+	--border-left-width: {(textElement.border.width.left || 0) * $template.relativeUnit}px;
+	--border-top-left-radius: {(textElement.border.radius.topLeft || 0) * $template.relativeUnit}px;
+	--border-top-right-radius: {(textElement.border.radius.topRight || 0) * $template.relativeUnit}px; 
 	--border-bottom-right-radius: {(textElement.border.radius.bottomRight || 0) *
-		$state.template.relativeUnit}px; 
+		$template.relativeUnit}px; 
 	--border-bottom-left-radius: {(textElement.border.radius.bottomLeft || 0) *
-		$state.template.relativeUnit}px;
+		$template.relativeUnit}px;
 	"
 >
 	<span>&#123;</span><span class="text-element"

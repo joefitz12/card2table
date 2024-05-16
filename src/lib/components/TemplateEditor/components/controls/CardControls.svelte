@@ -1,6 +1,6 @@
 <script lang="ts">
-	import '../../../../styles/controls.css';
-	import { state } from '$lib/store';
+	import '../../../../../styles/controls.css';
+	import { template } from '$lib/store';
 </script>
 
 <div class="flex column">
@@ -11,7 +11,7 @@
 		<div class="flex row">
 			<div class="flex column">
 				<label for="card-template-unit">Unit</label>
-				<select id="card-template-unit" bind:value={$state.template.unit}>
+				<select id="card-template-unit" bind:value={$template.unit}>
 					<option selected>in</option>
 					<option>cm</option>
 				</select>
@@ -25,7 +25,7 @@
 					id="card-template-width"
 					step="0.01"
 					min="0"
-					bind:value={$state.template.width}
+					bind:value={$template.width}
 				/>
 			</div>
 			<div class="flex column">
@@ -35,7 +35,7 @@
 					id="card-template-height"
 					step="0.01"
 					min="0"
-					bind:value={$state.template.height}
+					bind:value={$template.height}
 				/>
 			</div>
 		</div>
@@ -49,7 +49,7 @@
 						id={`card-template-padding-top`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.padding.top}
+						bind:value={$template.padding.top}
 					/>
 				</div>
 				<div class="flex column">
@@ -59,7 +59,7 @@
 						id={`card-template-padding-right`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.padding.right}
+						bind:value={$template.padding.right}
 					/>
 				</div>
 				<div class="flex column">
@@ -69,7 +69,7 @@
 						id={`card-template-padding-bottom`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.padding.bottom}
+						bind:value={$template.padding.bottom}
 					/>
 				</div>
 				<div class="flex column">
@@ -79,7 +79,7 @@
 						id={`card-template-padding-left`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.padding.left}
+						bind:value={$template.padding.left}
 					/>
 				</div>
 			</div>
@@ -88,7 +88,7 @@
 </div>
 <div class="flex column">
 	<div class="flex row header">
-		<input type="color" id={`border-color`} bind:value={$state.template.border.color} />
+		<input type="color" id={`border-color`} bind:value={$template.border.color} />
 		<h3>Border</h3>
 	</div>
 	<div class="flex column container">
@@ -102,7 +102,7 @@
 						id={`card-template-border-width-top`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.border.width.top}
+						bind:value={$template.border.width.top}
 					/>
 				</div>
 				<div class="flex column">
@@ -112,7 +112,7 @@
 						id={`card-template-border-width-right`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.border.width.right}
+						bind:value={$template.border.width.right}
 					/>
 				</div>
 				<div class="flex column">
@@ -122,7 +122,7 @@
 						id={`card-template-border-width-bottom`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.border.width.bottom}
+						bind:value={$template.border.width.bottom}
 					/>
 				</div>
 				<div class="flex column">
@@ -132,7 +132,7 @@
 						id={`card-template-border-width-left`}
 						step="0.01"
 						min="0"
-						bind:value={$state.template.border.width.left}
+						bind:value={$template.border.width.left}
 					/>
 				</div>
 			</div>
@@ -148,7 +148,7 @@
 							id={`card-template-border-radius-top`}
 							step="0.01"
 							min="0"
-							bind:value={$state.template.border.radius.topLeft}
+							bind:value={$template.border.radius.topLeft}
 						/>
 					</div>
 					<div class="flex column">
@@ -158,7 +158,7 @@
 							id={`card-template-border-radius-left`}
 							step="0.01"
 							min="0"
-							bind:value={$state.template.border.radius.bottomLeft}
+							bind:value={$template.border.radius.bottomLeft}
 						/>
 					</div>
 				</div>
@@ -170,7 +170,7 @@
 							id={`card-template-border-radius-right`}
 							step="0.01"
 							min="0"
-							bind:value={$state.template.border.radius.topRight}
+							bind:value={$template.border.radius.topRight}
 						/>
 					</div>
 					<div class="flex column">
@@ -180,7 +180,7 @@
 							id={`card-template-border-radius-bottom`}
 							step="0.01"
 							min="0"
-							bind:value={$state.template.border.radius.bottomRight}
+							bind:value={$template.border.radius.bottomRight}
 						/>
 					</div>
 				</div>

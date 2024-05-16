@@ -77,6 +77,3 @@ export type TextElement = Font & {
 	}
 };
 
-export type ViewerState = {
-	scale?: number;
-};

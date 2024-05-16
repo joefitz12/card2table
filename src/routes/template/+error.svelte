@@ -4,7 +4,3 @@
 </script>
 
 <h1>{status}: {error?.message}</h1>
-<h1>{status}: {error?.message}</h1>
-<h1>{status}: {error?.message}</h1>
-<h1>{status}: {error?.message}</h1>
-<h1>{status}: {error?.message}</h1>

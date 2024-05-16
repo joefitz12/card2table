@@ -5,6 +5,7 @@ import { UITextElement } from './utils/uiTextElement';
 import { cardTemplate } from './api/cardTemplate';
 import { TextElement } from './models/TextElement';
 import { UICardTemplate } from './utils/uiCardTemplate';
+import { CardTemplate } from './models/CardTemplate';
 
 export let count = writable<number>(0);
 
@@ -12,8 +13,8 @@ export const dbTemplates = writable<Map<number, any>>(new Map());
 
 export const uiTemplates = derived(dbTemplates, $dbTemplates => {
     return new Map(Array.from($dbTemplates).map(([id, cardTemplate]) => [id, new UICardTemplate(cardTemplate)]
-    ))
-})
+    ));
+});
 
 export const dbTextElements = writable<Map<number, TextElement & { id: number }>>(new Map());
 
@@ -29,7 +30,7 @@ export const uiTextElements = derived(dbTextElements, ($dbTextElements) => {
 });
 
 export type CardTemplateState = {
-    id: number,
+    id: IDBValidKey,
     title: string,
     unit: 'in' | 'cm' | 'mm',
     height: number,
@@ -96,7 +97,7 @@ export type State = {
     drag: DragState,
     feedback: FeedbackState,
     sidebar: SidebarState,
-    templates: Map<string, CardTemplateState>,
+    templates: Map<IDBValidKey, CardTemplateState>,
     template: CardTemplateState,
     templateId: string,
     print: PrintState
@@ -148,20 +149,11 @@ export let print = writable<PrintState>({
 
 export let selectedTextElements = writable<Map<number, TextElement>>();
 
-const template = derived(state, ($state) => {
+const _template = derived(state, ($state) => {
     return $state.template;
 });
 
-template.subscribe(($template) => {
-    if (!$template) {
-        return;
-    }
-    const { handleDrop, handleDragover, textElementId, ...template } = $template;
 
-    cardTemplate.updateById({
-        template,
-    });
-});
 
 
 // @todo: remove bonus store
@@ -200,11 +192,34 @@ state.subscribe((value) => {
             }
         })
     }
-
-    // set local storage
-    // if (browser) {
-    //     localStorage.setItem('card', JSON.stringify(value));
-    //     // @ts-ignore -- remove this in production
-    //     window['card2table'] = value;
-    // }
 });
+
+///// App
+export const menuExpanded = writable<boolean>(false);
+export const openedTemplates = writable<Map<IDBValidKey, string>>(new Map());
+
+///// Print
+export const csvs = writable<{ filename: string, id: number }[]>([]);
+export const selectedCsv = writable<number>();
+export const cardTemplates = writable<Array<CardTemplate & { id: IDBValidKey }>>();
+export const selectedCardTemplate = writable<number>();
+// export const uiTemplates = derived(cardTemplates, $cardTemplates => {
+//     return $cardTemplates.map((cardTemplate) => [cardTemplate.id, new UICardTemplate(cardTemplate)]
+//     );
+// });
+
+///// Template
+export const template = writable<UICardTemplate>();
+
+template.subscribe(($template) => {
+    if (!$template) {
+        return;
+    }
+    const { handleDrop, handleDragover, textElementId, ...template } = $template;
+
+    cardTemplate.updateById({
+        template,
+    });
+});
+
+export const textElements = writable<Map<IDBValidKey, UITextElement>>(new Map());

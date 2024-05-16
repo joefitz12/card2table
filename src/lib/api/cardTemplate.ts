@@ -9,129 +9,93 @@ import { textElement } from "./textElement";
 
 const cardTemplate = {
     add: function () {
-        let templateId: IDBValidKey;
+        return new Promise<IDBValidKey>((resolve, reject) => {
 
-        db.open((db) => {
-            // Init add Card Template transaction
-            const transaction = db.transaction(['template'], 'readwrite');
-            const template = transaction.objectStore('template');
+            db.open((db) => {
+                // Init add Card Template transaction
+                const transaction = db.transaction(['template'], 'readwrite');
+                const template = transaction.objectStore('template');
 
-            // Add Card
-            const addRequest = template.add(new CardTemplate());
+                // Add Card
+                const addRequest = template.add(new CardTemplate());
 
-            addRequest.onsuccess = () => {
-                templateId = addRequest.result;
-                // Init add to textElement
-                // const textElementTransaction = db.transaction(['textElement'], 'readwrite');
-                // const textElements = textElementTransaction.objectStore('textElement');
-                // const addTextElement = textElements.add([], templateId);
+                addRequest.onsuccess = () => {
+                    return resolve(addRequest.result);
+                };
+                addRequest.onerror = () => {
+                    return reject({ addRequest })
+                };
+            });
+        });
+    },
+    getById: function (id: IDBValidKey) {
+        return new Promise<CardTemplate & { id: IDBValidKey }>((resolve, reject) => {
+            if (!id) {
+                reject(error(404, {
+                    message: 'Not found'
+                }))
+            }
+            db.open((db) => {
+                const transaction = db.transaction(['template']);
+                const templates = transaction.objectStore('template');
 
-                // addTextElement.onsuccess = () => {
-                // Init get all cards transaction
-                const templateTransaction = db.transaction('template');
-                const templates = templateTransaction.objectStore('template');
+                const getTemplate = templates.get(typeof id === 'number' ? id : parseInt(id.toString()));
+
+                getTemplate.onsuccess = () => {
+                    const template = getTemplate.result;
+
+                    if (!template) {
+                        reject('did not find');
+                    }
+
+                    db.close();
+
+                    return resolve(template);
+                };
+
+                getTemplate.onerror = () => {
+                    return reject({ getTemplate });
+                }
+            });
+        });
+    },
+    getAll: function () {
+        return new Promise<Array<CardTemplate & { id: number }>>((resolve, reject) => {
+            db.open((db) => {
+                dbTemplates.update($dbTemplates => {
+                    $dbTemplates.clear();
+                    return $dbTemplates;
+                });
+
+                // Init template transaction
+                const transaction = db.transaction('template');
+                const templates = transaction.objectStore('template');
+                const promiseTemplates: Array<CardTemplate & { id: number }> = [];
 
                 // Get all cards
                 const openCursorRequest = templates.openCursor();
                 openCursorRequest.onsuccess = () => {
                     // Retrieve the cursor from the result
                     let cursor = openCursorRequest.result as IDBCursorWithValue;
-                    const templates = new Map();
 
-                    // Process the cursor and return a promise
-                    processCursor(cursor, (cursor) => {
-                        // Update the collection (`templates`) with the data from the cursor
-                        templates.set(parseInt(cursor.key.toString()), cursor.value);
-                    })
-                        .then(() => {
-                            dbTemplates.set(templates);
-                            console.log('NAVIGATING');
-                            goto(`/template/${templateId}`);
-                        })
-                        .catch((error) => {
-                            console.error('Error processing cursor:', error);
-                        });
+                    if (cursor) {
+                        // Update the collection (`dbTemplates`) with the data from the cursor
+                        dbTemplates.update(($dbTemplates) => $dbTemplates.set(cursor.value.id, cursor.value));
+                        promiseTemplates.push(cursor.value);
+
+                        cursor.continue()
+                    }
+                    else {
+                        return resolve(promiseTemplates);
+                    }
                 };
-                openCursorRequest.onerror = (event) => {
-                    console.log('Open Cursor Request error: ', event);
-                };
-                // }
-            };
-            addRequest.onerror = (event) => {
-                console.log('fail', event);
-            };
-        });
-    },
-    getById: function (id: string | number | undefined) {
-        if (!id) {
-            return error(404, {
-                message: 'Not found'
-            })
-        }
-        db.open((db) => {
-            const transaction = db.transaction(['template']);
-            const templates = transaction.objectStore('template');
-            const getTemplate = templates.get(typeof id === 'string' ? parseInt(id) : id);
-
-            getTemplate.onsuccess = () => {
-                const template = getTemplate.result;
-
-                if (!template) {
-                    console.log('did not find');
-                    return;
+                openCursorRequest.onerror = () => {
+                    return reject({ openCursorRequest });
                 }
-
-                state.update(($state) => {
-                    return {
-                        ...$state,
-                        template: {
-                            ...new UICardTemplate({
-                                ...template,
-                            }),
-                        },
-                    };
-                });
-
-                db.close()
-
-                dbTextElements.update($dbTextElements => {
-                    $dbTextElements.clear();
-                    return $dbTextElements;
-                });
-
-                textElement.getAllByTemplateId(id);
-            };
-        });
-    },
-    getAll: function () {
-        db.open((db) => {
-            dbTemplates.update($dbTemplates => {
-                $dbTemplates.clear();
-                return $dbTemplates;
             });
-
-            // Init template transaction
-            const transaction = db.transaction('template');
-            const templates = transaction.objectStore('template');
-
-            // Get all cards
-            const openCursorRequest = templates.openCursor();
-            openCursorRequest.onsuccess = () => {
-                // Retrieve the cursor from the result
-                let cursor = openCursorRequest.result as IDBCursorWithValue;
-
-                if (!cursor) {
-                    return;
-                }
-
-                // Update the collection (`dbTemplates`) with the data from the cursor
-                dbTemplates.update(($dbTemplates) => $dbTemplates.set(cursor.value.id, cursor.value));
-
-                cursor.continue()
-            };
         });
     },
-    updateById: function ({ template }: { template: InstanceType<typeof CardTemplate> & { id: string | number | undefined } }) {
+    updateById: function ({ template }: { template: CardTemplate & { id: IDBValidKey } }) {
         if (!template.id) {
             return error(404, { message: 'Cannot update, no ID' });
         }
@@ -143,8 +107,8 @@ const cardTemplate = {
             // Update Card
             const updateRequest = templateObjectStore.put(template);
 
-            updateRequest.onsuccess = (event) => {
-                // console.log('success!!!', event);
+            updateRequest.onsuccess = (/* event */) => {
+                // console.log('success!!!');
             };
             updateRequest.onerror = (event) => {
                 console.log('fail', event);
@@ -152,20 +116,22 @@ const cardTemplate = {
         })
     },
     delete: function ({ id }: { id: number }) {
-        db.open(db => {
-            // Init add Card Template transaction
-            const transaction = db.transaction(['template'], 'readwrite');
-            const templateObjectStore = transaction.objectStore('template');
+        return new Promise<void>((resolve, reject) => {
+            db.open(db => {
+                // Init add Card Template transaction
+                const transaction = db.transaction(['template'], 'readwrite');
+                const templateObjectStore = transaction.objectStore('template');
 
-            const deleteRequest = templateObjectStore.delete(id);
+                const deleteRequest = templateObjectStore.delete(id);
 
-            deleteRequest.onsuccess = () => {
-                this.getAll();
-            }
-            deleteRequest.onerror = () => {
-                console.error({ deleteRequest });
-            }
-        })
+                deleteRequest.onsuccess = () => {
+                    return resolve();
+                }
+                deleteRequest.onerror = () => {
+                    return reject({ deleteRequest });
+                }
+            })
+        });
     }
 };
 

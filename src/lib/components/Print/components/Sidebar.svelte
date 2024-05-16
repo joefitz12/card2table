@@ -1,11 +1,10 @@
 <script lang="ts">
 	import PapaParse from 'papaparse';
-	import { dbTemplates, state, print } from '$lib/store';
-	import '../../../styles/controls.css';
+	import { cardTemplates, csvs, selectedCardTemplate, selectedCsv, state, print } from '$lib/store';
+	import '../../../../styles/controls.css';
 	import { cardTemplate } from '$lib/api/cardTemplate';
 	import { csv } from '$lib/api/csv';
 	import { card } from '$lib/api/card';
-	import { writable } from 'svelte/store';
 
 	let collapsed: boolean;
 
@@ -26,17 +25,6 @@
 		if ($print.selectedTemplate) {
 			cardTemplate.getById($print.selectedTemplate);
 		}
-	});
-
-	const csvs = writable<
-		{
-			filename: string;
-			id: number;
-		}[]
-	>([]);
-
-	csv.getAllItems().then((data) => {
-		csvs.set(data);
 	});
 
 	const handleFileUpload = (e: Event) => {
@@ -70,12 +58,6 @@
 	<button on:click={() => updateSidebar({ collapsed: !$state.sidebar.collapsed })}
 		>{$state.sidebar.collapsed ? '<' : '>'}</button
 	>
-	<!-- <div class="flex row collapsible">
-		<button on:click={() => updateSidebar({ activeMenu: 'card' })}>card</button>
-		<button on:click={() => updateSidebar({ activeMenu: 'color' })}>color</button>
-		<button on:click={() => updateSidebar({ activeMenu: 'text' })}>text</button>
-		<button on:click={() => updateSidebar({ activeMenu: 'image' })}>image</button>
-	</div> -->
 	<div
 		class="collapsible"
 		class:collapsed={$state.sidebar.collapsed}
@@ -88,8 +70,8 @@
 				{#each $csvs as { filename, id }}
 					<div class="flex row">
 						<input
-							bind:group={$print.selectedCsv}
-							value={filename}
+							bind:group={$selectedCsv}
+							value={id}
 							id={`csv-${id}`}
 							type="radio"
 							name="choose-csv"
@@ -100,20 +82,20 @@
 			</fieldset>
 			<fieldset class="flex column container">
 				<legend>Choose Template</legend>
-				{#if $dbTemplates}
-					{#each Array.from($dbTemplates) as [id, template]}
-						<div class="flex row">
-							<input
-								bind:group={$print.selectedTemplate}
-								value={id}
-								id={`${id}`}
-								type="radio"
-								name="choose-template"
-							/>
-							<label for={`${id}`}>{template.title}</label>
-						</div>
-					{/each}
-				{/if}
+				<!-- {#if $cardTemplates} -->
+				{#each $cardTemplates as template}
+					<div class="flex row">
+						<input
+							bind:group={$selectedCardTemplate}
+							value={template.id}
+							id={`${template.id}`}
+							type="radio"
+							name="choose-template"
+						/>
+						<label for={`${template.id}`}>{template.title}</label>
+					</div>
+				{/each}
+				<!-- {/if} -->
 			</fieldset>
 			<fieldset class="flex column container">
 				<legend>Page layout</legend>
