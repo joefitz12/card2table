@@ -7,22 +7,15 @@
 		cardTemplate
 			.add()
 			.then((id) => goto(`/template/${id}`))
-			.then(() => {
-				return cardTemplate.getAll();
-			})
-			.then(($cardTemplates) => {
-				console.log({ $cardTemplates });
-				return cardTemplates.set($cardTemplates);
-			})
+			.then(() => cardTemplate.getAll())
+			.then(($cardTemplates) => cardTemplates.set($cardTemplates))
 			.catch((error) => console.error(error));
 	}
 
 	function deleteCard(id: number) {
 		cardTemplate
 			.delete({ id })
-			.then(() => {
-				return cardTemplate.getAll();
-			})
+			.then(() => cardTemplate.getAll())
 			.then(($cardTemplates) => cardTemplates.set($cardTemplates))
 			.catch((error) => console.error(error));
 	}
@@ -89,7 +82,7 @@
 		gap: 0.5rem;
 		transition: transform 60ms ease-in-out, opacity 60ms ease-in-out;
 		background-color: rgba(245, 245, 220, 0.5);
-		z-index: 1;
+		z-index: 2;
 		row-gap: 0.5rem;
 	}
 

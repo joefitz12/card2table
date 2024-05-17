@@ -196,7 +196,7 @@ state.subscribe((value) => {
 
 ///// App
 export const menuExpanded = writable<boolean>(false);
-export const openedTemplates = writable<Map<IDBValidKey, string>>(new Map());
+export const activeTabs = writable<Map<IDBValidKey, { id: IDBValidKey, itemId: IDBValidKey, title: string, type: 'template' | 'palette', }>>(new Map());
 
 ///// Print
 export const csvs = writable<{ filename: string, id: number }[]>([]);

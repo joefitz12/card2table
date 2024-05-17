@@ -24,10 +24,7 @@
 		if ($template?.title) {
 			cardTemplate
 				.getAll()
-				.then(($cardTemplates) => {
-					console.log({ $cardTemplates });
-					return cardTemplates.set($cardTemplates);
-				})
+				.then(($cardTemplates) => cardTemplates.set($cardTemplates))
 				.catch((error) => console.error(error));
 		}
 	}

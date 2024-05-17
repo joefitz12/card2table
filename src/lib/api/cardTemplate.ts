@@ -1,16 +1,10 @@
-import { goto } from "$app/navigation";
 import { db } from "$lib/db";
 import { CardTemplate } from "$lib/models/CardTemplate";
-import { dbTemplates, dbTextElements, state } from "$lib/store";
-import { processCursor } from "$lib/utils/processCursor";
-import { UICardTemplate } from "$lib/utils/uiCardTemplate";
 import { error } from "@sveltejs/kit";
-import { textElement } from "./textElement";
 
 const cardTemplate = {
     add: function () {
         return new Promise<IDBValidKey>((resolve, reject) => {
-
             db.open((db) => {
                 // Init add Card Template transaction
                 const transaction = db.transaction(['template'], 'readwrite');
@@ -62,11 +56,6 @@ const cardTemplate = {
     getAll: function () {
         return new Promise<Array<CardTemplate & { id: number }>>((resolve, reject) => {
             db.open((db) => {
-                dbTemplates.update($dbTemplates => {
-                    $dbTemplates.clear();
-                    return $dbTemplates;
-                });
-
                 // Init template transaction
                 const transaction = db.transaction('template');
                 const templates = transaction.objectStore('template');
@@ -79,8 +68,6 @@ const cardTemplate = {
                     let cursor = openCursorRequest.result as IDBCursorWithValue;
 
                     if (cursor) {
-                        // Update the collection (`dbTemplates`) with the data from the cursor
-                        dbTemplates.update(($dbTemplates) => $dbTemplates.set(cursor.value.id, cursor.value));
                         promiseTemplates.push(cursor.value);
 
                         cursor.continue()

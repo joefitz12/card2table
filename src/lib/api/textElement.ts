@@ -1,9 +1,7 @@
 import { db } from "$lib/db";
 import { TextElement } from "$lib/models/TextElement";
-import { dbTextElements } from "$lib/store";
 import { UITextElement } from "$lib/utils/uiTextElement";
 import { error } from "@sveltejs/kit";
-import { get, type Writable } from "svelte/store";
 
 export const textElement = {
     add: function ({ templateId }: { templateId: number }) {

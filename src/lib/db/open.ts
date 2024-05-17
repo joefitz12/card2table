@@ -17,7 +17,6 @@ export function open(callback: (db: IDBDatabase) => void) {
                     (e.target as IDBDatabase).close(); // Manually close our connection to the db
                 }
             };
-
         };
         // This event is only implemented in recent browsers
         openRequest.onupgradeneeded = () => {

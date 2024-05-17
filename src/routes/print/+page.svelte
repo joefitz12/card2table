@@ -1,5 +1,5 @@
 <script>
-	import PrintLayout from '$lib/components/Print/PrintLayout.svelte';
+	import PrintLayout from '$lib/components/PrintLayout/PrintLayout.svelte';
 </script>
 
 <PrintLayout />
