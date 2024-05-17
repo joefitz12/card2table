@@ -1,7 +1,8 @@
 import { Menu } from "./Menu";
-import { PrintLayout } from "./Print";
+import { PrintLayout } from "./PrintLayout";
+import { Tabs } from "./Tabs"
 import { TemplateEditor } from "./TemplateEditor";
 
 export {
-    Menu, PrintLayout, TemplateEditor
+    Menu, PrintLayout, Tabs, TemplateEditor
 }

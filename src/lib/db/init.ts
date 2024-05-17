@@ -1,4 +1,7 @@
 export function init(db: IDBDatabase) {
+    /////////////////////////////
+    //////// Template ///////////
+    /////////////////////////////
     try {
         // @todo - remove for production
         db.deleteObjectStore('template');
@@ -18,20 +21,24 @@ export function init(db: IDBDatabase) {
     }
     try {
         // @todo - remove for production
-        db.deleteObjectStore('template-list');
+        db.deleteObjectStore('templateList');
     }
     catch (e) {
         console.error(e);
     }
     try {
         // Create an objectStore for templates
-        const templateListStore = db.createObjectStore('template-list', {
+        const templateListStore = db.createObjectStore('templateList', {
             keyPath: 'id'
         });
     }
     catch (e) {
         console.error(e)
     }
+
+    /////////////////////////////
+    //////// Text Element ///////
+    /////////////////////////////
     try {
         // @todo - remove for production
         db.deleteObjectStore('textElement');
@@ -50,13 +57,10 @@ export function init(db: IDBDatabase) {
     catch (e) {
         console.error(e);
     }
-    // try {
-    //     // Create an objectStore for collections
-    //     const collectionStore = db.createObjectStore('collection', { autoIncrement: true });
-    // }
-    // catch (e) {
-    //     console.error(e);
-    // }
+
+    /////////////////////////////
+    ////////// CSV //////////////
+    /////////////////////////////
     try {
         // @todo - remove for production
         db.deleteObjectStore('csv');
@@ -92,6 +96,21 @@ export function init(db: IDBDatabase) {
     catch (e) {
         console.error(e);
     }
+
+    /////////////////////////////
+    //////// Collection /////////
+    /////////////////////////////
+    // try {
+    //     // Create an objectStore for collections
+    //     const collectionStore = db.createObjectStore('collection', { autoIncrement: true });
+    // }
+    // catch (e) {
+    //     console.error(e);
+    // }
+
+    /////////////////////////////
+    ////////// Palette //////////
+    /////////////////////////////   
     // try {
     //     // Create an objectStore for palettes
     //     const palleteStore = db.createObjectStore('palette', { autoIncrement: true });
@@ -99,4 +118,26 @@ export function init(db: IDBDatabase) {
     // catch (e) {
     //     console.error(e);
     // }
+
+    /////////////////////////////
+    /////////// UI //////////////
+    /////////////////////////////
+    try {
+        // @todo - remove for production
+        db.deleteObjectStore('tabList');
+    }
+    catch (e) {
+        console.error(e);
+    }
+    try {
+        // Create an objectStore for tabList
+        const tabList = db.createObjectStore('tabList', {
+            keyPath: 'id',
+            autoIncrement: true
+        });
+        tabList.createIndex('itemId', 'itemId');
+    }
+    catch (e) {
+        console.error(e)
+    }
 }
