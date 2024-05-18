@@ -21,6 +21,7 @@
 	.editor {
 		flex-grow: 1;
 		position: relative;
+		min-height: 0;
 	}
 	.main {
 		flex-grow: 1;

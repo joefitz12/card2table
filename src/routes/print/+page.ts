@@ -4,6 +4,7 @@ import { cardTemplates, csvs, selectedCardTemplate, selectedCsv } from "$lib/sto
 import { get } from "svelte/store";
 
 export function load() {
+    // get templates
     cardTemplate.getAll().then(templates => {
         cardTemplates.set(templates);
         if (!get(selectedCardTemplate)) {
@@ -11,6 +12,7 @@ export function load() {
         }
     }).catch((reason) => console.error({ reason }));
     // @todo: break out into utility function
+    // get all CSVs
     csv.getAll().then((files) => {
         csvs.set(files);
         if (!get(selectedCsv)) {

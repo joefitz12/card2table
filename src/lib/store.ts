@@ -7,27 +7,6 @@ import { TextElement } from './models/TextElement';
 import { UICardTemplate } from './utils/uiCardTemplate';
 import { CardTemplate } from './models/CardTemplate';
 
-export let count = writable<number>(0);
-
-export const dbTemplates = writable<Map<number, any>>(new Map());
-
-export const uiTemplates = derived(dbTemplates, $dbTemplates => {
-    return new Map(Array.from($dbTemplates).map(([id, cardTemplate]) => [id, new UICardTemplate(cardTemplate)]
-    ));
-});
-
-export const dbTextElements = writable<Map<number, TextElement & { id: number }>>(new Map());
-
-dbTextElements.subscribe(() => console.log('updating'));
-
-export const uiTextElements = derived(dbTextElements, ($dbTextElements) => {
-    const newTextElements = new Map(Array.from($dbTextElements).map(([id, textElement]) => {
-        console.log({ id, textElement });
-        return [id, new UITextElement({ ...textElement })];
-    }
-    ));
-    return newTextElements;
-});
 
 export type CardTemplateState = {
     id: IDBValidKey,
@@ -147,32 +126,6 @@ export let print = writable<PrintState>({
     selectedCsv: '',
 });
 
-export let selectedTextElements = writable<Map<number, TextElement>>();
-
-const _template = derived(state, ($state) => {
-    return $state.template;
-});
-
-
-
-
-// @todo: remove bonus store
-export const textElementsStore = writable<{ templateId: string, textElements: UITextElement[] }>({ templateId: '', textElements: [] });
-
-textElementsStore.subscribe(($textElements) => {
-    if (!get(state).template) {
-        return;
-    }
-    const {
-        textElements,
-    } = $textElements;
-
-    if (!textElements.length) {
-        console.log('EMPTY SET!!!!');
-    }
-    // textElement.update({ templateId: parseInt(get(state).template.id), textElements });
-});
-
 state.subscribe((value) => {
     const {
         template,
@@ -194,24 +147,31 @@ state.subscribe((value) => {
     }
 });
 
-///// App
+///////////////
+///// App /////
+///////////////
 export const menuExpanded = writable<boolean>(false);
 export const sidebarExpanded = writable<boolean>(false);
 export const activeSidebarMenu = writable<'card' | 'color' | 'text' | 'image' | 'print'>('card');
 export const activeTabs = writable<Map<IDBValidKey, { id: IDBValidKey, itemId: IDBValidKey, title: string, type: 'template' | 'palette', }>>(new Map());
 export const activeView = writable<'template' | 'print'>('template');
 
-///// Print
+////////////////////
+/////// Print //////
+////////////////////
 export const csvs = writable<{ filename: string, id: number }[]>([]);
-export const selectedCsv = writable<number>();
+export const selectedCsv = writable<IDBValidKey>();
 export const selectedCardTemplate = writable<number>();
 export const cardTemplates = writable<Array<CardTemplate & { id: IDBValidKey }>>();
+export const cards = writable<Map<IDBValidKey, { [x: string]: string }>>(new Map());
 // export const uiTemplates = derived(cardTemplates, $cardTemplates => {
 //     return $cardTemplates.map((cardTemplate) => [cardTemplate.id, new UICardTemplate(cardTemplate)]
 //     );
 // });
 
-///// Template
+////////////////////
+///// Template /////
+////////////////////
 export const template = writable<UICardTemplate>();
 
 template.subscribe(($template) => {

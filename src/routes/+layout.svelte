@@ -81,6 +81,7 @@
 		justify-content: space-between;
 		align-items: center;
 		height: 48px;
+		min-height: 48px;
 	}
 	main {
 		flex-grow: 1;

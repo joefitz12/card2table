@@ -1,6 +1,6 @@
 <script lang="ts">
 	import PapaParse from 'papaparse';
-	import { cardTemplates, csvs, selectedCardTemplate, selectedCsv, print } from '$lib/store';
+	import { cardTemplates, csvs, selectedCardTemplate, selectedCsv, print, cards } from '$lib/store';
 	import '../sidebar.css';
 	import { csv } from '$lib/api/csv';
 	import { card } from '$lib/api/card';
@@ -16,14 +16,24 @@
 		PapaParse.parse(file, {
 			header: true,
 			complete: (results) => {
-				const cards = results.data as { [x: string]: string }[];
 				csv
 					.add({
 						filename: file.name,
 					})
+					.then((csvId) =>
+						card.addMany({ csvId, cards: results.data as { [x: string]: string }[] })
+					)
 					.then((csvId) => {
-						card.addMany({ csvId, cards });
-					});
+						selectedCsv.set(csvId);
+
+						return card.getAllByCsvId(csvId);
+					})
+					.then((data) => {
+						cards.set(data);
+
+						return csv.getAll();
+					})
+					.then((data) => csvs.set(data));
 			},
 		});
 	};
@@ -35,6 +45,15 @@
 				csvs.set(data);
 			})
 			.catch((error) => console.error({ error }));
+		if ($selectedCsv) {
+			card.getAllByCsvId($selectedCsv).then((_cards) => cards.set(_cards));
+		}
+	});
+
+	selectedCsv.subscribe((csvId) => {
+		if (csvId) {
+			card.getAllByCsvId(csvId).then((_cards) => cards.set(_cards));
+		}
 	});
 </script>
 

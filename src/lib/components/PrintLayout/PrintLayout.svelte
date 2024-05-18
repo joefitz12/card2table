@@ -1,9 +1,7 @@
 <script lang="ts">
-	import { csvs, print, state, template, uiTextElements } from '$lib/store';
-	import type { UICardTemplate } from '$lib/utils/uiCardTemplate';
-	import type { UITextElement } from '$lib/utils/uiTextElement';
+	import { csv } from '$lib/api/csv';
+	import { cards, csvs, print, selectedCsv, template, textElements } from '$lib/store';
 
-	let textElements: Map<number, UITextElement>;
 	let rowsPerPage: Number;
 
 	$: {
@@ -13,9 +11,16 @@
 	// let columnGap = 0.5;
 	let rowGap = 0.5;
 
-	uiTextElements.subscribe(($uiTextElements) => {
-		textElements = $uiTextElements;
-	});
+	// get all CSVs
+	csv
+		.getAll()
+		.then((files) => {
+			csvs.set(files);
+			if (!$selectedCsv) {
+				selectedCsv.set(files[0]?.id);
+			}
+		})
+		.catch((reason) => console.error({ reason }));
 </script>
 
 <div class="flex row print-container">
@@ -34,7 +39,7 @@
 				<div class="flex column align-center"><span>Page too small =(</span></div>
 			{/if}
 			{#if $csvs.length && !($print.width < $template.width || $print.height < $template.height)}
-				{#each [0] as card}
+				{#each [...$cards.values()] as card}
 					<div
 						class="card-template"
 						style="--card-height: {($template.height || 3.43) + ($template.unit || 'in')}; 
@@ -64,20 +69,19 @@
                         "
 					>
 						<div class="overlay" />
-						{#if $template}
-							{#each Array.from(textElements) as [key, textElement]}
-								<div
-									class="text-element-container"
-									class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
-									style="--color: {textElement.color}; 
+						{#each Array.from($textElements) as [key, textElement]}
+							<div
+								class="text-element-container"
+								class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
+								style="--color: {textElement.color}; 
                                 	--font-size: {(textElement.fontSize || 0.22) +
-										($template.unit || 'in')}; 
+									($template.unit || 'in')}; 
                                 	--transform-left: {(textElement.leftTransform || 0) /
-										$template.relativeUnit +
-										($template.unit || 'in')};
+									$template.relativeUnit +
+									($template.unit || 'in')};
                                		--transform-top: {(textElement.topTransform || 0) /
-										$template.relativeUnit +
-										($template.unit || 'in')};
+									$template.relativeUnit +
+									($template.unit || 'in')};
 									--font-weight: {textElement.fontWeight};
 									--font-style: {textElement.fontStyle || 'normal'};
 									--text-decoration: {textElement.textDecoration || 'normal'};
@@ -92,17 +96,16 @@
 									--border-top-left-radius: {(textElement.border.radius.topLeft || 0) + ($template.unit || 'in')}; 
 									--border-top-right-radius: {(textElement.border.radius.topRight || 0) + ($template.unit || 'in')}; 
 									--border-bottom-right-radius: {(textElement.border.radius.bottomRight || 0) +
-										($template.unit || 'in')};
+									($template.unit || 'in')};
 									--border-bottom-left-radius: {(textElement.border.radius.bottomLeft || 0) +
-										($template.unit || 'in')};
+									($template.unit || 'in')};
 									"
+							>
+								<span class="text-element"
+									>{card[textElement.title.toLowerCase().split(' ').join('-')]}</span
 								>
-									<span class="text-element"
-										>{card[textElement.title.toLowerCase().split(' ').join('-')]}</span
-									>
-								</div>
-							{/each}
-						{/if}
+							</div>
+						{/each}
 					</div>
 				{/each}
 			{/if}
@@ -114,6 +117,7 @@
 	.print-container {
 		position: relative;
 		gap: 0;
+		overflow: scroll;
 	}
 	.preview:not(.empty) {
 		max-width: var(--page-width);

@@ -3,7 +3,6 @@
 	import { afterNavigate, goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { tab } from '$lib/api/tab';
-	import type { Tab } from '$lib/models/Tab';
 	import { activeTabs, menuExpanded, template } from '$lib/store';
 
 	function closeTab(id: IDBValidKey) {
@@ -76,14 +75,18 @@
 			menuExpanded.set(false);
 		}
 	});
+
+	let tabs = $activeTabs;
+
+	activeTabs.subscribe((value) => (tabs = value));
 </script>
 
-<ol class="flex">
-	{#if $activeTabs.size}
-		{#each Array.from($activeTabs.values()) as { id, itemId, title, type }}
+<ol class="tabs flex">
+	{#if tabs.size}
+		{#each Array.from(tabs.values()) as { id, itemId, title, type }}
 			<li class="template flex align-center">
 				<a
-					class:active={$page.url.pathname === `/${type}/${itemId}`}
+					class:active={[`/${type}/${itemId}`, `/${type}/${itemId}/`].includes($page.url.pathname)}
 					aria-label={`Edit ${title}`}
 					href={`/${type}/${itemId}`}>{title}</a
 				>
@@ -104,6 +107,7 @@
 		padding: 0;
 		min-width: 0;
 		overflow-x: auto;
+		overflow-y: clip;
 		max-width: 100%;
 		position: sticky;
 		z-index: 1;
@@ -112,10 +116,12 @@
 		/* @TODO - set dynamic values */
 		top: 48px;
 		height: 34px;
+		min-height: 34px;
 	}
 	ol li {
 		margin: 0;
 		color: lightgrey;
+		padding-right: 0.5rem;
 	}
 	ol li a {
 		padding: 0.5rem;
