@@ -1,4 +1,4 @@
-import { state, textElementsStore } from "$lib/store";
+import { state, textElements } from "$lib/store";
 import { get } from "svelte/store";
 import { CardTemplate } from "$lib/models/CardTemplate";
 import { TextElement } from "$lib/models/TextElement";
@@ -43,16 +43,14 @@ export class UICardTemplate extends CardTemplate {
             const textElementId = e.dataTransfer.getData('text');
 
 
-            textElementsStore.update(($textElementsStore) => {
-                const textElement = $textElementsStore.textElements.find(
-                    (element) => element.id == parseInt(textElementId)
-                );
-                const textElementIndex = $textElementsStore.textElements.findIndex(
+            textElements.update(($textElements) => {
+                const textElement = $textElements.get(textElementId);
+                const textElementIndex = [...$textElements.values()].findIndex(
                     (element) => element.template.id == textElementId
                 );
 
                 if (!textElement) {
-                    return $textElementsStore;
+                    return $textElements;
                 }
 
                 // @TODO: find replacement for layerX / layerY
@@ -71,16 +69,17 @@ export class UICardTemplate extends CardTemplate {
                     !Math.abs(cardOffset.offsetX - get(state).drag.offsetX) ||
                     !Math.abs(cardOffset.offsetY - get(state).drag.offsetY)
                 ) {
-                    return $textElementsStore;
+                    return $textElements;
                 }
 
                 textElement.leftTransform = cardOffset.offsetX - get(state).drag.offsetX;
                 textElement.topTransform = cardOffset.offsetY - get(state).drag.offsetY;
 
-                return {
-                    ...$textElementsStore,
-                    textElements: $textElementsStore.textElements.toSpliced(textElementIndex, 1, textElement)
-                };
+                return $textElements;
+                // return {
+                //     ...$textElements,
+                //     textElements: $textElements.textElements.toSpliced(textElementIndex, 1, textElement)
+                // };
             });
             state.update(($state) => {
                 return {

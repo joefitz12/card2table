@@ -97,7 +97,6 @@ export const textElement = {
 
                     // Cursor is empty
                     if (cursor) {
-                        // dbTextElements.update($dbTextElements => $dbTextElements.set(parseInt(cursor.value.id), cursor.value));
                         textElements.set(parseInt(cursor.value.id), cursor.value);
                         cursor.continue();
                     }
@@ -115,11 +114,6 @@ export const textElement = {
     delete: function ({ id }: { id: IDBValidKey }) {
         return new Promise<void>((resolve, reject) => {
             db.open((db) => {
-                // console.log({
-                //     'get(dbTextElements)': get(dbTextElements)
-                // });
-                // console.log('deleting!!!');
-                // console.log({ id });
                 // Init textElement transaction
                 const transaction = db.transaction('textElement', 'readwrite');
                 const textElements = transaction.objectStore('textElement');

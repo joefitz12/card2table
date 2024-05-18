@@ -13,7 +13,7 @@
 	>
 
 	<div
-		class="flex column collapsible"
+		class="inner-sidebar flex column collapsible"
 		class:collapsed={!$sidebarExpanded}
 		class:expanded={$sidebarExpanded}
 	>
@@ -45,6 +45,10 @@
 		height: 100%;
 		right: 0;
 		width: 1rem;
+	}
+
+	.inner-sidebar {
+		gap: 0.5rem;
 	}
 
 	.choose-editor {
