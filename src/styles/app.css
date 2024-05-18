@@ -4,7 +4,7 @@ html {
 
 body {
 	margin: 0;
-	overflow: scroll;
+	overflow: clip;
 	scrollbar-width: thin;
 	scroll-behavior: smooth;
 }
@@ -64,8 +64,11 @@ button {
 .row,
 .flex:not(.column) {
 	flex-direction: row;
-	gap: 0.5rem;
 	min-width: 0;
+}
+
+.row {
+	gap: 0.5rem;
 }
 
 .wrap {

@@ -1,15 +1,13 @@
 <script lang="ts">
-	import { print, state, uiTextElements } from '$lib/store';
+	import { csvs, print, state, template, uiTextElements } from '$lib/store';
 	import type { UICardTemplate } from '$lib/utils/uiCardTemplate';
 	import type { UITextElement } from '$lib/utils/uiTextElement';
-	import { Sidebar } from './components';
 
-	let selectedTemplate: UICardTemplate | undefined;
 	let textElements: Map<number, UITextElement>;
 	let rowsPerPage: Number;
 
 	$: {
-		rowsPerPage = selectedTemplate ? Math.floor($print.height / selectedTemplate.height) : 0;
+		rowsPerPage = $template ? Math.floor($print.height / $template.height) : 0;
 	}
 
 	// let columnGap = 0.5;
@@ -21,90 +19,82 @@
 </script>
 
 <div class="flex row print-container">
-	{#if selectedTemplate}
+	{#if $template}
 		<div
 			class="preview"
-			class:empty={$print.width < selectedTemplate.width || $print.height < selectedTemplate.height}
-			style="--column-gap: {$print.columnGap + (selectedTemplate.unit || 'in')}; 
-            --row-gap: {rowGap + (selectedTemplate.unit || 'in')}; 
-            --card-width: {(selectedTemplate.width || 2.44) + (selectedTemplate.unit || 'in')};
-            --page-height: {$print.height + (selectedTemplate.unit || 'in')};
-            --page-width: {$print.width + (selectedTemplate.unit || 'in')};
+			class:empty={$print.width < $template.width || $print.height < $template.height}
+			style="--column-gap: {$print.columnGap + ($template.unit || 'in')}; 
+            --row-gap: {rowGap + ($template.unit || 'in')}; 
+            --card-width: {($template.width || 2.44) + ($template.unit || 'in')};
+            --page-height: {$print.height + ($template.unit || 'in')};
+            --page-width: {$print.width + ($template.unit || 'in')};
             --rows-per-page: {rowsPerPage};"
 		>
-			{#if $print.width < selectedTemplate.width || $print.height < selectedTemplate.height}
+			{#if $print.width < $template.width || $print.height < $template.height}
 				<div class="flex column align-center"><span>Page too small =(</span></div>
 			{/if}
-			{#if $state.csvs.length && !($print.width < selectedTemplate.width || $print.height < selectedTemplate.height)}
-				{#each $state.csvs.find((csv) => parseInt(csv.id) === $print.selectedTemplate)?.cards || $state.csvs[0].cards as card}
+			{#if $csvs.length && !($print.width < $template.width || $print.height < $template.height)}
+				{#each [0] as card}
 					<div
 						class="card-template"
-						style="--card-height: {(selectedTemplate.height || 3.43) +
-							(selectedTemplate.unit || 'in')}; 
-                        --card-width: {(selectedTemplate.width || 2.44) +
-							(selectedTemplate.unit || 'in')}; 
-                        --card-border-color: {selectedTemplate.border.color}; 
-						--card-border-top-width: {(selectedTemplate.border.width.top || 0) +
-							(selectedTemplate.unit || 'in')};
-						--card-border-right-width: {(selectedTemplate.border.width.right || 0) +
-							(selectedTemplate.unit || 'in')};
-						--card-border-bottom-width: {(selectedTemplate.border.width.bottom || 0) +
-							(selectedTemplate.unit || 'in')};
-						--card-border-left-width: {(selectedTemplate.border.width.left || 0) +
-							(selectedTemplate.unit || 'in')};
-                        --card-border-top-left-radius: {(selectedTemplate.border.radius.topLeft ||
-							0) + (selectedTemplate.unit || 'in')}; 
-						--card-border-top-right-radius: {(selectedTemplate.border.radius.topRight || 0) +
-							(selectedTemplate.unit || 'in')}; 
-						--card-border-bottom-right-radius: {(selectedTemplate.border.radius.bottomRight || 0) +
-							(selectedTemplate.unit || 'in')};
-						--card-border-bottom-left-radius: {(selectedTemplate.border.radius.bottomLeft || 0) +
-							(selectedTemplate.unit || 'in')};
-                        --card-background-color: {selectedTemplate.backgroundColor}; 
-                        --card-top-padding: {(selectedTemplate.padding.top || 0) +
-							(selectedTemplate.unit || 'in')};
-                        --card-right-padding: {(selectedTemplate.padding.right || 0) +
-							(selectedTemplate.unit || 'in')};
-                        --card-bottom-padding: {(selectedTemplate.padding.bottom || 0) +
-							(selectedTemplate.unit || 'in')};
-                        --card-left-padding: {(selectedTemplate.padding.left || 0) +
-							(selectedTemplate.unit || 'in')};
+						style="--card-height: {($template.height || 3.43) + ($template.unit || 'in')}; 
+                        --card-width: {($template.width || 2.44) + ($template.unit || 'in')}; 
+                        --card-border-color: {$template.border.color}; 
+						--card-border-top-width: {($template.border.width.top || 0) + ($template.unit || 'in')};
+						--card-border-right-width: {($template.border.width.right || 0) + ($template.unit || 'in')};
+						--card-border-bottom-width: {($template.border.width.bottom || 0) + ($template.unit || 'in')};
+						--card-border-left-width: {($template.border.width.left || 0) + ($template.unit || 'in')};
+                        --card-border-top-left-radius: {($template.border.radius.topLeft || 0) +
+							($template.unit || 'in')}; 
+						--card-border-top-right-radius: {($template.border.radius.topRight || 0) +
+							($template.unit || 'in')}; 
+						--card-border-bottom-right-radius: {($template.border.radius.bottomRight || 0) +
+							($template.unit || 'in')};
+						--card-border-bottom-left-radius: {($template.border.radius.bottomLeft || 0) +
+							($template.unit || 'in')};
+                        --card-background-color: {$template.backgroundColor}; 
+                        --card-top-padding: {($template.padding.top || 0) +
+							($template.unit || 'in')};
+                        --card-right-padding: {($template.padding.right || 0) +
+							($template.unit || 'in')};
+                        --card-bottom-padding: {($template.padding.bottom || 0) +
+							($template.unit || 'in')};
+                        --card-left-padding: {($template.padding.left || 0) +
+							($template.unit || 'in')};
                         "
 					>
 						<div class="overlay" />
-						{#if selectedTemplate}
+						{#if $template}
 							{#each Array.from(textElements) as [key, textElement]}
 								<div
 									class="text-element-container"
 									class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
 									style="--color: {textElement.color}; 
                                 	--font-size: {(textElement.fontSize || 0.22) +
-										(selectedTemplate.unit || 'in')}; 
+										($template.unit || 'in')}; 
                                 	--transform-left: {(textElement.leftTransform || 0) /
-										selectedTemplate.relativeUnit +
-										(selectedTemplate.unit || 'in')};
+										$template.relativeUnit +
+										($template.unit || 'in')};
                                		--transform-top: {(textElement.topTransform || 0) /
-										selectedTemplate.relativeUnit +
-										(selectedTemplate.unit || 'in')};
+										$template.relativeUnit +
+										($template.unit || 'in')};
 									--font-weight: {textElement.fontWeight};
 									--font-style: {textElement.fontStyle || 'normal'};
 									--text-decoration: {textElement.textDecoration || 'normal'};
-									--padding-top: {(textElement.padding.top || 0) + (selectedTemplate.unit || 'in')};
-									--padding-right: {(textElement.padding.right || 0) + (selectedTemplate.unit || 'in')};
-									--padding-bottom: {(textElement.padding.bottom || 0) + (selectedTemplate.unit || 'in')};
-									--padding-left: {(textElement.padding.left || 0) + (selectedTemplate.unit || 'in')};
-									--border-top-width: {(textElement.border.width.top || 0) + (selectedTemplate.unit || 'in')};
-									--border-right-width: {(textElement.border.width.right || 0) + (selectedTemplate.unit || 'in')};
-									--border-bottom-width: {(textElement.border.width.bottom || 0) + (selectedTemplate.unit || 'in')};
-									--border-left-width: {(textElement.border.width.left || 0) + (selectedTemplate.unit || 'in')};
-									--border-top-left-radius: {(textElement.border.radius.topLeft || 0) +
-										(selectedTemplate.unit || 'in')}; 
-									--border-top-right-radius: {(textElement.border.radius.topRight || 0) +
-										(selectedTemplate.unit || 'in')}; 
+									--padding-top: {(textElement.padding.top || 0) + ($template.unit || 'in')};
+									--padding-right: {(textElement.padding.right || 0) + ($template.unit || 'in')};
+									--padding-bottom: {(textElement.padding.bottom || 0) + ($template.unit || 'in')};
+									--padding-left: {(textElement.padding.left || 0) + ($template.unit || 'in')};
+									--border-top-width: {(textElement.border.width.top || 0) + ($template.unit || 'in')};
+									--border-right-width: {(textElement.border.width.right || 0) + ($template.unit || 'in')};
+									--border-bottom-width: {(textElement.border.width.bottom || 0) + ($template.unit || 'in')};
+									--border-left-width: {(textElement.border.width.left || 0) + ($template.unit || 'in')};
+									--border-top-left-radius: {(textElement.border.radius.topLeft || 0) + ($template.unit || 'in')}; 
+									--border-top-right-radius: {(textElement.border.radius.topRight || 0) + ($template.unit || 'in')}; 
 									--border-bottom-right-radius: {(textElement.border.radius.bottomRight || 0) +
-										(selectedTemplate.unit || 'in')};
+										($template.unit || 'in')};
 									--border-bottom-left-radius: {(textElement.border.radius.bottomLeft || 0) +
-										(selectedTemplate.unit || 'in')};
+										($template.unit || 'in')};
 									"
 								>
 									<span class="text-element"
@@ -118,32 +108,12 @@
 			{/if}
 		</div>
 	{/if}
-
-	<div class="sidebar">
-		<Sidebar />
-	</div>
 </div>
 
 <style>
 	.print-container {
 		position: relative;
 		gap: 0;
-	}
-	/* .print-layout {
-		position: sticky;
-		top: 0;
-		right: 0;
-		z-index: 1;
-		margin-bottom: auto;
-		background-color: white;
-		filter: drop-shadow(-1px 2px 2px RGBA(0, 0, 0, 0.24));
-	} */
-	.sidebar {
-		border-radius: 4px;
-		overflow: hidden;
-		z-index: 0;
-		position: absolute;
-		right: 0;
 	}
 	.preview:not(.empty) {
 		max-width: var(--page-width);
@@ -233,9 +203,6 @@
 		text-decoration: var(--text-decoration, 'normal');
 	}
 	@media print {
-		.print-layout {
-			display: none;
-		}
 		.preview {
 			background: none;
 			border: none;

@@ -19,8 +19,7 @@ export class UICardTemplate extends CardTemplate {
         padding,
         border,
     }: InstanceType<typeof CardTemplate> & {
-        id: IDBValidKey,
-        textElements: InstanceType<typeof TextElement>[]
+        id: IDBValidKey
     }) {
         super();
         this.id = id;
