@@ -59,7 +59,8 @@
 <style>
 	.overlay {
 		width: 100%;
-		height: 100%;
+		height: calc(100vh - 48px);
+		max-height: calc(100vh - 48px);
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -76,7 +77,8 @@
 		position: absolute;
 		top: 0;
 		left: 0;
-		height: 100%;
+		height: calc(100vh - 48px);
+		max-height: calc(100vh - 48px);
 		width: 300px;
 		padding: 1rem;
 		gap: 0.5rem;

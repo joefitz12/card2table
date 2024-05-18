@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../../../../../styles/controls.css';
+	import '../../../sidebar.css';
 	import { template, textElements } from '$lib/store';
 	import TextElementControl from './TextElementControl.svelte';
 	import { textElement } from '$lib/api/textElement';

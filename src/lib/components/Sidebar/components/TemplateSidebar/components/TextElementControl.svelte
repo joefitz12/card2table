@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { textElement } from '$lib/api/textElement';
-	import type { TextElement } from '$lib/models/TextElement';
 	import { UITextElement } from '$lib/utils/uiTextElement';
-	import { textElements, textElementsStore } from '../../../../store';
+	import { textElements } from '$lib/store';
 	import { beforeUpdate } from 'svelte';
 	export let id: number;
 

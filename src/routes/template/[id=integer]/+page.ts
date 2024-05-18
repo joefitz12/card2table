@@ -8,17 +8,13 @@ import { UITextElement } from "$lib/utils/uiTextElement";
 import { get } from "svelte/store";
 
 export function load({ params }) {
-    const data = {
-
-    }
-
     cardTemplate
         .getById(params.id)
         .then((data) => {
             template.update($template => {
                 return {
                     ...$template,
-                    ...new UICardTemplate({ ...data, textElements: [] }),
+                    ...new UICardTemplate({ ...data }),
                 }
             });
             console.log('getting template');

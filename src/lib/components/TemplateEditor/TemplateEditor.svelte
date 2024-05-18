@@ -1,23 +1,11 @@
 <script lang="ts">
-	import { Card, Sidebar } from './components';
-	// template.subscribe(() => {
-	// 	tabList.update(($tabList) =>
-	// 		$tabList.set(`/template/${$template.id}`, { type: 'template', title: $template.title })
-	// 	);
-	// });
+	import { Card } from './components';
 </script>
 
 <div class="flex template-editor">
-	<!-- <Menu /> -->
 	<div class="card">
 		<Card />
 	</div>
-	<div class="sidebar">
-		<Sidebar />
-	</div>
-	<!-- <div class="canvas">
-		<Canvas />
-	</div> -->
 </div>
 
 <style>
@@ -30,19 +18,6 @@
 		position: relative;
 		min-width: 0;
 	}
-	.sidebar {
-		border-radius: 4px;
-		overflow: hidden;
-		z-index: 0;
-		position: absolute;
-		right: 0;
-	}
-	/* .canvas {
-		position: absolute;
-		height: 100%;
-		width: 100%;
-		pointer-events: none;
-	} */
 	@media screen and (min-width: 680px) {
 		.template-editor {
 			display: flex;

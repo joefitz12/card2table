@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../../../../../styles/controls.css';
+	import '../../../sidebar.css';
 	import { template } from '$lib/store';
 </script>
 

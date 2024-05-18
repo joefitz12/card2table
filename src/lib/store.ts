@@ -196,13 +196,16 @@ state.subscribe((value) => {
 
 ///// App
 export const menuExpanded = writable<boolean>(false);
+export const sidebarExpanded = writable<boolean>(false);
+export const activeSidebarMenu = writable<'card' | 'color' | 'text' | 'image' | 'print'>('card');
 export const activeTabs = writable<Map<IDBValidKey, { id: IDBValidKey, itemId: IDBValidKey, title: string, type: 'template' | 'palette', }>>(new Map());
+export const activeView = writable<'template' | 'print'>('template');
 
 ///// Print
 export const csvs = writable<{ filename: string, id: number }[]>([]);
 export const selectedCsv = writable<number>();
-export const cardTemplates = writable<Array<CardTemplate & { id: IDBValidKey }>>();
 export const selectedCardTemplate = writable<number>();
+export const cardTemplates = writable<Array<CardTemplate & { id: IDBValidKey }>>();
 // export const uiTemplates = derived(cardTemplates, $cardTemplates => {
 //     return $cardTemplates.map((cardTemplate) => [cardTemplate.id, new UICardTemplate(cardTemplate)]
 //     );

@@ -3,7 +3,7 @@
 	import { cardTemplates, template, textElements } from '$lib/store';
 	import { afterUpdate } from 'svelte';
 	import { TextElement } from './components';
-	import { setRelativeUnit } from './setRelativeUnit';
+	import { setRelativeUnit } from '$lib/utils/setRelativeUnit';
 	import { cardTemplate } from '$lib/api/cardTemplate';
 
 	function focus(input: HTMLInputElement) {
@@ -35,7 +35,6 @@
 {#if $template}
 	<div class="flex column template-container">
 		<div class="title">
-			<button type="button">&#9776;</button>
 			<input id="card-title" type="text" bind:value={$template.title} use:focus />
 		</div>
 		<div class="flex card-container" bind:this={cardContainer}>
@@ -84,6 +83,10 @@
 
 	.card-container {
 		flex-grow: 1;
+	}
+
+	.title input {
+		padding: 0.5rem 1rem;
 	}
 
 	.card {
