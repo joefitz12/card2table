@@ -124,6 +124,22 @@ export function init(db: IDBDatabase) {
     /////////////////////////////
     try {
         // @todo - remove for production
+        db.deleteObjectStore('setting');
+    }
+    catch (e) {
+        console.error(e);
+    }
+    try {
+        // Create an objectStore for settings
+        const setting = db.createObjectStore('setting', {
+            keyPath: 'id',
+        });
+    }
+    catch (e) {
+        console.error(e)
+    }
+    try {
+        // @todo - remove for production
         db.deleteObjectStore('tabList');
     }
     catch (e) {

@@ -1,9 +1,8 @@
 <script lang="ts">
 	import '../styles/app.css';
-	import '../styles/controls.css';
 	import { onNavigate } from '$app/navigation';
-	import { menuExpanded } from '$lib/store';
-	import { Menu, Tabs } from '$lib/components';
+	import { Header, Menu, Tabs } from '$lib/components';
+	import { darkTheme } from '$lib/store';
 
 	interface ExtendedDocument extends Document {
 		startViewTransition: any;
@@ -21,29 +20,8 @@
 	});
 </script>
 
-<div class="main-container flex column">
-	<nav>
-		<ul class="flex align-center">
-			<li>
-				<button
-					class="menu flex align-center"
-					on:click={() => menuExpanded.update(($menuExpanded) => !$menuExpanded)}>&#9776;</button
-				>
-			</li>
-			<li>
-				<a class="title" href="/">card2table</a>
-			</li>
-			<!-- <li>
-				<a href="/faq">FAQ</a>
-			</li> -->
-			<!-- <li>
-				<a href="/template">Templates</a>
-			</li> -->
-			<!-- <li>
-				<a href="/print">Print</a>
-			</li> -->
-		</ul>
-	</nav>
+<div class="main-container flex column" data-theme={$darkTheme ? 'dark' : 'default'}>
+	<Header />
 	<main class="flex column">
 		<Menu />
 		<Tabs />
@@ -52,46 +30,69 @@
 </div>
 
 <style>
-	button.menu {
-		background: transparent;
-		border: none;
-		padding: 0rem 1rem;
-		font-size: 2rem;
-		gap: 0.5rem;
-	}
-	a.title {
-		font-size: 1.75rem;
-	}
 	.main-container {
 		gap: 0;
 		height: 100vh;
 		max-width: 100vw;
 		overflow-x: clip;
+		transition: color 150ms ease-in-out, background-color 150ms ease-in-out;
+		background-color: var(--background-color);
+		color: var(--color);
+		position: relative;
 	}
-	ul {
-		padding: 0;
-		gap: 0.5rem;
+	.main-container:after {
+		content: ' ';
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		height: 100vh;
+		width: 100vw;
+		max-width: 100vw;
+		background-image: linear-gradient(
+				to top,
+				var(--light-theme-background-color) 0 30%,
+				var(--dark-theme-background-color) 30% 100%
+			),
+			radial-gradient(circle, pink 1px, rgba(0, 0, 0, 0) 1px);
+		opacity: 0;
+		transition: opacity 150ms ease-in-out;
 	}
-	li {
-		margin: 0;
+	.main-container:before {
+		content: ' ';
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		height: 100vh;
+		width: 100vw;
+		max-width: 100vw;
+		background-image: linear-gradient(
+				to top,
+				var(--dark-theme-background-color) 0 30%,
+				var(--light-theme-background-color) 30% 100%
+			),
+			radial-gradient(circle, pink 1px, rgba(0, 0, 0, 0) 1px);
+		opacity: 1;
+		transition: opacity 150ms ease-in-out;
 	}
-	nav {
-		view-transition-name: header-nav;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		height: 48px;
-		min-height: 48px;
+	.main-container[data-theme='dark'] {
+		--color: var(--dark-theme-color);
+		--background-color: var(--dark-theme-background-color);
+		--transparent-background-color: var(--dark-theme-transparent-background-color);
+	}
+	.main-container[data-theme='dark']:after {
+		opacity: 1;
+	}
+	.main-container[data-theme='dark']:before {
+		opacity: 0;
 	}
 	main {
+		z-index: 1;
 		flex-grow: 1;
 		gap: 0;
 		position: relative;
-	}
-
-	@media print {
-		nav {
-			display: none;
-		}
 	}
 </style>

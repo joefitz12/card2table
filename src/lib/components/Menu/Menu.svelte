@@ -27,7 +27,7 @@
 	on:click={() => menuExpanded.update(($menuExpanded) => !$menuExpanded)}
 	on:keypress={() => null}
 />
-<div class="menu flex column" class:expanded={$menuExpanded} class:collapsed={!$menuExpanded}>
+<div class="menu flex column" class:expanded={$menuExpanded}>
 	<div class="flex row align-center">
 		<h2>Templates</h2>
 		<button
@@ -67,9 +67,9 @@
 		bottom: 0;
 		left: 0;
 		pointer-events: none;
-		z-index: 1;
 	}
 	.overlay.expanded {
+		z-index: 3;
 		pointer-events: all;
 	}
 	.menu {
@@ -83,12 +83,9 @@
 		padding: 1rem;
 		gap: 0.5rem;
 		transition: transform 60ms ease-in-out, opacity 60ms ease-in-out;
-		background-color: rgba(245, 245, 220, 0.5);
-		z-index: 2;
+		background-color: var(--transparent-background-color);
+		z-index: 4;
 		row-gap: 0.5rem;
-	}
-
-	.menu.collapsed {
 		transform: translateX(-100%);
 		opacity: 0;
 	}
@@ -99,9 +96,7 @@
 	}
 	.menu h2 {
 		margin: 0;
-		/* font-weight: 400; */
 	}
-
 	.menu ol {
 		padding: 0;
 		margin: 0;

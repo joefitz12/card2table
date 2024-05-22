@@ -1,5 +1,4 @@
 <script lang="ts">
-	import '../../../../../styles/new.css';
 	import { cardTemplates, template, textElements } from '$lib/store';
 	import { afterUpdate } from 'svelte';
 	import { TextElement } from './components';
@@ -77,18 +76,25 @@
 
 <style>
 	.template-container {
-		--padding: 1rem;
-		height: calc(100% - 2 * var(--padding));
+		height: 100%;
 	}
-
 	.card-container {
 		flex-grow: 1;
 	}
-
-	.title input {
-		padding: 0.5rem 1rem;
+	.title {
+		display: flex;
+		align-items: center;
+		column-gap: 8px;
 	}
-
+	.title input {
+		flex-grow: 1;
+		font-size: 2rem;
+		font-weight: 400;
+		padding: 0.5rem 1rem;
+		border: none;
+		outline: none !important;
+		background: none !important;
+	}
 	.card {
 		margin: auto auto 3rem;
 		position: relative;
@@ -113,7 +119,6 @@
 			var(--card-left-padding);
 		box-sizing: border-box;
 	}
-
 	.card .overlay {
 		position: absolute;
 		height: 100%;

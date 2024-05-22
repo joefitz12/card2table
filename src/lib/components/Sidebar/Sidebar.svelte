@@ -32,37 +32,31 @@
 
 <style>
 	.sidebar {
-		padding: 1rem;
+		padding: 1rem 0rem 1rem 1rem;
+		margin-right: 1rem;
+		border-radius: 0.25rem;
+		overflow-x: hidden;
+		z-index: 0;
+		position: absolute;
+		right: 0;
+		max-height: calc(100vh - 48px - 34px);
 		gap: 0.5rem;
 		animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
-		position: relative;
-		background-color: rgba(255, 255, 255, 0.5);
+		background-color: var(--transparent-background-color);
 	}
-
-	.sidebar::after {
-		content: ' ';
-		position: absolute;
-		height: 100%;
-		right: 0;
-		width: 1rem;
-	}
-
 	.inner-sidebar {
 		gap: 0.5rem;
 	}
-
 	.choose-editor {
 		gap: 0.5rem;
 	}
-
 	.choose-editor button {
 		flex-grow: 1;
+		white-space: nowrap;
 	}
-
 	.collapsible {
 		overflow: visible;
 	}
-
 	@keyframes collapse {
 		from {
 			max-width: 350px;
@@ -74,11 +68,9 @@
 			min-width: 0px;
 		}
 	}
-
 	.collapsed .collapsible {
 		animation: 300ms ease both collapse, 300ms ease both fade-out;
 	}
-
 	@keyframes expand {
 		from {
 			max-width: 0px;
@@ -90,7 +82,6 @@
 			min-width: 350px;
 		}
 	}
-
 	.expanded .collapsible {
 		animation: 300ms ease both expand, 300ms ease both fade-in;
 	}
