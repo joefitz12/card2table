@@ -1,32 +1,59 @@
 html {
-	overflow: hidden;
+	/* Colors */
+	--light: rgba(255, 255, 255, 1);
+	--transparent-light: rgba(255, 255, 255, 0.5);
+	--dark: rgba(43, 43, 43, 1);
+	--transparent-dark: rgba(43, 43, 43, 0.5);
+
+	/* Light theme */
+	--light-theme-color: var(--dark);
+	--light-theme-background-color: var(--light);
+	--light-theme-transparent-background-color: var(--transparent-light);
+	--dark-theme-color: var(--light);
+	--dark-theme-background-color: var(--dark);
+	--dark-theme-transparent-background-color: var(--transparent-dark);
+
+	/* Assignments */
+	--color: var(--light-theme-color);
+	--background-color: var(--light-theme-background-color);
+	--transparent-background-color: var(--light-theme-transparent-background-color);
 }
 
 body {
+	overflow: hidden;
 	margin: 0;
 	overflow: clip;
 	scrollbar-width: thin;
 	scroll-behavior: smooth;
+	color: var(--color);
+	background-color: var(--background-color);
+}
+
+body[data-theme='dark'] {
+	--color: var(--dark-theme-color);
+	--background-color: var(--dark-theme-background-color);
+	--transparent-background-color: var(--dark-theme-transparent-background-color);
+}
+
+a,
+button,
+input,
+option,
+select {
+	color: var(--color);
+}
+
+button,
+input,
+select {
+	background-color: var(--background-color);
+	border: 1px solid;
 }
 
 body,
 input,
 button {
 	font-family: Courier;
-}
-
-nav {
-	background-color: beige;
-	z-index: 1;
-	position: sticky;
-	top: 0;
-	max-height: 3rem;
-	height: 3rem;
-
-	ul {
-		display: flex;
-		margin: 0;
-	}
 }
 
 li {
@@ -36,7 +63,6 @@ li {
 
 a {
 	text-decoration: none;
-	color: black;
 }
 
 input,

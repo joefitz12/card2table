@@ -12,9 +12,7 @@
 			<PrintLayout />
 		{/if}
 	</div>
-	<div class="sidebar">
-		<Sidebar />
-	</div>
+	<Sidebar />
 </div>
 
 <style>
@@ -27,13 +25,6 @@
 		flex-grow: 1;
 		position: relative;
 		min-width: 0;
-	}
-	.sidebar {
-		border-radius: 4px;
-		overflow: hidden;
-		z-index: 0;
-		position: absolute;
-		right: 0;
 	}
 	@media screen and (min-width: 680px) {
 		.editor {

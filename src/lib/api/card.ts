@@ -34,12 +34,7 @@ export const card = {
 
                     addCard.onsuccess = () => {
                         console.log('card added successfully');
-                        console.log({
-                            index,
-                            length: cards.length
-                        })
                         if (index === cards.length - 1) {
-                            console.log('we resolving');
                             return resolve(csvId);
                         }
                     }

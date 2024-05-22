@@ -20,6 +20,11 @@ label {
 
 fieldset label {
     font-weight: 600;
+    white-space: nowrap;
+}
+
+button {
+    background-color: var(--background-color);
 }
 
 button.create {

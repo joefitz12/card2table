@@ -112,7 +112,7 @@
 		position: sticky;
 		z-index: 1;
 		gap: 0;
-		background: whitesmoke;
+		/* background: beige; */
 		/* @TODO - set dynamic values */
 		top: 48px;
 		height: 34px;

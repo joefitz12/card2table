@@ -150,8 +150,9 @@ state.subscribe((value) => {
 ///////////////
 ///// App /////
 ///////////////
+export const darkTheme = writable<boolean>(false);
 export const menuExpanded = writable<boolean>(false);
-export const sidebarExpanded = writable<boolean>(false);
+export const sidebarExpanded = writable<boolean>(true);
 export const activeSidebarMenu = writable<'card' | 'color' | 'text' | 'image' | 'print'>('card');
 export const activeTabs = writable<Map<IDBValidKey, { id: IDBValidKey, itemId: IDBValidKey, title: string, type: 'template' | 'palette', }>>(new Map());
 export const activeView = writable<'template' | 'print'>('template');

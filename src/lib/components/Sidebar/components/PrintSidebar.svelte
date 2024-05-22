@@ -1,9 +1,8 @@
 <script lang="ts">
 	import PapaParse from 'papaparse';
-	import { cardTemplates, csvs, selectedCardTemplate, selectedCsv, print, cards } from '$lib/store';
+	import { csvs, selectedCsv, print, cards } from '$lib/store';
 	import '../sidebar.css';
-	import { csv } from '$lib/api/csv';
-	import { card } from '$lib/api/card';
+	import { card, csv } from '$lib/api';
 	import { onMount } from 'svelte';
 
 	const handleFileUpload = (e: Event) => {
