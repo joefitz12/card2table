@@ -4,7 +4,7 @@ import { init } from "./init";
 export function open(callback: (db: IDBDatabase) => void) {
     if (browser && window.indexedDB) {
         // init db
-        const openRequest = indexedDB.open("Card2Table2", 12);
+        const openRequest = indexedDB.open("Card2Table2", 13);
         openRequest.onerror = () => {
             console.error(`Cannot connect: ${openRequest.error}`);
         };

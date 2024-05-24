@@ -8,7 +8,7 @@
 				.add({ id: 'darkTheme' })
 				.then((success) => console.log(success))
 				.catch((error) => console.error(error));
-		} else {
+		} else if (value !== undefined) {
 			setting.delete('darkTheme').then((success) => console.log(success));
 		}
 	});
@@ -39,7 +39,7 @@
 	</nav>
 	<label class="theme" for="theme-toggle">
 		<input type="checkbox" id="theme-toggle" bind:checked={$darkTheme} />
-		<div class="slider round" class:dark-theme={$darkTheme} />
+		<div class="slider round" class:dark-theme={$darkTheme} class:light-theme={!$darkTheme} />
 	</label>
 </header>
 
@@ -106,35 +106,38 @@
 	.slider.dark-theme {
 		background-color: #2b2b2b;
 	}
-	.slider:before {
-		box-shadow: inset 0.35rem -0.1rem 0 0.01rem #f3d076;
+	.slider.dark-theme:before {
+		box-shadow: inset 0.35rem -0.25rem 0 0.01rem #f3d076;
 		background-color: transparent;
 		bottom: 0.125rem;
 		left: 0.125rem;
-		content: '';
+		content: ' ';
 		height: 1.25rem;
 		width: 1.25rem;
 		position: absolute;
 		transition: 0.4s;
-		opacity: 1;
 	}
-	.slider:after {
-		background-color: pink;
+	.slider.light-theme:before {
+		/* box-shadow: inset 0.35rem -0.25rem 0 0.01rem var(--dark-theme-color); */
+		/* background-color: transparent; */
+		background-color: #f3d076;
+		background-image: radial-gradient(#f3d076, orange);
+		border: 1px dashed orange;
+		box-sizing: border-box;
 		bottom: 0.125rem;
 		left: 0.125rem;
-		content: '';
+		content: ' ';
 		height: 1.25rem;
 		width: 1.25rem;
 		position: absolute;
 		transition: 0.4s;
-		opacity: 0;
 	}
-	.slider.dark-theme:after {
+	/* .slider.dark-theme:after {
 		opacity: 1;
 	}
 	.slider.dark-theme:before {
 		opacity: 0;
-	}
+	} */
 	input:checked + .slider {
 		background-color: #2b2b2b;
 	}

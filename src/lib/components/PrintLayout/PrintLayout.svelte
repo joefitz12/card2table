@@ -137,6 +137,7 @@
 		background-repeat: space repeat;
 		border: 1px dashed red;
 		box-sizing: border-box;
+		height: min-content;
 	}
 	.card-template {
 		margin: auto;

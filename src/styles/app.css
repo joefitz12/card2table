@@ -1,9 +1,19 @@
+@property --color {
+	syntax: "<color>";
+	inherits: false;
+}
+
+@property --background-color {
+	syntax: "<color>";
+	inherits: false;
+}
+
 html {
 	/* Colors */
 	--light: rgba(255, 255, 255, 1);
-	--transparent-light: rgba(255, 255, 255, 0.5);
+	--transparent-light: rgba(255, 255, 255, 0.8);
 	--dark: rgba(43, 43, 43, 1);
-	--transparent-dark: rgba(43, 43, 43, 0.5);
+	--transparent-dark: rgba(43, 43, 43, 0.8);
 
 	/* Light theme */
 	--light-theme-color: var(--dark);
