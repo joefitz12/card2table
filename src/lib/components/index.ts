@@ -1,3 +1,4 @@
+import { Background } from "./Background";
 import { Header } from "./Header";
 import { Home } from "./Home";
 import { Menu } from "./Menu";
@@ -7,5 +8,5 @@ import { Tabs } from "./Tabs"
 import { TemplateEditor } from "./TemplateEditor";
 
 export {
-    Header, Home, Menu, PrintLayout, Sidebar, Tabs, TemplateEditor
+    Background, Header, Home, Menu, PrintLayout, Sidebar, Tabs, TemplateEditor
 }

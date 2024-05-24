@@ -1,6 +1,6 @@
 import { browser } from "$app/environment";
-import { cardTemplate, setting } from "$lib/api";
-import { cardTemplates, darkTheme, selectedCardTemplate } from "$lib/store";
+import { cardTemplate, setting, tab } from "$lib/api";
+import { activeTabs, cardTemplates, darkTheme, selectedCardTemplate } from "$lib/store";
 import { get } from "svelte/store";
 
 export function load() {
@@ -16,6 +16,10 @@ export function load() {
 			darkTheme.set(true);
 		}
 	});
+
+	tab.getAll().then(tabs => {
+		activeTabs.set(tabs);
+	}).catch(error => console.error(error));
 };
 
 

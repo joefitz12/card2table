@@ -1,8 +1,6 @@
-import { cardTemplate } from "$lib/api/cardTemplate";
-import { tab } from "$lib/api/tab.js";
-import { textElement } from "$lib/api/textElement.js";
+import { cardTemplate, setting, tab, textElement } from "$lib/api";
 import { TextElement } from "$lib/models/TextElement.js";
-import { activeTabs, template, textElements } from "$lib/store";
+import { activeTabs, darkTheme, template, textElements } from "$lib/store";
 import { UICardTemplate } from "$lib/utils/uiCardTemplate.js";
 import { UITextElement } from "$lib/utils/uiTextElement";
 import { get } from "svelte/store";
@@ -46,4 +44,10 @@ export function load({ params }) {
         .then(() => tab.getAll())
         .then(tabs => activeTabs.set(tabs))
         .catch(error => console.error(error));
+
+    setting.get('darkTheme').then(value => {
+        if (value) {
+            darkTheme.set(true);
+        }
+    });
 }

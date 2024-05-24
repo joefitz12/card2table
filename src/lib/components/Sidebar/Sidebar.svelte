@@ -54,16 +54,11 @@
 		position: absolute;
 		margin-right: 0.5rem;
 		box-sizing: border-box;
+		overflow: hidden;
 		/* margin: 0.5rem 1rem; */
 	}
-	button.options:hover {
-		background-color: var(--color);
-		color: var(--background-color);
-		border-color: var(--color);
-		transition: 0.2s;
-	}
 	button.options.active {
-		border-color: var(--color);
+		border-color: lightgray;
 		transition: 0.2s;
 	}
 	.inner-sidebar {
@@ -75,8 +70,9 @@
 		background-color: var(--transparent-background-color);
 		gap: 0.5rem;
 		position: absolute;
-		width: 350px;
 		transform-origin: top right;
+		width: min(350px, calc(100vw - 1rem));
+		box-sizing: border-box;
 	}
 	.choose-editor {
 		gap: 0.5rem;
@@ -96,30 +92,8 @@
 			transform: scale(0);
 		}
 	}
-	@keyframes collapse {
-		from {
-			max-width: 350px;
-			min-width: 350px;
-		}
-
-		to {
-			max-width: 0px;
-			min-width: 0px;
-		}
-	}
 	.collapsed {
 		animation: 300ms ease both minimize, 300ms ease both fade-out;
-	}
-	@keyframes expand {
-		from {
-			max-width: 0px;
-			min-width: 0px;
-		}
-
-		to {
-			max-width: 350px;
-			min-width: 350px;
-		}
 	}
 	@keyframes maximize {
 		from {
@@ -131,5 +105,18 @@
 	}
 	.expanded {
 		animation: 300ms ease both maximize, 300ms ease both fade-in;
+	}
+	@media screen and (min-width: 600px) {
+		button.options:hover {
+			background-color: var(--color);
+			color: var(--background-color);
+			border-color: var(--color);
+			transition: 0.2s;
+		}
+	}
+	@media print {
+		.sidebar {
+			display: none;
+		}
 	}
 </style>
