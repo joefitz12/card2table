@@ -29,4 +29,7 @@
 	.fade-in {
 		animation: 300ms ease both fade-in;
 	}
+	button {
+		flex-grow: 1;
+	}
 </style>

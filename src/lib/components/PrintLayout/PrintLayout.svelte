@@ -209,8 +209,8 @@
 	}
 	@media print {
 		.preview {
-			background: none;
-			border: none;
+			background: none !important;
+			border: none !important;
 			overflow: visible;
 		}
 	}
