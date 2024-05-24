@@ -108,12 +108,12 @@
 		border-bottom-left-radius: var(--card-border-bottom-left-radius);
 		background-color: var(--card-background-color);
 		transform-origin: top left;
-		--shadow-color: 0deg 0% 60%;
+		/* --shadow-color: 0deg 0% 60%;
 		--box-shadow: 0px 0.4px 0.6px hsl(var(--shadow-color) / 0.1),
 			0px 1.9px 2.7px -0.2px hsl(var(--shadow-color) / 0.24),
 			0px 4px 5.6px -0.4px hsl(var(--shadow-color) / 0.39),
 			0.1px 8.6px 12.1px -0.6px hsl(var(--shadow-color) / 0.53);
-		box-shadow: var(--box-shadow);
+		box-shadow: var(--box-shadow); */
 		overflow: hidden;
 		padding: var(--card-top-padding) var(--card-right-padding) var(--card-bottom-padding)
 			var(--card-left-padding);

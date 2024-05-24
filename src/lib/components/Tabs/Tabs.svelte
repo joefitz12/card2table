@@ -110,7 +110,7 @@
 		overflow-y: clip;
 		max-width: 100%;
 		position: sticky;
-		z-index: 1;
+		/* z-index: 1; */
 		gap: 0;
 		/* background: beige; */
 		/* @TODO - set dynamic values */
