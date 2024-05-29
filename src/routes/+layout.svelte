@@ -21,12 +21,10 @@
 	});
 </script>
 
-<div
-	class="main-container flex column"
-	class:template={$page.url.pathname.includes('template')}
-	data-theme={$darkTheme ? 'dark' : 'light'}
->
-	<Background />
+<div class="main-container flex column" data-theme={$darkTheme ? 'dark' : 'light'}>
+	{#if !$page.url.pathname.includes('template')}
+		<Background />
+	{/if}
 	<Header />
 	<main class="flex column">
 		<Menu />
@@ -35,7 +33,7 @@
 	</main>
 </div>
 
-<style>
+<style lang="scss">
 	:root {
 		--graph-unit: 65px;
 	}
@@ -48,11 +46,13 @@
 		background-color: var(--background-color);
 		color: var(--color);
 		position: relative;
-	}
-	.main-container[data-theme='dark'] {
-		--color: var(--dark-theme-color);
-		--background-color: var(--dark-theme-background-color);
-		--transparent-background-color: var(--dark-theme-transparent-background-color);
+		overflow: clip;
+
+		&[data-theme='dark'] {
+			--color: var(--dark-theme-color);
+			--background-color: var(--dark-theme-background-color);
+			--transparent-background-color: var(--dark-theme-transparent-background-color);
+		}
 	}
 	main {
 		z-index: 1;

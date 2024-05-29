@@ -76,7 +76,7 @@ export const textElement = {
         });
     },
     getAllByTemplateId: function (templateId: IDBValidKey) {
-        return new Promise<Map<number, TextElement>>((resolve, reject) => {
+        return new Promise<Map<IDBValidKey, TextElement>>((resolve, reject) => {
             if (!templateId) {
                 return error(404, {
                     message: 'Empty templateId'

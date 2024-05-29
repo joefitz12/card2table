@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { activeView, sidebarExpanded, state } from '$lib/store';
+	import { activeView, sidebarExpanded } from '$lib/store';
+	import { onMount } from 'svelte';
 	import { PrintSidebar, TemplateSidebar } from './components';
+
+	let sidebar: HTMLDivElement;
 </script>
 
-<div class="sidebar flex">
+<div class="sidebar flex column" bind:this={sidebar}>
 	<button
 		type="button"
 		class="options"
@@ -28,18 +31,20 @@
 	</div>
 </div>
 
-<style>
+<style lang="scss">
 	.sidebar {
+		align-items: flex-end;
 		justify-content: flex-end;
 		z-index: 0;
 		position: absolute;
-		right: 0;
+		right: 0.5rem;
 		top: 0;
-		max-height: calc(100vh - 48px - 34px);
+		max-height: calc(100vh - 48px);
 		gap: 0.5rem;
-		animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
+		animation: 60ms ease both fade-in;
 	}
 	button.options {
+		flex-shrink: 0;
 		font-size: 2rem;
 		font-weight: 400;
 		height: 2rem;
@@ -51,38 +56,34 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		position: absolute;
-		margin-right: 0.5rem;
 		box-sizing: border-box;
 		overflow: hidden;
-		/* margin: 0.5rem 1rem; */
-	}
-	button.options.active {
-		border-color: lightgray;
-		transition: 0.2s;
+
+		&.active {
+			border-color: lightgray;
+			transition: 0.2s;
+		}
 	}
 	.inner-sidebar {
-		top: 2.5rem;
 		padding: 1rem;
-		margin-right: 0.5rem;
 		border-radius: 0.25rem;
 		border: 1px solid lightgray;
 		background-color: var(--transparent-background-color);
 		gap: 0.5rem;
-		position: absolute;
-		transform-origin: top right;
+		transform-origin: 95% 0%;
 		width: min(350px, calc(100vw - 1rem));
 		box-sizing: border-box;
+		max-height: 100%;
+		overflow-y: scroll;
+		scrollbar-width: thin;
 	}
 	.choose-editor {
 		gap: 0.5rem;
-	}
-	.choose-editor button {
-		flex-grow: 1;
-		white-space: nowrap;
-	}
-	.collapsible {
-		overflow: visible;
+
+		button {
+			flex-grow: 1;
+			white-space: nowrap;
+		}
 	}
 	@keyframes minimize {
 		from {
@@ -92,9 +93,6 @@
 			transform: scale(0);
 		}
 	}
-	.collapsed {
-		animation: 300ms ease both minimize, 300ms ease both fade-out;
-	}
 	@keyframes maximize {
 		from {
 			transform: scale(0);
@@ -103,8 +101,11 @@
 			transform: scale(1);
 		}
 	}
+	.collapsed {
+		animation: 150ms ease both minimize, 175ms ease both fade-out;
+	}
 	.expanded {
-		animation: 300ms ease both maximize, 300ms ease both fade-in;
+		animation: 150ms ease both maximize, 175ms ease both fade-in;
 	}
 	@media screen and (min-width: 600px) {
 		button.options:hover {

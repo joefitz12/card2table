@@ -2,6 +2,8 @@
 	import { textElements, template } from '$lib/store';
 	export let id: number;
 
+	let textElementContainer: HTMLDivElement;
+
 	$: textElement = $textElements.get(id)!;
 </script>
 
@@ -9,9 +11,25 @@
 	class="text-element-container"
 	class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
 	draggable="true"
+	bind:this={textElementContainer}
 	on:dragstart={(e) => {
 		console.log(textElement);
 		textElement.template.onDragstart(e);
+	}}
+	on:click={() => textElement.template.onClick(id)}
+	on:keydown={(event) => {
+		if (event.key === 'Enter' || event.key === ' ') {
+			// Prevent default action if necessary
+			event.preventDefault();
+			// Create a synthetic click event
+			const clickEvent = new MouseEvent('click', {
+				bubbles: true,
+				cancelable: true,
+				view: window,
+			});
+			// Dispatch the synthetic click event
+			textElementContainer.dispatchEvent(clickEvent);
+		}
 	}}
 	on:mouseover={textElement.onMouseover}
 	on:mouseleave={textElement.onMouseleave}

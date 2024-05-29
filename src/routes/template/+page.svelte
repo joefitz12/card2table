@@ -1,8 +1,8 @@
 <script lang="ts">
 	import '../../styles/list.css';
-	import { goto, onNavigate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 	import { cardTemplates } from '$lib/store';
-	import { cardTemplate } from '$lib/api/cardTemplate';
+	import { cardTemplate } from '$lib/api';
 
 	function addNewCard() {
 		cardTemplate
