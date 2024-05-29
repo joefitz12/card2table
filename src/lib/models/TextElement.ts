@@ -18,6 +18,7 @@ export class TextElement {
     leftTransform: number;
     topTransform: number;
     templateId: number;
+    minimized: boolean;
     constructor({ templateId }: { templateId: number }) {
         this.title = `Text Element`
         this.color = '#000000';
@@ -35,5 +36,6 @@ export class TextElement {
         this.leftTransform = 0;
         this.topTransform = 0;
         this.templateId = templateId;
+        this.minimized = false;
     }
 }

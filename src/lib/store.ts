@@ -187,3 +187,4 @@ template.subscribe(($template) => {
 });
 
 export const textElements = writable<Map<IDBValidKey, UITextElement>>(new Map());
+export const refreshElement = writable<IDBValidKey | null>(undefined);

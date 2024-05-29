@@ -1,14 +1,16 @@
+import { textElement } from "$lib/api";
 import { TextElement } from "$lib/models/TextElement";
-import { state } from "$lib/store";
+import { activeSidebarMenu, refreshElement, sidebarExpanded, state, textElements } from "$lib/store";
 
 export class UITextElement extends TextElement {
-    id: number;
+    id: IDBValidKey;
     onMouseover: () => void;
     onMouseleave: () => void;
     getControl: () => HTMLElement | null;
     getTemplate: () => HTMLElement | null;
     template: {
         onDragstart: (e: DragEvent) => void;
+        onClick: (id: IDBValidKey) => void
         id: string;
     };
     control: {
@@ -25,8 +27,9 @@ export class UITextElement extends TextElement {
         textDecoration,
         border,
         padding,
-        margin
-    }: InstanceType<typeof TextElement> & { id: number }) {
+        margin,
+        minimized
+    }: InstanceType<typeof TextElement> & { id: IDBValidKey }) {
         super(({ templateId }));
         this.id = id;
         this.title = title;
@@ -62,7 +65,7 @@ export class UITextElement extends TextElement {
                         }
                     }
                 }
-            })
+            });
         }
         this.getControl = () => document.getElementById(`text-element-${templateId}-control`);
         this.getTemplate = () => document.getElementById(`text-element-${templateId}-template`);
@@ -105,11 +108,24 @@ export class UITextElement extends TextElement {
                 // e.dataTransfer.setDragImage(dragImage, offsetLeft, offsetTop);
                 e.dataTransfer.setData('text/plain', update.elementId);
             },
+            onClick: (id) => {
+                textElement.getById(id)
+                    .then(data => textElement.update({...new UITextElement(data), minimized: false}))
+                    .then(() => {
+                        textElements.update($textElements => {
+                            return $textElements.set(id, {...$textElements.get(id)!, minimized: false})
+                        });
+                        refreshElement.set(id)
+                        sidebarExpanded.set(true);
+                        activeSidebarMenu.set('text')
+                    })
+                    .catch(error => console.error(error));
+            },
             id: `text-element-${templateId}-template`
         };
         this.control = {
             id: `text-element-${templateId}-color`
         };
-
+        this.minimized = minimized;
     }
 };
