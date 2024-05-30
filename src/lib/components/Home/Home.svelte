@@ -2,7 +2,7 @@
 	import { afterUpdate } from 'svelte';
 	import { UICardTemplate } from '$lib/utils/uiCardTemplate';
 	import { CardTemplate } from '$lib/models/CardTemplate';
-	import { activeView, cardTemplates, menuExpanded } from '$lib/store';
+	import { activeView, cardTemplates, darkTheme, menuExpanded } from '$lib/store';
 	import { cardTemplate } from '$lib/api/cardTemplate';
 	import { goto } from '$app/navigation';
 	import { browser } from '$app/environment';
@@ -132,7 +132,7 @@
 						>
 					</div>
 				</div>
-				<div class="shadow" />
+				<div class="shadow" data-theme={$darkTheme ? 'dark' : 'light'} />
 			</div>
 		</div>
 	</div>
@@ -190,7 +190,14 @@
 		background-size: 10% 10%;
 		transform: rotate3d(1, 0, 0, 78deg) skew(8deg);
 		transform-origin: bottom;
+		transition: transform 0.4s, opacity 0.4s;
+		opacity: 0.8;
 		z-index: 2;
+	}
+
+	.shadow[data-theme='light'] {
+		transform: rotate3d(1, 0, 0, 78deg) skew(-16deg);
+		opacity: 0.5;
 	}
 
 	.title {
