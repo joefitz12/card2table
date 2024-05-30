@@ -134,6 +134,7 @@ export function init(db: IDBDatabase) {
         const setting = db.createObjectStore('setting', {
             keyPath: 'id',
         });
+        setting.add({id: 'darkTheme'});
     }
     catch (e) {
         console.error(e)
