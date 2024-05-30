@@ -5,6 +5,7 @@
 	import { activeView, cardTemplates, menuExpanded } from '$lib/store';
 	import { cardTemplate } from '$lib/api/cardTemplate';
 	import { goto } from '$app/navigation';
+	import { browser } from '$app/environment';
 
 	// convert to pixels
 	let cardContainer: HTMLDivElement;
@@ -45,6 +46,18 @@
 			.then(($cardTemplates) => cardTemplates.set($cardTemplates))
 			.catch((error) => console.error(error));
 	}
+
+	// Buttons
+	let createButton: HTMLButtonElement;
+	const createButtonOffset: { x: string | number; y: string | number } = {
+		x: '50%',
+		y: '50%',
+	};
+	let openButton: HTMLButtonElement;
+	const openButtonOffset: { x: string | number; y: string | number } = {
+		x: '50%',
+		y: '50%',
+	};
 </script>
 
 <svelte:window on:resize={() => setRelativeUnit(cardContainer)} />
@@ -85,8 +98,37 @@
 					</div>
 					<span class="type">a Svelte application</span>
 					<div class="button-container flex">
-						<button type="button" on:click={addNewCard}>New card template</button>
-						<button type="button" on:click={() => menuExpanded.set(true)}>Open card template</button
+						<button
+							type="button"
+							bind:this={createButton}
+							on:click={addNewCard}
+							on:mouseover={(e) => {
+								createButtonOffset.x = `${e.pageX - createButton.getBoundingClientRect().left}px`;
+								createButtonOffset.y = `${e.pageY - createButton.getBoundingClientRect().top}px`;
+							}}
+							on:mousemove={(e) => {
+								createButtonOffset.x = `${e.pageX - createButton.getBoundingClientRect().left}px`;
+								createButtonOffset.y = `${e.pageY - createButton.getBoundingClientRect().top}px`;
+							}}
+							on:focus={(e) => console.log(e)}
+							style="--x: {createButtonOffset.x}; --y: {createButtonOffset.y};"
+							>New card template</button
+						>
+						<button
+							type="button"
+							bind:this={openButton}
+							on:click={() => menuExpanded.set(true)}
+							on:mouseover={(e) => {
+								openButtonOffset.x = `${e.pageX - openButton.getBoundingClientRect().left}px`;
+								openButtonOffset.y = `${e.pageY - openButton.getBoundingClientRect().top}px`;
+							}}
+							on:mousemove={(e) => {
+								openButtonOffset.x = `${e.pageX - openButton.getBoundingClientRect().left}px`;
+								openButtonOffset.y = `${e.pageY - openButton.getBoundingClientRect().top}px`;
+							}}
+							on:focus={(e) => console.log(e)}
+							style="--x: {openButtonOffset.x}; --y: {openButtonOffset.y};"
+							>Open card template</button
 						>
 					</div>
 				</div>
@@ -96,7 +138,7 @@
 	</div>
 {/if}
 
-<style>
+<style lang="scss">
 	.template-container {
 		height: 100%;
 	}
@@ -168,18 +210,58 @@
 		justify-content: space-around;
 	}
 
+	@keyframes pulse {
+		from {
+			--pulse: -50%;
+		}
+		to {
+			--pulse: 150%;
+		}
+	}
+
 	button {
+		--pulse: -50%;
+		--x: 50%;
+		--y: 50%;
 		height: calc(var(--card-height) / 4);
 		width: calc(var(--card-height) / 4);
-		background: transparent;
+		background-color: var(--card-background-color);
+		// background: linear-gradient(170deg, var(--magic-rainbow-color-1), var(--magic-rainbow-color-2));
+		background-image: radial-gradient(
+				circle at var(--x) var(--y),
+				var(--card-background-color) 0%,
+				var(--card-background-color) max(var(--pulse) - 50%, 0%),
+				transparent max(var(--pulse), 0%),
+				var(--card-background-color) calc(var(--pulse) + 50%),
+				var(--card-background-color) 100%
+			),
+			linear-gradient(to right, pink 1px, transparent 2px),
+			linear-gradient(to bottom, pink 2px, transparent 2px);
+		// background-image: linear-gradient(
+		// 		115deg,
+		// 		var(--card-background-color) 0%,
+		// 		var(--card-background-color) max(var(--pulse) - 30%, 0%),
+		// 		transparent max(var(--pulse), 0%),
+		// 		var(--card-background-color) calc(var(--pulse) + 30%),
+		// 		var(--card-background-color) 100%
+		// 	),
+		// 	linear-gradient(to right, pink 1px, transparent 2px),
+		// 	linear-gradient(to bottom, pink 2px, transparent 2px);
+		// background-image: linear-gradient(
+		// 	115deg,
+		// 	transparent 0%,
+		// 	transparent max(var(--pulse) - 30%, 0%),
+		// 	pink max(var(--pulse), 0%),
+		// 	transparent calc(var(--pulse) + 30%),
+		// 	transparent 100%
+		// );
+		background-size: cover, 10% 10%, 10% 10%;
 		border-radius: 0.5rem;
 		border: 5px solid pink;
 		font-size: calc(var(--base-font-size) / 2);
-		transition: transform 150ms ease-in-out;
-	}
 
-	button:hover {
-		transform: scale(0.99);
-		transform-origin: bottom;
+		&:hover {
+			animation: pulse 2000ms infinite ease-out;
+		}
 	}
 </style>
