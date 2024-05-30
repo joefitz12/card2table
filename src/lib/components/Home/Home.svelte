@@ -226,7 +226,6 @@
 		height: calc(var(--card-height) / 4);
 		width: calc(var(--card-height) / 4);
 		background-color: var(--card-background-color);
-		// background: linear-gradient(170deg, var(--magic-rainbow-color-1), var(--magic-rainbow-color-2));
 		background-image: radial-gradient(
 				circle at var(--x) var(--y),
 				var(--card-background-color) 0%,
@@ -235,8 +234,9 @@
 				var(--card-background-color) calc(var(--pulse) + 50%),
 				var(--card-background-color) 100%
 			),
-			linear-gradient(to right, pink 1px, transparent 2px),
-			linear-gradient(to bottom, pink 2px, transparent 2px);
+			linear-gradient(to right, lightgreen 1px, transparent 2px),
+			linear-gradient(to bottom, lightgreen 2px, transparent 2px);
+		/* Angled linear gradient */
 		// background-image: linear-gradient(
 		// 		115deg,
 		// 		var(--card-background-color) 0%,
@@ -247,14 +247,6 @@
 		// 	),
 		// 	linear-gradient(to right, pink 1px, transparent 2px),
 		// 	linear-gradient(to bottom, pink 2px, transparent 2px);
-		// background-image: linear-gradient(
-		// 	115deg,
-		// 	transparent 0%,
-		// 	transparent max(var(--pulse) - 30%, 0%),
-		// 	pink max(var(--pulse), 0%),
-		// 	transparent calc(var(--pulse) + 30%),
-		// 	transparent 100%
-		// );
 		background-size: cover, 10% 10%, 10% 10%;
 		border-radius: 0.5rem;
 		border: 5px solid pink;
