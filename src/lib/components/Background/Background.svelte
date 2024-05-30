@@ -15,24 +15,12 @@
 </div>
 
 <style lang="scss">
-	/* .theme-container[data-theme='dark'] {
-		--color: var(--dark-theme-color);
-		--background-color: var(--dark-theme-background-color);
-		--transparent-background-color: var(--dark-theme-transparent-background-color);
-	} */
 	.theme-container[data-theme='dark'] {
 		.dark-theme {
 			opacity: 1;
 		}
 		.light-theme {
 			opacity: 0;
-		}
-		.bottom-portion {
-			background-image: linear-gradient(
-				to bottom,
-				var(--dark-theme-background-color) 0%,
-				var(--dark-theme-color) 100%
-			);
 		}
 	}
 	.theme-container[data-theme='light'] {
@@ -42,14 +30,12 @@
 		.dark-theme {
 			opacity: 0;
 		}
-		.bottom-portion {
-			background-image: linear-gradient(
-				to bottom,
-				var(--light-theme-background-color) 0%,
-				var(--light-theme-color) 100%
-			);
-		}
 	}
+	/* .theme-container[data-theme='dark'] {
+		--color: var(--dark-theme-color);
+		--background-color: var(--dark-theme-background-color);
+		--transparent-background-color: var(--dark-theme-transparent-background-color);
+	} */
 	.background {
 		content: ' ';
 		position: absolute;
@@ -95,5 +81,20 @@
 		height: 30vh;
 		width: 100vw;
 		max-width: 100vw;
+
+		.dark-theme & {
+			background-image: linear-gradient(
+				to bottom,
+				var(--dark-theme-background-color) 0%,
+				var(--dark-theme-color) 100%
+			);
+		}
+		.light-theme & {
+			background-image: linear-gradient(
+				to bottom,
+				var(--light-theme-background-color) 0%,
+				var(--light-theme-color) 100%
+			);
+		}
 	}
 </style>
