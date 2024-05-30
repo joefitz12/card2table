@@ -43,7 +43,7 @@
 	</label>
 </header>
 
-<style>
+<style lang="scss">
 	header {
 		view-transition-name: header;
 		justify-content: space-between;
@@ -84,12 +84,12 @@
 		height: calc(1.5rem + 2px);
 		position: relative;
 		width: calc(2.75rem + 2px);
-	}
-	.theme input {
-		display: none;
+
+		input {
+			display: none;
+		}
 	}
 	.slider {
-		/* background-color: whitesmoke; */
 		bottom: 0;
 		cursor: pointer;
 		left: 0;
@@ -99,58 +99,49 @@
 		transition: 0.4s;
 		border: 1px solid #ccc;
 		border-radius: 1.5rem;
+		&.dark-theme {
+			background-color: #2b2b2b;
+			&:before {
+				box-shadow: inset 0.35rem -0.25rem 0 0.01rem #f3d076;
+				background-color: transparent;
+				bottom: 0.125rem;
+				left: 0.125rem;
+				content: ' ';
+				height: 1.25rem;
+				width: 1.25rem;
+				position: absolute;
+				transition: 0.4s;
+			}
+		}
+		&.light-theme:before {
+			background-color: #f3d076;
+			background-image: radial-gradient(#f3d076, orange);
+			border: 1px dashed orange;
+			box-sizing: border-box;
+			bottom: 0.125rem;
+			left: 0.125rem;
+			content: ' ';
+			height: 1.25rem;
+			width: 1.25rem;
+			position: absolute;
+			transition: 0.4s;
+		}
 	}
-	/* [data-theme='dark'] & {
-			
-	} */
-	.slider.dark-theme {
-		background-color: #2b2b2b;
+	.slider {
+		border-radius: 1.5rem;
+
+		&:before,
+		&:after {
+			border-radius: 50%;
+		}
 	}
-	.slider.dark-theme:before {
-		box-shadow: inset 0.35rem -0.25rem 0 0.01rem #f3d076;
-		background-color: transparent;
-		bottom: 0.125rem;
-		left: 0.125rem;
-		content: ' ';
-		height: 1.25rem;
-		width: 1.25rem;
-		position: absolute;
-		transition: 0.4s;
-	}
-	.slider.light-theme:before {
-		/* box-shadow: inset 0.35rem -0.25rem 0 0.01rem var(--dark-theme-color); */
-		/* background-color: transparent; */
-		background-color: #f3d076;
-		background-image: radial-gradient(#f3d076, orange);
-		border: 1px dashed orange;
-		box-sizing: border-box;
-		bottom: 0.125rem;
-		left: 0.125rem;
-		content: ' ';
-		height: 1.25rem;
-		width: 1.25rem;
-		position: absolute;
-		transition: 0.4s;
-	}
-	/* .slider.dark-theme:after {
-		opacity: 1;
-	}
-	.slider.dark-theme:before {
-		opacity: 0;
-	} */
 	input:checked + .slider {
 		background-color: #2b2b2b;
-	}
-	input:checked + .slider:after,
-	input:checked + .slider:before {
-		transform: translateX(1.25rem);
-	}
-	.slider.round {
-		border-radius: 1.5rem;
-	}
-	.slider.round:after,
-	.slider.round:before {
-		border-radius: 50%;
+
+		&:before,
+		&:after {
+			transform: translateX(1.25rem);
+		}
 	}
 	/* end theme toggle */
 	@media print {
