@@ -4,6 +4,7 @@
 	import { Background, Header, Menu, Tabs } from '$lib/components';
 	import { darkTheme } from '$lib/store';
 	import { page } from '$app/stores';
+	import { browser } from '$app/environment';
 
 	interface ExtendedDocument extends Document {
 		startViewTransition: any;
@@ -19,6 +20,15 @@
 			});
 		});
 	});
+
+	if (browser) {
+		CSS.registerProperty({
+			name: '--pulse',
+			syntax: '<percentage>',
+			inherits: false,
+			initialValue: '0%',
+		});
+	}
 </script>
 
 <div class="main-container flex column" data-theme={$darkTheme ? 'dark' : 'light'}>
