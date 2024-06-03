@@ -96,7 +96,7 @@
 		background: none !important;
 	}
 	.card {
-		margin: auto auto 3rem;
+		margin: 3rem auto auto;
 		position: relative;
 		display: flex;
 		flex-direction: column;
@@ -139,5 +139,11 @@
 		border-bottom-right-radius: var(--card-border-bottom-right-radius);
 		border-bottom-left-radius: var(--card-border-bottom-left-radius);
 		pointer-events: none;
+	}
+
+	@media screen and (min-width: 600px) {
+		.card {
+			margin: auto auto 3rem;
+		}
 	}
 </style>

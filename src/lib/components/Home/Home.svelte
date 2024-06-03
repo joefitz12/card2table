@@ -266,7 +266,7 @@
 
 	@media screen and (min-width: 600px) {
 		.outer-card {
-			margin: 3rem auto auto;
+			margin: auto auto 3rem;
 		}
 	}
 </style>
