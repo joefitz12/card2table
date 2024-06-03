@@ -61,10 +61,15 @@ button.delete:hover {
     background-color: whitesmoke;
 }
 
+fieldset {
+    min-width: 0;
+}
+
 fieldset input {
     max-width: 3rem;
 }
 
 fieldset input[type="file"] {
     max-width: 80%;
+    cursor: pointer;
 }
