@@ -241,8 +241,8 @@
 				var(--card-background-color) calc(var(--pulse) + 50%),
 				var(--card-background-color) 100%
 			),
-			linear-gradient(to right, lightgreen 1px, transparent 2px),
-			linear-gradient(to bottom, lightgreen 2px, transparent 2px);
+			linear-gradient(to right, lightgreen 2qpx, transparent 2px),
+			linear-gradient(to bottom, lightgreen 1px, transparent 2px);
 		/* Angled linear gradient */
 		// background-image: linear-gradient(
 		// 		115deg,
@@ -261,6 +261,12 @@
 
 		&:hover {
 			animation: pulse 2000ms infinite ease-out;
+		}
+	}
+
+	@media screen and (min-width: 600px) {
+		.outer-card {
+			margin: 3rem auto auto;
 		}
 	}
 </style>

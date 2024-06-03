@@ -111,7 +111,7 @@ on:focus={() => currentControl?.onMouseover()}
 on:focusin={() => currentControl?.onMouseover()}
 on:focusout={() => currentControl?.onMouseleave()} -->
 {#if template}
-	<div
+	<li
 		class="flex column container"
 		class:minimized={template.minimized}
 		id={`text-element-${id}-control`}
@@ -446,31 +446,38 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 				</fieldset>
 			</div>
 		</div>
-	</div>
+	</li>
 {/if}
 
 <style lang="scss">
 	.container {
 		// animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
 		animation: 60ms ease both fade-in;
+		flex-shrink: 0;
+		padding-top: 0px;
 	}
-	.header input[type='color'] {
-		border: none;
-		background: none;
-		min-width: 1.5rem;
-		width: 1.5rem;
-		height: 1.5rem;
-		cursor: pointer;
-	}
-	input.title {
-		font-size: 1rem;
-		flex-grow: 1;
+	.header {
+		// margin-top: 0.75rem;
+		flex-shrink: 0;
+		padding-top: 0.75rem;
+		input[type='color'] {
+			border: none;
+			background: none;
+			min-width: 1.5rem;
+			width: 1.5rem;
+			height: 1.5rem;
+			cursor: pointer;
+		}
+		input.title {
+			font-size: 1rem;
+			flex-grow: 1;
 
-		&:focus-visible {
-			outline: none;
+			&:focus-visible {
+				outline: none;
+			}
 		}
 	}
-	button.delete,
+	.header button.delete,
 	button.minimize {
 		background-color: transparent;
 		border: none;
@@ -486,9 +493,10 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 	button.minimize {
 		transition: opacity 150ms ease-in-out;
 		span {
-			transform: translateY(calc(-1rem / 16));
+			// transform: translateY(calc(-1rem / 16));
 			.minimized & {
-				transform: translateY(0);
+				transform: translateY(calc(1rem / 16));
+				// transform: translateY(0);
 			}
 		}
 	}
@@ -498,7 +506,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 	.content {
 		display: grid;
 		grid-template-rows: 1fr;
-		transition: all 150ms ease-in-out;
+		transition: grid-template-rows 150ms ease-in-out, opacity 150ms ease-in-out;
 		.minimized & {
 			margin-top: -0.25rem;
 			opacity: 0;

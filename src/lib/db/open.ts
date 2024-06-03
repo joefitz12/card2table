@@ -11,7 +11,7 @@ export function open(callback: (db: IDBDatabase) => void) {
         openRequest.onsuccess = () => {
             callback(openRequest.result);
 
-            // Close db if 
+            // Close db if there is a version change
             openRequest.result.onversionchange = function (e) {
                 if (e.target && e.newVersion === null) { // An attempt is made to delete the db
                     (e.target as IDBDatabase).close(); // Manually close our connection to the db

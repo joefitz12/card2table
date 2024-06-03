@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { activeView, sidebarExpanded } from '$lib/store';
+	import { activeSidebarMenu, activeView, sidebarExpanded } from '$lib/store';
 	import { onMount } from 'svelte';
 	import { PrintSidebar, TemplateSidebar } from './components';
 
@@ -14,20 +14,35 @@
 		on:click={() => sidebarExpanded.update(($sidebarExpanded) => !$sidebarExpanded)}>&#9881;</button
 	>
 	<div
-		class="inner-sidebar flex column collapsible"
+		class="inner-sidebar flex column"
 		class:collapsed={!$sidebarExpanded}
 		class:expanded={$sidebarExpanded}
 	>
-		<div class="choose-editor flex">
-			<button type="button" on:click={() => activeView.set('print')}>print</button>
-			<button type="button" on:click={() => activeView.set('template')}>edit template</button>
+		<div
+			class="choose-editor flex column"
+			class:add-secondary-header={$activeSidebarMenu === 'text'}
+		>
+			<div class="flex row">
+				<button type="button" on:click={() => activeView.set('print')}>print</button>
+				<button type="button" on:click={() => activeView.set('template')}>edit template</button>
+			</div>
+			{#if $activeView === 'template'}
+				<div class="flex row">
+					<button on:click={() => activeSidebarMenu.set('card')}>card</button>
+					<button on:click={() => activeSidebarMenu.set('color')}>color</button>
+					<button on:click={() => activeSidebarMenu.set('text')}>text</button>
+					<button on:click={() => activeSidebarMenu.set('image')}>image</button>
+				</div>
+			{/if}
 		</div>
-		{#if $activeView === 'template'}
-			<TemplateSidebar />
-		{/if}
-		{#if $activeView === 'print'}
-			<PrintSidebar />
-		{/if}
+		<div class="flex column controls fade-in">
+			{#if $activeView === 'template'}
+				<TemplateSidebar />
+			{/if}
+			{#if $activeView === 'print'}
+				<PrintSidebar />
+			{/if}
+		</div>
 	</div>
 </div>
 
@@ -65,13 +80,13 @@
 		}
 	}
 	.inner-sidebar {
-		padding: 1rem;
+		padding: 0 1rem 1rem;
 		border-radius: 0.25rem;
 		border: 1px solid lightgray;
 		background-color: var(--transparent-background-color);
-		gap: 0.5rem;
+		gap: 0rem;
 		transform-origin: 95% 0%;
-		width: min(350px, calc(100vw - 1rem));
+		width: min(375px, calc(100vw - 1rem));
 		box-sizing: border-box;
 		max-height: 100%;
 		overflow-y: scroll;
@@ -79,10 +94,25 @@
 	}
 	.choose-editor {
 		gap: 0.5rem;
+		min-height: unset;
+		position: sticky;
+		top: 0;
+		background-image: linear-gradient(
+			to top,
+			transparent 0,
+			var(--background-color) 0.25rem,
+			var(--background-color) 100%
+		);
+		z-index: 1;
+		padding: 1rem 0 0.5rem;
 
 		button {
 			flex-grow: 1;
 			white-space: nowrap;
+		}
+
+		&.add-secondary-header {
+			background: var(--background-color);
 		}
 	}
 	@keyframes minimize {
@@ -106,6 +136,9 @@
 	}
 	.expanded {
 		animation: 150ms ease both maximize, 175ms ease both fade-in;
+	}
+	.fade-in {
+		animation: 300ms ease both fade-in;
 	}
 	@media screen and (min-width: 600px) {
 		button.options:hover {

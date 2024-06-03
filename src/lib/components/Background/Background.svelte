@@ -1,5 +1,4 @@
 <script>
-	import { page } from '$app/stores';
 	import { darkTheme } from '$lib/store';
 </script>
 
@@ -19,23 +18,12 @@
 		.dark-theme {
 			opacity: 1;
 		}
-		.light-theme {
-			opacity: 0;
-		}
 	}
 	.theme-container[data-theme='light'] {
-		.light-theme {
-			opacity: 1;
-		}
 		.dark-theme {
 			opacity: 0;
 		}
 	}
-	/* .theme-container[data-theme='dark'] {
-		--color: var(--dark-theme-color);
-		--background-color: var(--dark-theme-background-color);
-		--transparent-background-color: var(--dark-theme-transparent-background-color);
-	} */
 	.background {
 		content: ' ';
 		position: absolute;
@@ -70,7 +58,12 @@
 		background-image: radial-gradient(circle, pink 1px, rgba(0, 0, 0, 0) 1px);
 		background-size: var(--graph-unit) var(--graph-unit);
 		animation: drift 10000ms infinite linear;
-		// transform: rotateZ(22deg);
+		.dark-theme & {
+			background-color: var(--dark-theme-background-color);
+		}
+		.light-theme & {
+			background-color: var(--light-theme-background-color);
+		}
 	}
 	.bottom-portion {
 		content: ' ';
@@ -81,7 +74,6 @@
 		height: 30vh;
 		width: 100vw;
 		max-width: 100vw;
-
 		.dark-theme & {
 			background-image: linear-gradient(
 				to bottom,

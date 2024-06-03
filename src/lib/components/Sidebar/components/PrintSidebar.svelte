@@ -56,10 +56,10 @@
 	});
 </script>
 
-<div class="flex column fade-in">
-	<fieldset class="flex column container">
-		<legend>Choose CSV</legend>
-		<input type="file" accept="text/csv" on:change={handleFileUpload} />
+<fieldset class="flex column container">
+	<legend>Choose CSV</legend>
+	<input type="file" accept="text/csv" on:change={handleFileUpload} />
+	{#if $csvs.length}
 		<div class="flex column">
 			{#each $csvs as { filename, id }}
 				<div class="flex row">
@@ -74,29 +74,22 @@
 				</div>
 			{/each}
 		</div>
-	</fieldset>
-	<fieldset class="flex column container">
-		<legend>Page layout</legend>
-		<div class="flex row">
-			<div class="flex column">
-				<label for="page-width">Page width</label>
-				<input id="page-width" type="number" bind:value={$print.width} step="0.1" />
-			</div>
-			<div class="flex column">
-				<label for="page-height">Page height</label>
-				<input id="page-height" type="number" bind:value={$print.height} step="0.1" />
-			</div>
-			<div class="flex column">
-				<label for="column-gap">Column gap</label>
-				<input id="column-gap" type="number" bind:value={$print.columnGap} step="0.1" />
-			</div>
+	{/if}
+</fieldset>
+<fieldset class="flex column container">
+	<legend>Page layout</legend>
+	<div class="flex row wrap">
+		<div class="flex column">
+			<label for="page-width">Page width</label>
+			<input id="page-width" type="number" bind:value={$print.width} step="0.1" />
 		</div>
-		<div />
-	</fieldset>
-</div>
-
-<style>
-	.fade-in {
-		animation: 300ms ease both fade-in;
-	}
-</style>
+		<div class="flex column">
+			<label for="page-height">Page height</label>
+			<input id="page-height" type="number" bind:value={$print.height} step="0.1" />
+		</div>
+		<div class="flex column">
+			<label for="column-gap">Column gap</label>
+			<input id="column-gap" type="number" bind:value={$print.columnGap} step="0.1" />
+		</div>
+	</div>
+</fieldset>
