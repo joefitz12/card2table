@@ -1,12 +1,16 @@
 <script>
-	import { CardControls, ColorControls, TextElementControls } from './components';
+	import {
+		CardControls,
+		ColorControls,
+		TextElementControl,
+		TextElementControls,
+	} from './components';
 	import { activeElement, activeSidebarMenu } from '$lib/store';
-	import TextElementControl from './components/TextElementControl.svelte';
-	import { fade } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 </script>
 
 {#if $activeSidebarMenu || $activeElement}
-	<div in:fade={{ duration: 120 }}>
+	<div class="container" in:fly={{ opacity: 0, duration: 12000, y: 'calc(100% + 0.5rem)' }}>
 		{#if $activeSidebarMenu === 'card'}
 			<CardControls />
 		{/if}

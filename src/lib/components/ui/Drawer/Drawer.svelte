@@ -14,11 +14,7 @@
 </script>
 
 <div class="column drawer">
-	<div
-		in:fade={{ duration: 120 }}
-		class="flex column controls"
-		class:container={$activeSidebarMenu}
-	>
+	<div in:fade={{ duration: 120 }} class="flex column controls">
 		<!-- {#if $activeView === 'template'} -->
 		<TemplateDrawer />
 		<!-- {/if}
@@ -26,7 +22,7 @@
 			<PrintSidebar />
 		{/if} -->
 	</div>
-	<div class="flex row">
+	<div class="flex row menu">
 		<button on:click={() => toggleActiveMenu('card')}>card</button>
 		<button on:click={() => toggleActiveMenu('color')}>color</button>
 		<button on:click={() => toggleActiveMenu('text')}>text</button>
@@ -37,6 +33,11 @@
 <style lang="scss">
 	.drawer {
 		position: relative;
+	}
+	.menu {
+		position: relative;
+		z-index: 1;
+		background: var(--background-color);
 	}
 	.controls {
 		--gutter: 0.5rem;
