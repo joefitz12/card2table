@@ -18,7 +18,7 @@
 		position: relative;
 		min-width: 0;
 	}
-	@media screen and (min-width: 680px) {
+	@media screen and (min-width: 640px) {
 		.template-editor {
 			display: flex;
 		}

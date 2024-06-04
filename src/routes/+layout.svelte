@@ -38,7 +38,9 @@
 	<Header />
 	<main class="flex column">
 		<Menu />
-		<Tabs />
+		<div class="tabs">
+			<Tabs />
+		</div>
 		<slot />
 	</main>
 </div>
@@ -69,5 +71,15 @@
 		flex-grow: 1;
 		gap: 0;
 		position: relative;
+	}
+	.tabs {
+		flex-basis: 0;
+		grid-template-rows: 0fr;
+		overflow: hidden;
+	}
+	@media screen and (min-width: 640px) {
+		.tabs {
+			flex-basis: auto;
+		}
 	}
 </style>
