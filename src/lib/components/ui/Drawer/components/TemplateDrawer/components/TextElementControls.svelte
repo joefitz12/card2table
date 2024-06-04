@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../../../drawer.css';
-	import { template, textElements } from '$lib/store';
+	import { activeElement, activeSidebarMenu, template, textElements } from '$lib/store';
 	import TextElementControl from './TextElementControl.svelte';
 	import { textElement } from '$lib/api/textElement';
 	import { UITextElement } from '$lib/utils/uiTextElement';
@@ -9,20 +9,26 @@
 	$: templateId = parseInt($template?.id.toString());
 
 	const addTextElement = () => {
+		let addedElementId: IDBValidKey;
+
 		console.log('add text element');
 		textElement
-			.add({ templateId })
-			.then(() => {
+			.add({ templateId, minimized: true })
+			.then((id) => {
+				addedElementId = id;
 				return textElement.getAllByTemplateId(templateId);
 			})
 			.then((data) => {
+				// Get all elements
 				textElements.update(($textElements) => {
+					// Delete any elements that do not exist in query response
 					Array.from($textElements.keys()).forEach((textElement) => {
 						if (!data.get(parseInt(textElement.toString()))) {
 							$textElements.delete(textElement);
 						}
 					});
 
+					// Add any elements missing in state that exist in query response
 					if (data) {
 						Array.from(data.keys()).forEach((key) => {
 							if (!$textElements.get(key)) {
@@ -36,17 +42,20 @@
 
 					return $textElements;
 				});
+				// Set element as active
+				activeSidebarMenu.set(null);
+				activeElement.set(addedElementId);
 			});
 	};
 </script>
 
-<div class="text-element-container flex column">
-	<div class="flex row header">
-		<h3>Text Elements</h3>
-		<button type="button" class="create" on:click={() => addTextElement()}>+</button>
+<div class="text-element-container flex row">
+	<div class="flex row">
+		<button type="button" on:click={() => addTextElement()}>Add text element</button>
+		<button type="button">See all</button>
 	</div>
 
-	{#if $textElements}
+	<!-- {#if $textElements}
 		<ul class="flex column">
 			{#each Array.from($textElements.keys()) as key}
 				{#key key}
@@ -54,19 +63,11 @@
 				{/key}
 			{/each}
 		</ul>
-	{/if}
+	{/if} -->
 </div>
 
 <style>
 	.text-element-container {
 		gap: 0;
-		flex-direction: column-reverse;
-	}
-	.header {
-		padding-bottom: 0.25rem;
-	}
-	ul {
-		margin: 0;
-		padding: 0;
 	}
 </style>

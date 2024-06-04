@@ -77,7 +77,7 @@
 		grid-template-rows: 0fr;
 		overflow: hidden;
 	}
-	@media screen and (min-width: 600px) {
+	@media screen and (min-width: 640px) {
 		.tabs {
 			flex-basis: auto;
 		}

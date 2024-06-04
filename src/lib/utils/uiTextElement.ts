@@ -1,3 +1,4 @@
+import { browser } from "$app/environment";
 import { textElement } from "$lib/api";
 import { TextElement } from "$lib/models/TextElement";
 import { activeElement, activeSidebarMenu, sidebarExpanded, state, textElements } from "$lib/store";
@@ -30,7 +31,7 @@ export class UITextElement extends TextElement {
         margin,
         minimized
     }: InstanceType<typeof TextElement> & { id: IDBValidKey }) {
-        super(({ templateId }));
+        super(({ templateId, minimized }));
         this.id = id;
         this.title = title;
         this.color = color;
@@ -113,11 +114,11 @@ export class UITextElement extends TextElement {
                     .then(data => textElement.update({...new UITextElement(data), minimized: false}))
                     .then(() => {
                         textElements.update($textElements => {
-                            return $textElements.set(id, {...$textElements.get(id)!, minimized: false})
+                            return $textElements.set(id, {...$textElements.get(id)!, minimized: browser && window.innerWidth <= 640 ? true : false})
                         });
                         activeElement.set(id);
                         sidebarExpanded.set(true);
-                        activeSidebarMenu.set('text')
+                        activeSidebarMenu.set(browser && window.innerWidth > 640 ? 'text' : null)
                     })
                     .catch(error => console.error(error));
             },
@@ -126,6 +127,5 @@ export class UITextElement extends TextElement {
         this.control = {
             id: `text-element-${templateId}-color`
         };
-        this.minimized = minimized;
     }
 };

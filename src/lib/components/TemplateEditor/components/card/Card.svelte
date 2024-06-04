@@ -139,7 +139,7 @@
 		pointer-events: none;
 	}
 
-	@media screen and (min-width: 600px) {
+	@media screen and (min-width: 640px) {
 		.card {
 			margin: auto auto 3rem;
 		}

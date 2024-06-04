@@ -4,14 +4,14 @@ import { UITextElement } from "$lib/utils/uiTextElement";
 import { error } from "@sveltejs/kit";
 
 export const textElement = {
-    add: function ({ templateId }: { templateId: number }) {
+    add: function ({ templateId, minimized }: { templateId: number, minimized?: boolean }) {
         return new Promise<IDBValidKey>((resolve, reject) => {
             db.open((db) => {
                 // Init add Card Template transaction
                 const transaction = db.transaction(['textElement'], 'readwrite');
                 const textElements = transaction.objectStore('textElement');
 
-                const addTextElement = textElements.add(new TextElement({ templateId }));
+                const addTextElement = textElements.add(new TextElement({ templateId, minimized }));
 
                 addTextElement.onsuccess = () => {
                     resolve(addTextElement.result)

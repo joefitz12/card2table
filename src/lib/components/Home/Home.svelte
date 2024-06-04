@@ -272,7 +272,7 @@
 		}
 	}
 
-	@media screen and (min-width: 600px) {
+	@media screen and (min-width: 640px) {
 		.outer-card {
 			margin: auto auto 3rem;
 		}

@@ -1,15 +1,24 @@
 <script lang="ts">
 	import { activeElement, activeSidebarMenu } from '$lib/store';
 	import { TemplateDrawer } from './components';
+	import { fade } from 'svelte/transition';
 
-	function setActiveMenu(menu: 'card' | 'color' | 'text' | 'image') {
+	function toggleActiveMenu(menu: 'card' | 'color' | 'text' | 'image') {
+		if ($activeSidebarMenu === menu) {
+			activeSidebarMenu.set(null);
+		} else {
+			activeSidebarMenu.set(menu);
+		}
 		activeElement.set(null);
-		activeSidebarMenu.set(menu);
 	}
 </script>
 
 <div class="column drawer">
-	<div class="flex column controls fade-in">
+	<div
+		in:fade={{ duration: 120 }}
+		class="flex column controls"
+		class:container={$activeSidebarMenu}
+	>
 		<!-- {#if $activeView === 'template'} -->
 		<TemplateDrawer />
 		<!-- {/if}
@@ -18,10 +27,10 @@
 		{/if} -->
 	</div>
 	<div class="flex row">
-		<button on:click={() => setActiveMenu('card')}>card</button>
-		<button on:click={() => setActiveMenu('color')}>color</button>
-		<button on:click={() => setActiveMenu('text')}>text</button>
-		<button on:click={() => setActiveMenu('image')}>image</button>
+		<button on:click={() => toggleActiveMenu('card')}>card</button>
+		<button on:click={() => toggleActiveMenu('color')}>color</button>
+		<button on:click={() => toggleActiveMenu('text')}>text</button>
+		<button on:click={() => toggleActiveMenu('image')}>image</button>
 	</div>
 </div>
 
@@ -30,11 +39,16 @@
 		position: relative;
 	}
 	.controls {
+		--gutter: 0.5rem;
+		width: calc(100vw - 2 * var(--gutter));
 		position: absolute;
+		left: var(--gutter);
+		right: var(--gutter);
 		bottom: calc(100% + 0.5rem);
 		max-height: calc(85vh);
-		width: 100vw;
 		overflow: scroll;
+		box-sizing: border-box;
+		background-color: var(--transparent-background-color);
 	}
 	button {
 		height: 3rem;

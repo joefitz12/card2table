@@ -19,7 +19,7 @@ export class TextElement {
     topTransform: number;
     templateId: number;
     minimized: boolean;
-    constructor({ templateId }: { templateId: number }) {
+    constructor({ templateId, minimized }: { templateId: number, minimized: boolean | undefined }) {
         this.title = `Text Element`
         this.color = '#000000';
         this.fontSize = 0.22;
@@ -36,6 +36,6 @@ export class TextElement {
         this.leftTransform = 0;
         this.topTransform = 0;
         this.templateId = templateId;
-        this.minimized = false;
+        this.minimized = minimized || false;
     }
 }

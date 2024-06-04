@@ -140,7 +140,7 @@
 	.fade-in {
 		animation: 300ms ease both fade-in;
 	}
-	@media screen and (min-width: 600px) {
+	@media screen and (min-width: 640px) {
 		button.options:hover {
 			background-color: var(--color);
 			color: var(--background-color);

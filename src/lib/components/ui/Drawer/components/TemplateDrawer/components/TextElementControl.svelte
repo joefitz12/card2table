@@ -528,7 +528,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 		}
 	}
 
-	@media screen and (min-width: 600px) {
+	@media screen and (min-width: 640px) {
 		button.delete,
 		button.minimize {
 			&:hover {

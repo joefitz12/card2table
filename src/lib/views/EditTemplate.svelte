@@ -2,8 +2,11 @@
 	import { browser } from '$app/environment';
 	import { Drawer, PrintLayout, Sidebar, TemplateEditor } from '$lib/components';
 	import { activeView } from '$lib/store';
+
+	let isDesktop = browser && window.innerWidth > 640;
 </script>
 
+<svelte:window on:resize={() => (isDesktop = browser && window.innerWidth > 640)} />
 <div class="flex column editor">
 	<div class="main flex">
 		{#if $activeView === 'template'}
@@ -13,12 +16,14 @@
 			<PrintLayout />
 		{/if}
 	</div>
-	{#if browser && window.innerWidth > 600}
+	{#if isDesktop}
 		<div class="sidebar">
 			<Sidebar />
 		</div>
 	{/if}
-	<div class="drawer"><Drawer /></div>
+	{#if !isDesktop}
+		<div class="drawer"><Drawer /></div>
+	{/if}
 </div>
 
 <style>
@@ -34,7 +39,7 @@
 	.sidebar {
 		display: none;
 	}
-	@media screen and (min-width: 680px) {
+	@media screen and (min-width: 640px) {
 		.drawer {
 			display: none;
 		}
