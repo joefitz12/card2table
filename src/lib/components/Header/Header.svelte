@@ -47,7 +47,7 @@
 	header {
 		view-transition-name: header;
 		justify-content: space-between;
-		padding: 0 0.5rem;
+		padding: 0 0.5rem 0 0;
 		z-index: 1;
 		position: sticky;
 		top: 0;
@@ -147,6 +147,11 @@
 	@media print {
 		header {
 			display: none;
+		}
+	}
+	@media screen and (min-width: 640px) {
+		.header {
+			padding: 0 0.5rem;
 		}
 	}
 </style>

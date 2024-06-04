@@ -49,6 +49,7 @@
 		overflow: scroll;
 		box-sizing: border-box;
 		background-color: var(--transparent-background-color);
+		border-radius: 4px;
 	}
 	button {
 		height: 3rem;
