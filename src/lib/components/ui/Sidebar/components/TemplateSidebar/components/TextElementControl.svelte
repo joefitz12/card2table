@@ -113,7 +113,7 @@ on:focusin={() => currentControl?.onMouseover()}
 on:focusout={() => currentControl?.onMouseleave()} -->
 {#if template}
 	<li
-		class="flex column container"
+		class="container"
 		class:minimized={template.minimized}
 		id={`text-element-${id}-control`}
 		tabindex="0"
@@ -452,15 +452,9 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 
 <style lang="scss">
 	.container {
-		// animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
 		animation: 60ms ease both fade-in;
-		flex-shrink: 0;
-		padding-top: 0px;
 	}
 	.header {
-		// margin-top: 0.75rem;
-		flex-shrink: 0;
-		padding-top: 0.75rem;
 		input[type='color'] {
 			border: none;
 			background: none;
@@ -507,9 +501,10 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 	.content {
 		display: grid;
 		grid-template-rows: 1fr;
-		transition: grid-template-rows 150ms ease-in-out, opacity 150ms ease-in-out;
+		transition: all 120ms ease-in-out;
+		margin-top: 0.25rem;
 		.minimized & {
-			margin-top: -0.25rem;
+			margin-top: 0;
 			opacity: 0;
 			grid-template-rows: 0fr;
 			overflow: hidden;
@@ -535,7 +530,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 		}
 	}
 
-	@media screen and (min-width: 640px) {
+	@media screen and (min-width: 600px) {
 		button.delete,
 		button.minimize {
 			&:hover {

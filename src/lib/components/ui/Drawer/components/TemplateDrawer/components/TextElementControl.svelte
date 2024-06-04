@@ -86,11 +86,9 @@
 	}
 
 	function focus(input: HTMLInputElement) {
-		input.focus();
-		input.scrollIntoView({
-			behavior: 'smooth',
-			block: 'start',
-		});
+		if ($activeElement === id) {
+			input.focus();
+		}
 	}
 </script>
 
@@ -112,7 +110,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 	>
 		<div class="flex row header">
 			<input type="color" id={`text-element-${id}-color`} bind:value={template.color} />
-			<input type="text" bind:value={template.title} class="title" bind:this={title} />
+			<input type="text" bind:value={template.title} class="title" bind:this={title} use:focus />
 			<div class="container-controls">
 				<button
 					type="button"
@@ -444,8 +442,6 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 
 <style lang="scss">
 	.container {
-		// animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
-		animation: 120ms ease both fade-in;
 		flex-shrink: 0;
 		padding-top: 0px;
 	}
