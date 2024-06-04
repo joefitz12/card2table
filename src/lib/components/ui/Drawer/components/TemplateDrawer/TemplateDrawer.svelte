@@ -1,12 +1,15 @@
 <script>
-	import { CardControls, ColorControls, TextElementControls } from './components';
+	import {
+		CardControls,
+		ColorControls,
+		TextElementControl,
+		TextElementControls,
+	} from './components';
 	import { activeElement, activeSidebarMenu } from '$lib/store';
-	import TextElementControl from './components/TextElementControl.svelte';
-	import { fade } from 'svelte/transition';
 </script>
 
-{#if $activeSidebarMenu || $activeElement}
-	<div in:fade={{ duration: 120 }}>
+{#if $activeSidebarMenu && !$activeElement}
+	<div class="container">
 		{#if $activeSidebarMenu === 'card'}
 			<CardControls />
 		{/if}
@@ -16,10 +19,16 @@
 		{#if $activeSidebarMenu === 'text' && !$activeElement}
 			<TextElementControls />
 		{/if}
-		{#if $activeElement}
-			{#key $activeElement}
-				<TextElementControl id={$activeElement} />
-			{/key}
-		{/if}
 	</div>
 {/if}
+{#if $activeElement}
+	{#key $activeElement}
+		<TextElementControl id={$activeElement} />
+	{/key}
+{/if}
+
+<style lang="scss">
+	.container {
+		background-color: var(--transparent-background-color);
+	}
+</style>
