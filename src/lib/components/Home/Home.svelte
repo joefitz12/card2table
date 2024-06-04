@@ -1,39 +1,45 @@
 <script lang="ts">
-	import { afterUpdate } from 'svelte';
+	import { onMount } from 'svelte';
 	import { UICardTemplate } from '$lib/utils/uiCardTemplate';
 	import { CardTemplate } from '$lib/models/CardTemplate';
 	import { activeView, cardTemplates, darkTheme, menuExpanded } from '$lib/store';
 	import { cardTemplate } from '$lib/api/cardTemplate';
 	import { goto } from '$app/navigation';
-	import { browser } from '$app/environment';
 
 	// convert to pixels
+	const card = new UICardTemplate({ ...new CardTemplate(), id: '' });
 	let cardContainer: HTMLDivElement;
-	let relativeUnit: number;
+	let relativeUnit: number | undefined;
 
-	function setRelativeUnit(cardContainer: HTMLDivElement) {
+	function setRelativeUnit({
+		cardContainer,
+		card,
+	}: {
+		cardContainer: HTMLDivElement;
+		card: UICardTemplate;
+	}) {
 		if (!cardContainer) {
 			return;
 		}
-		let maxCardHeight = cardContainer.clientHeight - 2 * 48;
-		let maxCardWidth = cardContainer.clientWidth - 2 * 16;
+		let maxCardHeight = window.innerHeight - cardContainer.getBoundingClientRect().top - 2 * 48;
+		let maxCardWidth = window.innerWidth - 2 * 16;
 
-		if (relativeUnit * 2.44 > maxCardWidth) {
-			relativeUnit = Math.floor(maxCardWidth / 2.44);
-		} else {
-			relativeUnit = Math.floor(maxCardHeight / 3.43);
-		}
+		const aspectWidth = card.width;
+		const aspectHeight = card.height;
+
+		// Calculate the unit based on width and height constraints
+		const unitByWidth = maxCardWidth / aspectWidth;
+		const unitByHeight = maxCardHeight / aspectHeight;
+
+		// The maximum relative unit will be the smaller of these two values
+		const maxUnit = Math.min(unitByWidth, unitByHeight);
+
+		return maxUnit;
 	}
 
-	afterUpdate(() => {
-		setRelativeUnit(cardContainer);
+	onMount(() => {
+		relativeUnit = setRelativeUnit({ card, cardContainer });
 	});
-
-	$: {
-		setRelativeUnit(cardContainer);
-	}
-
-	const card = new UICardTemplate({ ...new CardTemplate(), id: '' });
 
 	function addNewCard() {
 		cardTemplate
@@ -60,22 +66,23 @@
 	};
 </script>
 
-<svelte:window on:resize={() => setRelativeUnit(cardContainer)} />
+<svelte:window on:resize={() => (relativeUnit = setRelativeUnit({ cardContainer, card }))} />
 
 {#if card}
-	<div class="flex column template-container">
+	<div class="flex column template-container" style="--relative-unit: {relativeUnit}">
 		<div class="flex card-container" bind:this={cardContainer}>
-			<div
-				class="outer-card"
-				style="--card-border-top-left-radius: {(card.border.radius.topLeft || 0) *
-					relativeUnit}px;  
+			{#if relativeUnit}
+				<div
+					class="outer-card"
+					style="--card-border-top-left-radius: {(card.border.radius.topLeft || 0) *
+						relativeUnit}px;  
 					--card-border-top-right-radius: {(card.border.radius.topRight || 0) * relativeUnit}px; 
 					--card-border-bottom-right-radius: {(card.border.radius.bottomRight || 0) * relativeUnit}px;  
 					--card-border-bottom-left-radius: {(card.border.radius.bottomLeft || 0) * relativeUnit}px; "
-			>
-				<div
-					class="card"
-					style="--card-height: {card.height * relativeUnit}px; 
+				>
+					<div
+						class="card"
+						style="--card-height: {card.height * relativeUnit}px; 
 					--card-width: {card.width * relativeUnit}px; 
 					--card-border-color: {card.border.color}; 
 					--card-border-top-width: {(card.border.width.top || 5) * relativeUnit}px; 
@@ -90,50 +97,51 @@
 					--card-left-padding: {(card.padding.left || 0) * relativeUnit}px;
 					--base-font-size: {0.22 * relativeUnit}px;
 					"
-				>
-					<div class="flex title">
-						<span data-content="card">card</span>
-						<span data-content="2">2</span>
-						<span data-content="table">table</span>
+					>
+						<div class="flex title">
+							<span data-content="card">card</span>
+							<span data-content="2">2</span>
+							<span data-content="table">table</span>
+						</div>
+						<span class="type">a Svelte application</span>
+						<div class="button-container flex">
+							<button
+								type="button"
+								bind:this={createButton}
+								on:click={addNewCard}
+								on:mouseover={(e) => {
+									createButtonOffset.x = `${e.pageX - createButton.getBoundingClientRect().left}px`;
+									createButtonOffset.y = `${e.pageY - createButton.getBoundingClientRect().top}px`;
+								}}
+								on:mousemove={(e) => {
+									createButtonOffset.x = `${e.pageX - createButton.getBoundingClientRect().left}px`;
+									createButtonOffset.y = `${e.pageY - createButton.getBoundingClientRect().top}px`;
+								}}
+								on:focus={(e) => console.log(e)}
+								style="--x: {createButtonOffset.x}; --y: {createButtonOffset.y};"
+								>New card template</button
+							>
+							<button
+								type="button"
+								bind:this={openButton}
+								on:click={() => menuExpanded.set(true)}
+								on:mouseover={(e) => {
+									openButtonOffset.x = `${e.pageX - openButton.getBoundingClientRect().left}px`;
+									openButtonOffset.y = `${e.pageY - openButton.getBoundingClientRect().top}px`;
+								}}
+								on:mousemove={(e) => {
+									openButtonOffset.x = `${e.pageX - openButton.getBoundingClientRect().left}px`;
+									openButtonOffset.y = `${e.pageY - openButton.getBoundingClientRect().top}px`;
+								}}
+								on:focus={(e) => console.log(e)}
+								style="--x: {openButtonOffset.x}; --y: {openButtonOffset.y};"
+								>Open card template</button
+							>
+						</div>
 					</div>
-					<span class="type">a Svelte application</span>
-					<div class="button-container flex">
-						<button
-							type="button"
-							bind:this={createButton}
-							on:click={addNewCard}
-							on:mouseover={(e) => {
-								createButtonOffset.x = `${e.pageX - createButton.getBoundingClientRect().left}px`;
-								createButtonOffset.y = `${e.pageY - createButton.getBoundingClientRect().top}px`;
-							}}
-							on:mousemove={(e) => {
-								createButtonOffset.x = `${e.pageX - createButton.getBoundingClientRect().left}px`;
-								createButtonOffset.y = `${e.pageY - createButton.getBoundingClientRect().top}px`;
-							}}
-							on:focus={(e) => console.log(e)}
-							style="--x: {createButtonOffset.x}; --y: {createButtonOffset.y};"
-							>New card template</button
-						>
-						<button
-							type="button"
-							bind:this={openButton}
-							on:click={() => menuExpanded.set(true)}
-							on:mouseover={(e) => {
-								openButtonOffset.x = `${e.pageX - openButton.getBoundingClientRect().left}px`;
-								openButtonOffset.y = `${e.pageY - openButton.getBoundingClientRect().top}px`;
-							}}
-							on:mousemove={(e) => {
-								openButtonOffset.x = `${e.pageX - openButton.getBoundingClientRect().left}px`;
-								openButtonOffset.y = `${e.pageY - openButton.getBoundingClientRect().top}px`;
-							}}
-							on:focus={(e) => console.log(e)}
-							style="--x: {openButtonOffset.x}; --y: {openButtonOffset.y};"
-							>Open card template</button
-						>
-					</div>
+					<div class="shadow" data-theme={$darkTheme ? 'dark' : 'light'} />
 				</div>
-				<div class="shadow" data-theme={$darkTheme ? 'dark' : 'light'} />
-			</div>
+			{/if}
 		</div>
 	</div>
 {/if}
@@ -148,7 +156,7 @@
 	}
 
 	.outer-card {
-		margin: auto auto 3rem;
+		margin: auto;
 		position: relative;
 		border-top-left-radius: var(--card-border-top-left-radius);
 		border-top-right-radius: var(--card-border-top-right-radius);
@@ -241,7 +249,7 @@
 				var(--card-background-color) calc(var(--pulse) + 50%),
 				var(--card-background-color) 100%
 			),
-			linear-gradient(to right, lightgreen 2qpx, transparent 2px),
+			linear-gradient(to right, lightgreen 2px, transparent 2px),
 			linear-gradient(to bottom, lightgreen 1px, transparent 2px);
 		/* Angled linear gradient */
 		// background-image: linear-gradient(
@@ -267,6 +275,10 @@
 	@media screen and (min-width: 600px) {
 		.outer-card {
 			margin: auto auto 3rem;
+		}
+		.card {
+			height: var(--card-height);
+			width: var(--card-width);
 		}
 	}
 </style>

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { textElement } from '$lib/api/textElement';
 	import { UITextElement } from '$lib/utils/uiTextElement';
-	import { refreshElement, textElements } from '$lib/store';
+	import { activeElement, textElements } from '$lib/store';
 	import { beforeUpdate } from 'svelte';
 	export let id: IDBValidKey;
 
@@ -35,12 +35,6 @@
 	// };
 
 	let template = { ...($textElements.get(id) as UITextElement) };
-	refreshElement.subscribe(($refreshElement) => {
-		if (id === $refreshElement) {
-			template.minimized = false;
-			refreshElement.set(null);
-		}
-	});
 
 	beforeUpdate(() => {
 		if (template.fontStyle === 'italic') {
@@ -452,7 +446,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 <style lang="scss">
 	.container {
 		// animation: 60ms ease both fade-in, 300ms ease both slide-from-right;
-		animation: 60ms ease both fade-in;
+		animation: 120ms ease both fade-in;
 		flex-shrink: 0;
 		padding-top: 0px;
 	}

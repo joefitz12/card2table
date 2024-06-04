@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { activeSidebarMenu, activeView, sidebarExpanded } from '$lib/store';
-	import { onMount } from 'svelte';
 	import { PrintSidebar, TemplateSidebar } from './components';
 
 	let sidebar: HTMLDivElement;
@@ -133,6 +132,7 @@
 	}
 	.collapsed {
 		animation: 150ms ease both minimize, 175ms ease both fade-out;
+		pointer-events: none;
 	}
 	.expanded {
 		animation: 150ms ease both maximize, 175ms ease both fade-in;

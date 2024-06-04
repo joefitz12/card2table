@@ -13,13 +13,11 @@
 	let cardContainer: HTMLDivElement;
 
 	afterUpdate(() => {
-		setRelativeUnit(cardContainer);
+		console.log('after update');
+		setRelativeUnit({ cardContainer, card: $template });
 	});
 
 	$: {
-		if ($template?.width || $template?.height) {
-			setRelativeUnit(cardContainer);
-		}
 		if ($template?.title) {
 			cardTemplate
 				.getAll()
@@ -29,7 +27,7 @@
 	}
 </script>
 
-<svelte:window on:resize={() => setRelativeUnit(cardContainer)} />
+<svelte:window on:resize={() => setRelativeUnit({ cardContainer, card: $template })} />
 
 {#if $template}
 	<div class="flex column template-container">
@@ -96,7 +94,7 @@
 		background: none !important;
 	}
 	.card {
-		margin: 3rem auto auto;
+		margin: auto;
 		position: relative;
 		display: flex;
 		flex-direction: column;

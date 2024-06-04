@@ -1,6 +1,6 @@
 import { textElement } from "$lib/api";
 import { TextElement } from "$lib/models/TextElement";
-import { activeSidebarMenu, refreshElement, sidebarExpanded, state, textElements } from "$lib/store";
+import { activeElement, activeSidebarMenu, sidebarExpanded, state, textElements } from "$lib/store";
 
 export class UITextElement extends TextElement {
     id: IDBValidKey;
@@ -115,7 +115,7 @@ export class UITextElement extends TextElement {
                         textElements.update($textElements => {
                             return $textElements.set(id, {...$textElements.get(id)!, minimized: false})
                         });
-                        refreshElement.set(id)
+                        activeElement.set(id);
                         sidebarExpanded.set(true);
                         activeSidebarMenu.set('text')
                     })

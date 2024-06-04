@@ -3,10 +3,10 @@ import { Header } from "./Header";
 import { Home } from "./Home";
 import { Menu } from "./Menu";
 import { PrintLayout } from "./PrintLayout";
-import { Sidebar } from "./Sidebar";
+import { Drawer, Sidebar } from "./ui";
 import { Tabs } from "./Tabs"
 import { TemplateEditor } from "./TemplateEditor";
 
 export {
-    Background, Header, Home, Menu, PrintLayout, Sidebar, Tabs, TemplateEditor
+    Background, Drawer, Header, Home, Menu, PrintLayout, Sidebar, Tabs, TemplateEditor
 }
