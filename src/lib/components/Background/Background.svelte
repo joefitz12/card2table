@@ -31,7 +31,7 @@
 		right: 0;
 		bottom: 0;
 		left: 0;
-		height: 100vh;
+		height: var(--app-max-height);
 		width: 100vw;
 		max-width: 100vw;
 		transition: opacity 150ms ease-in-out;
