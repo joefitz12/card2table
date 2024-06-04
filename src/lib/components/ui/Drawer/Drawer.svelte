@@ -14,7 +14,7 @@
 </script>
 
 <div class="column drawer">
-	<div in:fade={{ duration: 120 }} class="flex column controls">
+	<div in:fade|global={{ duration: 120 }} class="flex column controls">
 		<!-- {#if $activeView === 'template'} -->
 		<TemplateDrawer />
 		<!-- {/if}

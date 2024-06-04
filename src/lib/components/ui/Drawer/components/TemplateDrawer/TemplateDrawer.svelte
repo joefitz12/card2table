@@ -10,7 +10,7 @@
 </script>
 
 {#if $activeSidebarMenu || $activeElement}
-	<div class="container" in:fly={{ opacity: 0, duration: 12000, y: 'calc(100% + 0.5rem)' }}>
+	<div class="container" in:fly|global={{ opacity: 0, duration: 12000, y: 'calc(100% + 0.5rem)' }}>
 		{#if $activeSidebarMenu === 'card'}
 			<CardControls />
 		{/if}
