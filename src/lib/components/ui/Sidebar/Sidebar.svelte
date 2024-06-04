@@ -53,7 +53,7 @@
 		position: absolute;
 		right: 0.5rem;
 		top: 0;
-		max-height: calc(100vh - 48px);
+		max-height: calc(var(--app-max-height) - 48px);
 		gap: 0.5rem;
 		animation: 60ms ease both fade-in;
 	}

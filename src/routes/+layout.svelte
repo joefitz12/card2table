@@ -5,6 +5,9 @@
 	import { darkTheme } from '$lib/store';
 	import { page } from '$app/stores';
 	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
+
+	let maxHeight: number;
 
 	interface ExtendedDocument extends Document {
 		startViewTransition: any;
@@ -21,6 +24,10 @@
 		});
 	});
 
+	onMount(() => {
+		maxHeight = window.innerHeight;
+	});
+
 	if (browser) {
 		CSS.registerProperty({
 			name: '--pulse',
@@ -31,27 +38,36 @@
 	}
 </script>
 
-<div class="main-container flex column" data-theme={$darkTheme ? 'dark' : 'light'}>
-	{#if !$page.url.pathname.includes('template')}
-		<Background />
-	{/if}
-	<Header />
-	<main class="flex column">
-		<Menu />
-		<div class="tabs">
-			<Tabs />
-		</div>
-		<slot />
-	</main>
-</div>
+<svelte:window on:resize={() => (maxHeight = window.innerHeight)} />
+
+{#if browser}
+	<div
+		class="main-container flex column"
+		data-theme={$darkTheme ? 'dark' : 'light'}
+		style="--window-height: {maxHeight}"
+	>
+		{#if !$page.url.pathname.includes('template')}
+			<Background />
+		{/if}
+		<Header />
+		<main class="flex column">
+			<Menu />
+			<div class="tabs">
+				<Tabs />
+			</div>
+			<slot />
+		</main>
+	</div>
+{/if}
 
 <style lang="scss">
 	:root {
 		--graph-unit: 65px;
 	}
 	.main-container {
+		--app-max-height: calc(var(--window-height) * 1px);
 		gap: 0;
-		height: 100vh;
+		height: var(--app-max-height);
 		max-width: 100vw;
 		overflow-x: clip;
 		transition: color 150ms ease-in-out, background-color 150ms ease-in-out;
