@@ -15,7 +15,7 @@
 </script>
 
 {#if $activeSidebarMenu}
-	<div class="container flex column">
+	<div class="container flex column min-content">
 		<div class="flex row header align-center">
 			<h2>{$activeElement || $activeSidebarMenu}</h2>
 			<button
@@ -90,7 +90,7 @@
 	}
 	.content {
 		display: grid;
-		grid-template-rows: minmax(0, 1fr);
+		grid-template-rows: 1fr;
 		transition: grid-template-rows 120ms ease-in-out, opacity 120ms ease-in-out;
 		&.collapsed {
 			margin-top: -0.25rem;

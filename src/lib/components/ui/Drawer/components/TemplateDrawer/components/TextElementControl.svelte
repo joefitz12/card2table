@@ -103,7 +103,7 @@ on:focusin={() => currentControl?.onMouseover()}
 on:focusout={() => currentControl?.onMouseleave()} -->
 {#if template}
 	<div
-		class="flex column container"
+		class="flex column min-content container"
 		class:minimized={template.minimized}
 		id={`text-element-${id}-control`}
 		tabindex="0"
@@ -136,9 +136,9 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 			>
 		</div>
 		<div class="content" class:minimized={template.minimized}>
-			<div class="flex column">
+			<div class="flex column min-content">
 				<div class="flex row">
-					<div class="flex column">
+					<div class="flex column min-content">
 						<label for={`text-element-${id}-font-size`}>Size</label>
 						<input
 							type="number"
@@ -148,7 +148,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 							bind:value={template.fontSize}
 						/>
 					</div>
-					<div class="flex column">
+					<div class="flex column min-content">
 						<label for={`text-element-${id}-font-weight`}>Weight</label>
 						<select id={`text-element-${id}-font-weight`} bind:value={template.fontWeight}>
 							<option>100</option>
@@ -205,10 +205,10 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 						/><span class="strikethrough">strikethrough</span></label
 					>
 				</div>
-				<!-- <fieldset class="flex column container">
+				<!-- <fieldset class="flex column min-content container">
 					<legend>Margin</legend>
 					<div class="flex row wrap">
-						<div class="flex column">
+						<div class="flex column min-content">
 							<fieldset class="flex row">
 								<legend>Top</legend>
 			
@@ -227,7 +227,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 								/>
 							</fieldset>
 						</div>
-						<div class="flex column">
+						<div class="flex column min-content">
 							<fieldset class="flex row">
 								<legend>Right</legend>
 			
@@ -246,7 +246,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 								/>
 							</fieldset>
 						</div>
-						<div class="flex column">
+						<div class="flex column min-content">
 							<fieldset class="flex row">
 								<legend>Bottom</legend>
 			
@@ -265,7 +265,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 								/>
 							</fieldset>
 						</div>
-						<div class="flex column">
+						<div class="flex column min-content">
 							<fieldset class="flex row">
 								<legend>Left</legend>
 			
@@ -286,10 +286,10 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 						</div>
 					</div>
 				</fieldset> -->
-				<fieldset class="flex column container">
+				<fieldset class="flex column min-content container">
 					<legend>Padding</legend>
 					<div class="flex row wrap">
-						<div class="flex column">
+						<div class="flex column min-content">
 							<label for={`text-element-${id}-padding-top`}>Top</label>
 							<input
 								type="number"
@@ -299,7 +299,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 								bind:value={template.padding.top}
 							/>
 						</div>
-						<div class="flex column">
+						<div class="flex column min-content">
 							<label for={`text-element-${id}-padding-right`}>Right</label>
 							<input
 								type="number"
@@ -309,7 +309,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 								bind:value={template.padding.right}
 							/>
 						</div>
-						<div class="flex column">
+						<div class="flex column min-content">
 							<label for={`text-element-${id}-padding-bottom`}>Bottom</label>
 							<input
 								type="number"
@@ -319,7 +319,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 								bind:value={template.padding.bottom}
 							/>
 						</div>
-						<div class="flex column">
+						<div class="flex column min-content">
 							<label for={`text-element-${id}-padding-left`}>Left</label>
 							<input
 								type="number"
@@ -331,7 +331,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 						</div>
 					</div>
 				</fieldset>
-				<fieldset class="flex column container">
+				<fieldset class="flex column min-content container">
 					<div class="flex row header align-center">
 						<input
 							type="color"
@@ -340,10 +340,10 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 						/>
 						<legend>Border</legend>
 					</div>
-					<fieldset class="flex column container">
+					<fieldset class="flex column min-content container">
 						<legend>Width</legend>
 						<div class="flex row wrap">
-							<div class="flex column">
+							<div class="flex column min-content">
 								<label for={`text-element-${id}-border-width-top`}>Top</label>
 								<input
 									type="number"
@@ -353,7 +353,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 									bind:value={template.border.width.top}
 								/>
 							</div>
-							<div class="flex column">
+							<div class="flex column min-content">
 								<label for={`text-element-${id}-border-width-right`}>Right</label>
 								<input
 									type="number"
@@ -363,7 +363,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 									bind:value={template.border.width.right}
 								/>
 							</div>
-							<div class="flex column">
+							<div class="flex column min-content">
 								<label for={`text-element-${id}-border-width-bottom`}>Bottom</label>
 								<input
 									type="number"
@@ -373,7 +373,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 									bind:value={template.border.width.bottom}
 								/>
 							</div>
-							<div class="flex column">
+							<div class="flex column min-content">
 								<label for={`text-element-${id}-border-width-left`}>Left</label>
 								<input
 									type="number"
@@ -385,11 +385,11 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 							</div>
 						</div>
 					</fieldset>
-					<fieldset class="flex column container">
+					<fieldset class="flex column min-content container">
 						<legend>Radius</legend>
 						<div class="flex row">
-							<div class="flex column">
-								<div class="flex column">
+							<div class="flex column min-content">
+								<div class="flex column min-content">
 									<label for={`card-template-border-radius-top`}>Top Left</label>
 									<input
 										type="number"
@@ -399,7 +399,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 										bind:value={template.border.radius.topLeft}
 									/>
 								</div>
-								<div class="flex column">
+								<div class="flex column min-content">
 									<label for={`card-template-border-radius-left`}>Bottom Left</label>
 									<input
 										type="number"
@@ -410,8 +410,8 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 									/>
 								</div>
 							</div>
-							<div class="flex column">
-								<div class="flex column">
+							<div class="flex column min-content">
+								<div class="flex column min-content">
 									<label for={`card-template-border-radius-right`}>Top Right</label>
 									<input
 										type="number"
@@ -421,7 +421,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 										bind:value={template.border.radius.topRight}
 									/>
 								</div>
-								<div class="flex column">
+								<div class="flex column min-content">
 									<label for={`card-template-border-radius-bottom`}>Bottom Right</label>
 									<input
 										type="number"

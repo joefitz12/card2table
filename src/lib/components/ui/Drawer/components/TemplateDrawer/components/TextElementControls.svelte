@@ -49,7 +49,7 @@
 	};
 </script>
 
-<div class="text-element-container flex column">
+<div class="text-element-container flex column min-content">
 	<div class="flex row">
 		<button type="button" on:click={() => addTextElement()}>Add text element</button>
 		<button type="button">See all</button>
