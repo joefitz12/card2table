@@ -102,7 +102,7 @@ on:focus={() => currentControl?.onMouseover()}
 on:focusin={() => currentControl?.onMouseover()}
 on:focusout={() => currentControl?.onMouseleave()} -->
 {#if template}
-	<li
+	<div
 		class="flex column container"
 		class:minimized={template.minimized}
 		id={`text-element-${id}-control`}
@@ -437,13 +437,14 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 				</fieldset>
 			</div>
 		</div>
-	</li>
+	</div>
 {/if}
 
 <style lang="scss">
 	.container {
 		flex-shrink: 0;
 		padding-top: 0px;
+		background-color: var(--transparent-background-color);
 	}
 	.header {
 		// margin-top: 0.75rem;

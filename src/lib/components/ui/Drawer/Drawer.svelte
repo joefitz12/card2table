@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { activeElement, activeSidebarMenu } from '$lib/store';
+	import { activeElement, activeSidebarMenu, template } from '$lib/store';
 	import { TemplateDrawer } from './components';
 	import { fade, slide } from 'svelte/transition';
 
@@ -14,25 +14,21 @@
 </script>
 
 <div class="column drawer">
-	{#if $activeSidebarMenu || $activeElement}
-		<div class="controls-container" in:fade|global={{ duration: 120 }}>
-			<div class="flex column controls" in:slide|global={{ axis: 'y', duration: 120 }}>
-				<!-- {#if $activeView === 'template'} -->
-
+	{#if ($activeSidebarMenu || $activeElement) && $template}
+		<div class="controls-container" in:fade|local={{ duration: 120 }}>
+			<div class="flex column controls" in:slide|local={{ axis: 'y', duration: 120 }}>
 				<TemplateDrawer />
-				<!-- {/if}
-			{#if $activeView === 'print'}
-				<PrintSidebar />
-			{/if} -->
 			</div>
 		</div>
 	{/if}
-	<div class="flex row menu">
-		<button on:click={() => toggleActiveMenu('card')}>card</button>
-		<button on:click={() => toggleActiveMenu('color')}>color</button>
-		<button on:click={() => toggleActiveMenu('text')}>text</button>
-		<button on:click={() => toggleActiveMenu('image')}>image</button>
-	</div>
+	{#if $template}
+		<div class="flex row menu">
+			<button on:click={() => toggleActiveMenu('card')}>card</button>
+			<button on:click={() => toggleActiveMenu('color')}>color</button>
+			<button on:click={() => toggleActiveMenu('text')}>text</button>
+			<button on:click={() => toggleActiveMenu('image')}>image</button>
+		</div>
+	{/if}
 </div>
 
 <style lang="scss">
