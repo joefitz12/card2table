@@ -1,5 +1,5 @@
 import { e as error } from "./index.js";
-import { l as state, h as textElements, r as refreshElement, i as sidebarExpanded, j as activeSidebarMenu } from "./store.js";
+import { l as state, h as textElements, g as activeElement, m as sidebarExpanded, i as activeSidebarMenu } from "./store.js";
 class TextElement {
   title;
   color;
@@ -14,7 +14,7 @@ class TextElement {
   topTransform;
   templateId;
   minimized;
-  constructor({ templateId }) {
+  constructor({ templateId, minimized }) {
     this.title = `Text Element`;
     this.color = "#000000";
     this.fontSize = 0.22;
@@ -31,11 +31,11 @@ class TextElement {
     this.leftTransform = 0;
     this.topTransform = 0;
     this.templateId = templateId;
-    this.minimized = false;
+    this.minimized = minimized || false;
   }
 }
 const textElement = {
-  add: function({ templateId }) {
+  add: function({ templateId, minimized }) {
     return new Promise((resolve, reject) => {
     });
   },
@@ -88,7 +88,7 @@ class UITextElement extends TextElement {
     margin,
     minimized
   }) {
-    super({ templateId });
+    super({ templateId, minimized });
     this.id = id;
     this.title = title;
     this.color = color;
@@ -156,14 +156,15 @@ class UITextElement extends TextElement {
         });
         e.dataTransfer.setData("text/plain", update.elementId);
       },
-      onClick: (id2) => {
+      onClick: (e, id2) => {
+        e.stopPropagation();
         textElement.getById(id2).then((data) => textElement.update({ ...new UITextElement(data), minimized: false })).then(() => {
           textElements.update(($textElements) => {
             return $textElements.set(id2, { ...$textElements.get(id2), minimized: false });
           });
-          refreshElement.set(id2);
+          activeElement.set(id2);
           sidebarExpanded.set(true);
-          activeSidebarMenu.set("text");
+          activeSidebarMenu.set(null);
         }).catch((error2) => console.error(error2));
       },
       id: `text-element-${templateId}-template`
@@ -171,7 +172,6 @@ class UITextElement extends TextElement {
     this.control = {
       id: `text-element-${templateId}-color`
     };
-    this.minimized = minimized;
   }
 }
 export {

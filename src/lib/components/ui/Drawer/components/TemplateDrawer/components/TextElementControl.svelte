@@ -495,7 +495,7 @@ on:focusout={() => currentControl?.onMouseleave()} -->
 	.content {
 		display: grid;
 		grid-template-rows: 1fr;
-		transition: grid-template-rows 150ms ease-in-out, opacity 150ms ease-in-out;
+		transition: grid-template-rows 120ms ease-in-out, opacity 120ms ease-in-out;
 		.minimized & {
 			margin-top: -0.25rem;
 			opacity: 0;

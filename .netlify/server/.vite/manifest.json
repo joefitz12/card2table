@@ -8,16 +8,17 @@
     "src": ".svelte-kit/generated/server/internal.js"
   },
   "TemplateEditor.css": {
-    "file": "_app/immutable/assets/TemplateEditor.13a705a0.css",
+    "file": "_app/immutable/assets/TemplateEditor.b63979ec.css",
     "src": "TemplateEditor.css"
   },
   "_PrintLayout.js": {
     "css": [
-      "_app/immutable/assets/TemplateEditor.13a705a0.css"
+      "_app/immutable/assets/TemplateEditor.b63979ec.css"
     ],
     "file": "chunks/PrintLayout.js",
     "imports": [
-      "_index2.js",
+      "_utils.js",
+      "_ssr.js",
       "_csv.js",
       "_store.js"
     ]
@@ -28,16 +29,19 @@
   "_index.js": {
     "file": "chunks/index.js",
     "imports": [
-      "_index2.js"
+      "_utils.js"
     ]
-  },
-  "_index2.js": {
-    "file": "chunks/index2.js"
   },
   "_internal.js": {
     "file": "chunks/internal.js",
     "imports": [
-      "_index2.js"
+      "_ssr.js"
+    ]
+  },
+  "_ssr.js": {
+    "file": "chunks/ssr.js",
+    "imports": [
+      "_utils.js"
     ]
   },
   "_store.js": {
@@ -49,7 +53,7 @@
   "_stores.js": {
     "file": "chunks/stores.js",
     "imports": [
-      "_index2.js"
+      "_ssr.js"
     ]
   },
   "_tab.js": {
@@ -62,7 +66,7 @@
     "file": "chunks/uiCardTemplate.js",
     "imports": [
       "_store.js",
-      "_index2.js"
+      "_utils.js"
     ]
   },
   "_uiTextElement.js": {
@@ -72,6 +76,9 @@
       "_store.js"
     ]
   },
+  "_utils.js": {
+    "file": "chunks/utils.js"
+  },
   "list.css": {
     "file": "_app/immutable/assets/list.1835859b.css",
     "src": "list.css"
@@ -79,7 +86,8 @@
   "node_modules/@sveltejs/kit/src/runtime/components/error.svelte": {
     "file": "entries/fallbacks/error.svelte.js",
     "imports": [
-      "_index2.js",
+      "_utils.js",
+      "_ssr.js",
       "_stores.js"
     ],
     "isEntry": true,
@@ -100,20 +108,20 @@
     "src": "src/params/integer.ts"
   },
   "src/routes/+layout.css": {
-    "file": "_app/immutable/assets/_layout.964fd618.css",
+    "file": "_app/immutable/assets/_layout.3e001a17.css",
     "src": "src/routes/+layout.css"
   },
   "src/routes/+layout.svelte": {
     "css": [
-      "_app/immutable/assets/_layout.964fd618.css",
-      "_app/immutable/assets/TemplateEditor.13a705a0.css"
+      "_app/immutable/assets/_layout.3e001a17.css",
+      "_app/immutable/assets/TemplateEditor.b63979ec.css"
     ],
     "file": "entries/pages/_layout.svelte.js",
     "imports": [
-      "_index2.js",
+      "_utils.js",
+      "_ssr.js",
       "_store.js",
       "_index.js",
-      "_tab.js",
       "_stores.js"
     ],
     "isEntry": true,
@@ -121,13 +129,14 @@
   },
   "src/routes/+page.svelte": {
     "css": [
-      "_app/immutable/assets/TemplateEditor.13a705a0.css"
+      "_app/immutable/assets/TemplateEditor.b63979ec.css"
     ],
     "file": "entries/pages/_page.svelte.js",
     "imports": [
-      "_index2.js",
+      "_ssr.js",
       "_store.js",
       "_index.js",
+      "_utils.js",
       "_uiCardTemplate.js"
     ],
     "isEntry": true,
@@ -136,7 +145,7 @@
   "src/routes/+page.ts": {
     "file": "entries/pages/_page.ts.js",
     "imports": [
-      "_index2.js",
+      "_utils.js",
       "_store.js",
       "_tab.js",
       "_index.js"
@@ -150,7 +159,7 @@
     ],
     "file": "entries/pages/collection/_page.svelte.js",
     "imports": [
-      "_index2.js"
+      "_ssr.js"
     ],
     "isEntry": true,
     "src": "src/routes/collection/+page.svelte"
@@ -158,7 +167,7 @@
   "src/routes/collection/new/+page.svelte": {
     "file": "entries/pages/collection/new/_page.svelte.js",
     "imports": [
-      "_index2.js"
+      "_ssr.js"
     ],
     "isEntry": true,
     "src": "src/routes/collection/new/+page.svelte"
@@ -173,18 +182,18 @@
     ],
     "file": "entries/pages/faq/_page.svelte.js",
     "imports": [
-      "_index2.js"
+      "_ssr.js"
     ],
     "isEntry": true,
     "src": "src/routes/faq/+page.svelte"
   },
   "src/routes/print/+page.svelte": {
     "css": [
-      "_app/immutable/assets/TemplateEditor.13a705a0.css"
+      "_app/immutable/assets/TemplateEditor.b63979ec.css"
     ],
     "file": "entries/pages/print/_page.svelte.js",
     "imports": [
-      "_index2.js",
+      "_ssr.js",
       "_store.js",
       "_index.js",
       "_PrintLayout.js"
@@ -197,7 +206,7 @@
     "imports": [
       "_store.js",
       "_csv.js",
-      "_index2.js"
+      "_utils.js"
     ],
     "isEntry": true,
     "src": "src/routes/print/+page.ts"
@@ -205,7 +214,8 @@
   "src/routes/template/+error.svelte": {
     "file": "entries/pages/template/_error.svelte.js",
     "imports": [
-      "_index2.js",
+      "_utils.js",
+      "_ssr.js",
       "_stores.js"
     ],
     "isEntry": true,
@@ -217,7 +227,8 @@
     ],
     "file": "entries/pages/template/_page.svelte.js",
     "imports": [
-      "_index2.js",
+      "_utils.js",
+      "_ssr.js",
       "_store.js",
       "_index.js"
     ],
@@ -228,23 +239,24 @@
     "file": "entries/pages/template/_page.ts.js",
     "imports": [
       "_store.js",
-      "_index2.js"
+      "_utils.js"
     ],
     "isEntry": true,
     "src": "src/routes/template/+page.ts"
   },
   "src/routes/template/[id=integer]/+page.css": {
-    "file": "_app/immutable/assets/_page.717ed2d1.css",
+    "file": "_app/immutable/assets/_page.d5dbea0b.css",
     "src": "src/routes/template/[id=integer]/+page.css"
   },
   "src/routes/template/[id=integer]/+page.svelte": {
     "css": [
-      "_app/immutable/assets/_page.717ed2d1.css",
-      "_app/immutable/assets/TemplateEditor.13a705a0.css"
+      "_app/immutable/assets/_page.d5dbea0b.css",
+      "_app/immutable/assets/TemplateEditor.b63979ec.css"
     ],
     "file": "entries/pages/template/_id_integer_/_page.svelte.js",
     "imports": [
-      "_index2.js",
+      "_ssr.js",
+      "_utils.js",
       "_store.js",
       "_index.js",
       "_PrintLayout.js",
@@ -260,7 +272,7 @@
       "_tab.js",
       "_uiTextElement.js",
       "_uiCardTemplate.js",
-      "_index2.js"
+      "_utils.js"
     ],
     "isEntry": true,
     "src": "src/routes/template/[id=integer]/+page.ts"

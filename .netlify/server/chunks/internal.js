@@ -1,4 +1,4 @@
-import { c as create_ssr_component, s as setContext, v as validate_component, m as missing_component } from "./index2.js";
+import { c as create_ssr_component, s as setContext, v as validate_component, m as missing_component } from "./ssr.js";
 let base = "";
 let assets = base;
 const initial = { base, assets };
@@ -47,16 +47,14 @@ const Root = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     $$bindings.data_1(data_1);
   let $$settled;
   let $$rendered;
+  let previous_head = $$result.head;
   do {
     $$settled = true;
+    $$result.head = previous_head;
     {
       stores.page.set(page);
     }
-    $$rendered = `
-
-
-
-${constructors[1] ? `${validate_component(constructors[0] || missing_component, "svelte:component").$$render(
+    $$rendered = `  ${constructors[1] ? `${validate_component(constructors[0] || missing_component, "svelte:component").$$render(
       $$result,
       { data: data_0, this: components[0] },
       {
@@ -90,9 +88,7 @@ ${constructors[1] ? `${validate_component(constructors[0] || missing_component, 
         }
       },
       {}
-    )}`}
-
-${``}`;
+    )}`} ${``}`;
   } while (!$$settled);
   return $$rendered;
 });
@@ -110,7 +106,7 @@ const options = {
   root: Root,
   service_worker: true,
   templates: {
-    app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n\n<head>\n	<meta charset="utf-8" />\n	<meta name="viewport"\n		content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=3.0, minimal-ui" />\n	<meta property="og:description" content="welcome to card gen" />\n	<link rel="icon" href="' + assets2 + '/favicon.png" />\n	<meta name="viewport" content="width=device-width" />\n	' + head + '\n</head>\n\n<body data-sveltekit-preload-data="tap">\n	<div style="display: contents">' + body + "</div>\n</body>\n\n</html>",
+    app: ({ head, body, assets: assets2, nonce, env }) => '<!DOCTYPE html>\n<html lang="en">\n\n<head>\n	<meta charset="utf-8" />\n	<meta name="viewport"\n		content="width=device-width, initial-scale=1, minimum-scale=1.0, maximum-scale=3.0, minimal-ui" />\n	<meta property="og:description" content="design board game card templates and upload CSV data to create printer-friendly card sheets" />\n	<link rel="icon" href="' + assets2 + '/favicon.png" />\n	<meta name="viewport" content="width=device-width" />\n	' + head + '\n</head>\n\n<body data-sveltekit-preload-data="tap">\n	<div style="display: contents">' + body + "</div>\n</body>\n\n</html>",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
@@ -182,7 +178,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "rol3z1"
+  version_hash: "1t37y0g"
 };
 function get_hooks() {
   return {};

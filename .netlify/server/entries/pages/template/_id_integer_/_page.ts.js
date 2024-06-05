@@ -1,8 +1,8 @@
-import { b as cardTemplate, t as template, h as textElements, a as activeTabs, d as darkTheme } from "../../../../chunks/store.js";
+import { c as cardTemplate, t as template, h as textElements, b as activeTabs, d as darkTheme } from "../../../../chunks/store.js";
 import { t as tab, s as setting } from "../../../../chunks/tab.js";
 import { t as textElement, U as UITextElement } from "../../../../chunks/uiTextElement.js";
 import { U as UICardTemplate } from "../../../../chunks/uiCardTemplate.js";
-import { f as get_store_value } from "../../../../chunks/index2.js";
+import { g as get_store_value } from "../../../../chunks/utils.js";
 function load({ params }) {
   try {
     cardTemplate.getById(params.id).then((data) => {
