@@ -12,7 +12,7 @@ export function setRelativeUnit({
         return;
     }
     let maxCardHeight = cardContainer.getBoundingClientRect().bottom - cardContainer.getBoundingClientRect().top - 2 * 48;
-    let maxCardWidth = window.innerWidth - 2 * 16;
+    let maxCardWidth = window.innerWidth - (window.innerWidth < 640 ? 2 * 16 : window.innerWidth * .2);
 
     const aspectWidth = card.width;
     const aspectHeight = card.height;
