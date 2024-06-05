@@ -27,7 +27,7 @@
 			<button on:click={() => toggleActiveMenu('card')}>card</button>
 			<button on:click={() => toggleActiveMenu('color')}>color</button>
 			<button on:click={() => toggleActiveMenu('text')}>text</button>
-			<button on:click={() => toggleActiveMenu('image')}>image</button>
+			<!-- <button on:click={() => toggleActiveMenu('image')}>image</button> -->
 		</div>
 	{/if}
 </div>
