@@ -16,7 +16,7 @@
 
 {#if $activeSidebarMenu}
 	<div class="container flex column">
-		<div class="flex row header">
+		<div class="flex row header align-center">
 			<h2>{$activeElement || $activeSidebarMenu}</h2>
 			<button
 				type="button"
@@ -85,11 +85,7 @@
 	button.collapse {
 		transition: opacity 150ms ease-in-out;
 		span {
-			// transform: translateY(calc(-1rem / 16));
-			.collapsed & {
-				transform: translateY(calc(1rem / 16));
-				// transform: translateY(0);
-			}
+			transform: translateY(calc(1rem / 16));
 		}
 	}
 	.content {

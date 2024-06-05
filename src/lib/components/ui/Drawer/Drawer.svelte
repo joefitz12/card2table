@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { activeElement, activeSidebarMenu, template } from '$lib/store';
 	import { TemplateDrawer } from './components';
-	import { fade, slide } from 'svelte/transition';
+	import { fade, scale, slide } from 'svelte/transition';
 
 	function toggleActiveMenu(menu: 'card' | 'color' | 'text' | 'image') {
 		if ($activeSidebarMenu === menu) {
@@ -15,8 +15,8 @@
 
 <div class="column drawer">
 	{#if ($activeSidebarMenu || $activeElement) && $template}
-		<div class="controls-container" in:fade|local={{ duration: 120 }}>
-			<div class="flex column controls" in:slide|local={{ axis: 'y', duration: 120 }}>
+		<div class="controls-container" in:fade|local={{ duration: 60 }}>
+			<div class="flex column controls" in:scale|local={{ opacity: 0, duration: 120 }}>
 				<TemplateDrawer />
 			</div>
 		</div>
@@ -53,6 +53,7 @@
 		width: calc(100vw - 2 * var(--gutter));
 		box-sizing: border-box;
 		border-radius: 4px;
+		transform-origin: bottom;
 	}
 	button {
 		height: 3rem;
