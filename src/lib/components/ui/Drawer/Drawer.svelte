@@ -18,6 +18,7 @@
 		<div class="controls-container" in:fade|global={{ duration: 120 }}>
 			<div class="flex column controls" in:slide|global={{ axis: 'y', duration: 120 }}>
 				<!-- {#if $activeView === 'template'} -->
+
 				<TemplateDrawer />
 				<!-- {/if}
 			{#if $activeView === 'print'}
@@ -41,7 +42,6 @@
 	.menu {
 		position: relative;
 		z-index: 1;
-		background: var(--background-color);
 		padding: 0.5rem;
 	}
 	.controls-container {

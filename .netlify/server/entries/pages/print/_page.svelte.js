@@ -1,4 +1,4 @@
-import { c as create_ssr_component, v as validate_component } from "../../../chunks/index2.js";
+import { c as create_ssr_component, v as validate_component } from "../../../chunks/ssr.js";
 import "../../../chunks/store.js";
 /* empty css                                                            */import "../../../chunks/index.js";
 import { P as PrintLayout } from "../../../chunks/PrintLayout.js";

@@ -1,32 +1,4 @@
-function noop() {
-}
-function run(fn) {
-  return fn();
-}
-function blank_object() {
-  return /* @__PURE__ */ Object.create(null);
-}
-function run_all(fns) {
-  fns.forEach(run);
-}
-function is_function(thing) {
-  return typeof thing === "function";
-}
-function safe_not_equal(a, b) {
-  return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
-}
-function subscribe(store, ...callbacks) {
-  if (store == null) {
-    return noop;
-  }
-  const unsub = store.subscribe(...callbacks);
-  return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
-}
-function get_store_value(store) {
-  let value;
-  subscribe(store, (_) => value = _)();
-  return value;
-}
+import { r as run_all, b as blank_object } from "./utils.js";
 let current_component;
 function set_current_component(component) {
   current_component = component;
@@ -43,7 +15,9 @@ function setContext(key, context) {
 function getContext(key) {
   return get_current_component().$$.context.get(key);
 }
-Promise.resolve();
+function ensure_array_like(array_like_or_iterator) {
+  return array_like_or_iterator?.length !== void 0 ? array_like_or_iterator : Array.from(array_like_or_iterator);
+}
 const ATTR_REGEX = /[&"]/g;
 const CONTENT_REGEX = /[&<]/g;
 function escape(value, is_attr = false) {
@@ -61,6 +35,7 @@ function escape(value, is_attr = false) {
   return escaped + str.substring(last);
 }
 function each(items, fn) {
+  items = ensure_array_like(items);
   let str = "";
   for (let i = 0; i < items.length; i += 1) {
     str += fn(items[i], i);
@@ -74,7 +49,9 @@ function validate_component(component, name) {
   if (!component || !component.$$render) {
     if (name === "svelte:component")
       name += " this={...}";
-    throw new Error(`<${name}> is not a valid SSR component. You may need to review your build config to ensure that dependencies are compiled, rather than imported as pre-compiled modules. Otherwise you may need to fix a <${name}>.`);
+    throw new Error(
+      `<${name}> is not a valid SSR component. You may need to review your build config to ensure that dependencies are compiled, rather than imported as pre-compiled modules. Otherwise you may need to fix a <${name}>.`
+    );
   }
   return component;
 }
@@ -122,18 +99,12 @@ function add_attribute(name, value, boolean) {
   return ` ${name}${assignment}`;
 }
 export {
-  subscribe as a,
-  add_attribute as b,
+  add_attribute as a,
+  each as b,
   create_ssr_component as c,
-  escape as d,
-  each as e,
-  get_store_value as f,
+  escape as e,
   getContext as g,
-  safe_not_equal as h,
-  is_function as i,
   missing_component as m,
-  noop as n,
-  run_all as r,
   setContext as s,
   validate_component as v
 };

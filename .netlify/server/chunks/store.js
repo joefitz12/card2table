@@ -86,7 +86,6 @@ state.subscribe((value) => {
   }
 });
 const darkTheme = writable();
-const menuExpanded = writable(false);
 const sidebarExpanded = writable(true);
 const activeSidebarMenu = writable("card");
 const activeTabs = writable(/* @__PURE__ */ new Map());
@@ -107,23 +106,22 @@ template.subscribe(($template) => {
   });
 });
 const textElements = writable(/* @__PURE__ */ new Map());
-const refreshElement = writable(void 0);
+const activeElement = writable(void 0);
 export {
-  activeTabs as a,
-  cardTemplate as b,
-  cardTemplates as c,
+  cardTemplates as a,
+  activeTabs as b,
+  cardTemplate as c,
   darkTheme as d,
   csvs as e,
   selectedCsv as f,
-  cards as g,
+  activeElement as g,
   textElements as h,
-  sidebarExpanded as i,
-  activeSidebarMenu as j,
-  activeView as k,
+  activeSidebarMenu as i,
+  activeView as j,
+  cards as k,
   state as l,
-  menuExpanded as m,
+  sidebarExpanded as m,
   print as p,
-  refreshElement as r,
   selectedCardTemplate as s,
   template as t
 };

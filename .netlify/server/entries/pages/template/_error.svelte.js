@@ -1,4 +1,5 @@
-import { c as create_ssr_component, a as subscribe, d as escape } from "../../../chunks/index2.js";
+import { s as subscribe } from "../../../chunks/utils.js";
+import { c as create_ssr_component, e as escape } from "../../../chunks/ssr.js";
 import { p as page } from "../../../chunks/stores.js";
 const Error = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let $page, $$unsubscribe_page;

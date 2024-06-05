@@ -1,5 +1,5 @@
 import { h as textElements, l as state } from "./store.js";
-import { f as get_store_value } from "./index2.js";
+import { g as get_store_value } from "./utils.js";
 class CardTemplate {
   unit;
   height;

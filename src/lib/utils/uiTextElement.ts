@@ -11,7 +11,7 @@ export class UITextElement extends TextElement {
     getTemplate: () => HTMLElement | null;
     template: {
         onDragstart: (e: DragEvent) => void;
-        onClick: (id: IDBValidKey) => void
+        onClick: (e: MouseEvent, id: IDBValidKey) => void
         id: string;
     };
     control: {
@@ -109,7 +109,8 @@ export class UITextElement extends TextElement {
                 // e.dataTransfer.setDragImage(dragImage, offsetLeft, offsetTop);
                 e.dataTransfer.setData('text/plain', update.elementId);
             },
-            onClick: (id) => {
+            onClick: (e, id) => {
+                e.stopPropagation();
                 textElement.getById(id)
                     .then(data => textElement.update({...new UITextElement(data), minimized: false}))
                     .then(() => {

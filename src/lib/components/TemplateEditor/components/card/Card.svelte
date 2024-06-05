@@ -1,5 +1,11 @@
 <script lang="ts">
-	import { cardTemplates, template, textElements } from '$lib/store';
+	import {
+		activeElement,
+		activeSidebarMenu,
+		cardTemplates,
+		template,
+		textElements,
+	} from '$lib/store';
 	import { afterUpdate } from 'svelte';
 	import { TextElement } from './components';
 	import { setRelativeUnit } from '$lib/utils/setRelativeUnit';
@@ -60,6 +66,11 @@
 				"
 				on:drop={$template.handleDrop}
 				on:dragover={$template.handleDragover}
+				on:click={() => {
+					activeElement.set(null);
+					activeSidebarMenu.set('card');
+				}}
+				on:keydown={() => true}
 			>
 				<div class="overlay" />
 				{#each Array.from($textElements.keys()) as id}

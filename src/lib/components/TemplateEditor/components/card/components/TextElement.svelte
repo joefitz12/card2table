@@ -16,7 +16,7 @@
 		console.log(textElement);
 		textElement.template.onDragstart(e);
 	}}
-	on:click={() => textElement.template.onClick(id)}
+	on:click={(e) => textElement.template.onClick(e, id)}
 	on:keydown={(event) => {
 		if (event.key === 'Enter' || event.key === ' ') {
 			// Prevent default action if necessary
