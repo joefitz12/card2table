@@ -15,8 +15,8 @@
 
 <div class="column drawer">
 	{#if ($activeSidebarMenu || $activeElement) && $template}
-		<div class="controls-container" in:fade|local={{ duration: 60 }}>
-			<div class="flex column controls" in:scale|local={{ opacity: 0, duration: 120 }}>
+		<div class="controls-container" in:fade|global={{ duration: 60 }}>
+			<div class="flex column controls" in:scale|global={{ opacity: 0, duration: 120 }}>
 				<TemplateDrawer />
 			</div>
 		</div>
