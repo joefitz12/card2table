@@ -90,7 +90,7 @@
 	}
 	.content {
 		display: grid;
-		grid-template-rows: 1fr;
+		grid-template-rows: minmax(0, 1fr);
 		transition: grid-template-rows 120ms ease-in-out, opacity 120ms ease-in-out;
 		&.collapsed {
 			margin-top: -0.25rem;
