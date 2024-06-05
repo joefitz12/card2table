@@ -5,7 +5,7 @@
 		TextElementControl,
 		TextElementControls,
 	} from './components';
-	import { activeElement, activeSidebarMenu } from '$lib/store';
+	import { activeElement, activeSidebarMenu, template } from '$lib/store';
 
 	let collapsed = false;
 
@@ -47,7 +47,7 @@
 			{#if $activeSidebarMenu === 'color'}
 				<ColorControls />
 			{/if}
-			{#if $activeSidebarMenu === 'text' && !$activeElement}
+			{#if $activeSidebarMenu === 'text'}
 				<TextElementControls />
 			{/if}
 		</div>
