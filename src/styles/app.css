@@ -96,6 +96,10 @@ button {
 	min-height: 0;
 }
 
+.column.min-content {
+	max-height: min-content
+}
+
 .row,
 .flex:not(.column) {
 	flex-direction: row;
