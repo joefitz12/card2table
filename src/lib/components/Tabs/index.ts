@@ -1,3 +1,3 @@
-import Tabs from "./Tabs.svelte";
+import Tabs from './Tabs.svelte';
 
-export { Tabs }
+export { Tabs };

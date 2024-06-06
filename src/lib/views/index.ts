@@ -1,3 +1,3 @@
-import EditTemplate from "./EditTemplate.svelte";
+import EditTemplate from './EditTemplate.svelte';
 
 export { EditTemplate };

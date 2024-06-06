@@ -65,7 +65,7 @@
 	}
 	.header {
 		h2 {
-			margin: 0 auto 0 0;
+			margin-right: auto;
 			text-transform: capitalize;
 		}
 	}

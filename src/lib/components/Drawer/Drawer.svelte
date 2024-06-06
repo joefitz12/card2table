@@ -61,5 +61,6 @@
 		height: 3rem;
 		flex-grow: 1;
 		border-radius: 8px;
+		touch-action: manipulation;
 	}
 </style>

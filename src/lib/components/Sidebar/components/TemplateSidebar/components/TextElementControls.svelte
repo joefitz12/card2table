@@ -74,7 +74,5 @@
 		padding-bottom: 0.25rem;
 	}
 	ul {
-		margin: 0;
-		padding: 0;
 	}
 </style>

@@ -1,2 +1,2 @@
-import TemplateEditor from "./TemplateEditor.svelte";
+import TemplateEditor from './TemplateEditor.svelte';
 export { TemplateEditor };

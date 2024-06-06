@@ -1,4 +1,5 @@
 <script lang="ts">
+	import '../styles/reset.css';
 	import '../styles/app.css';
 	import { onNavigate } from '$app/navigation';
 	import { Background, Header, Menu, Tabs } from '$lib/components';
@@ -90,7 +91,6 @@
 	}
 	.tabs {
 		flex-basis: 0;
-		grid-template-rows: 0fr;
 		overflow: hidden;
 	}
 	@media screen and (min-width: 640px) {

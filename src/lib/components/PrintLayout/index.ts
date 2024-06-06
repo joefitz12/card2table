@@ -1,3 +1,3 @@
-import PrintLayout from "./PrintLayout.svelte";
+import PrintLayout from './PrintLayout.svelte';
 
-export { PrintLayout }; 
+export { PrintLayout };

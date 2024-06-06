@@ -72,11 +72,9 @@
 		font-size: 1.75rem;
 	}
 	ul {
-		padding: 0;
 		gap: 0.5rem;
 	}
 	li {
-		margin: 0;
 	}
 	/* theme toggle */
 	.theme {
