@@ -1,11 +1,6 @@
-import CardControls from "./CardControls.svelte";
-import ColorControls from "./ColorControls.svelte";
-import TextElementControl from "./TextElementControl.svelte";
-import TextElementControls from "./TextElementControls.svelte";
+import CardControls from './CardControls.svelte';
+import ColorControls from './ColorControls.svelte';
+import TextElementControl from './TextElementControl.svelte';
+import TextElementControls from './TextElementControls.svelte';
 
-export {
-    CardControls,
-    ColorControls,
-    TextElementControl,
-    TextElementControls
-};
+export { CardControls, ColorControls, TextElementControl, TextElementControls };

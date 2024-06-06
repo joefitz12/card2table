@@ -1,4 +1,4 @@
-import { UITextElement } from "./utils/uiTextElement";
+import { UITextElement } from './utils/uiTextElement';
 
 export type Unit = 'in' | 'cm';
 export type FontSizes = {
@@ -6,15 +6,15 @@ export type FontSizes = {
 };
 
 export type PositionalProps = {
-	top?: number,
-	right?: number,
-	bottom?: number,
-	left?: number,
-	topLeft?: number,
-	topRight?: number,
-	bottomRight?: number,
-	bottomLeft?: number
-}
+	top?: number;
+	right?: number;
+	bottom?: number;
+	left?: number;
+	topLeft?: number;
+	topRight?: number;
+	bottomRight?: number;
+	bottomLeft?: number;
+};
 
 type BorderWidth = Pick<PositionalProps, 'top' | 'right' | 'bottom' | 'left'>;
 type BorderRadius = Pick<PositionalProps, 'topLeft' | 'topRight' | 'bottomRight' | 'bottomLeft'>;
@@ -23,20 +23,20 @@ type Border = {
 	color: string;
 	radius: BorderRadius;
 	width: BorderWidth;
-}
+};
 
 export type Margin = {
-	top: number | 'auto',
-	right: number | 'auto',
-	bottom: number | 'auto',
-	left: number | 'auto'
-}
+	top: number | 'auto';
+	right: number | 'auto';
+	bottom: number | 'auto';
+	left: number | 'auto';
+};
 
 export type Font = {
 	fontSize: number;
 	fontStyle: string;
-	fontWeight: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'
-}
+	fontWeight: '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+};
 
 export type CardState = {
 	title?: string;
@@ -50,11 +50,9 @@ export type CardState = {
 		color?: string;
 		radius?: BorderRadius;
 		width?: BorderWidth;
-	}
+	};
 	textElements: UITextElement[];
 };
-
-
 
 export type TextElement = Font & {
 	id: string;
@@ -74,6 +72,5 @@ export type TextElement = Font & {
 	};
 	control: {
 		id: string;
-	}
+	};
 };
-

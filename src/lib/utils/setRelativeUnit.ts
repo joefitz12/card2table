@@ -1,34 +1,37 @@
-import { template } from "$lib/store";
-import type { UICardTemplate } from "./uiCardTemplate";
+import { template } from '$lib/store';
+import type { UICardTemplate } from './uiCardTemplate';
 
 export function setRelativeUnit({
-    cardContainer,
-    card,
+	cardContainer,
+	card,
 }: {
-    cardContainer: HTMLDivElement;
-    card: UICardTemplate;
+	cardContainer: HTMLDivElement;
+	card: UICardTemplate;
 }) {
-    if (!cardContainer) {
-        return;
-    }
-    let maxCardHeight = cardContainer.getBoundingClientRect().bottom - cardContainer.getBoundingClientRect().top - 2 * 48;
-    let maxCardWidth = window.innerWidth - (window.innerWidth < 640 ? 2 * 16 : window.innerWidth * .2);
+	if (!cardContainer) {
+		return;
+	}
+	let maxCardHeight =
+		cardContainer.getBoundingClientRect().bottom -
+		cardContainer.getBoundingClientRect().top -
+		2 * 48;
+	let maxCardWidth =
+		window.innerWidth - (window.innerWidth < 640 ? 2 * 16 : window.innerWidth * 0.2);
 
-    const aspectWidth = card.width;
-    const aspectHeight = card.height;
+	const aspectWidth = card.width;
+	const aspectHeight = card.height;
 
-    // Calculate the unit based on width and height constraints
-    const unitByWidth = maxCardWidth / aspectWidth;
-    const unitByHeight = maxCardHeight / aspectHeight;
+	// Calculate the unit based on width and height constraints
+	const unitByWidth = maxCardWidth / aspectWidth;
+	const unitByHeight = maxCardHeight / aspectHeight;
 
-    // The maximum relative unit will be the smaller of these two values
-    const maxUnit = Math.min(unitByWidth, unitByHeight);
+	// The maximum relative unit will be the smaller of these two values
+	const maxUnit = Math.min(unitByWidth, unitByHeight);
 
-    template.update(($template) => {
-            return {
-                ...$template,
-                relativeUnit: maxUnit
-            };
-       
-    });
-};
+	template.update(($template) => {
+		return {
+			...$template,
+			relativeUnit: maxUnit,
+		};
+	});
+}

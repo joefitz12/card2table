@@ -1,1 +1,20 @@
-.editor.svelte-1hnp8r8{flex-grow:1;min-height:0}.main.svelte-1hnp8r8{flex-grow:1;position:relative;min-width:0}.sidebar.svelte-1hnp8r8{display:none}@media screen and (min-width: 640px){.drawer.svelte-1hnp8r8{display:none}.sidebar.svelte-1hnp8r8{display:block}}
+.editor.svelte-1hnp8r8 {
+	flex-grow: 1;
+	min-height: 0;
+}
+.main.svelte-1hnp8r8 {
+	flex-grow: 1;
+	position: relative;
+	min-width: 0;
+}
+.sidebar.svelte-1hnp8r8 {
+	display: none;
+}
+@media screen and (min-width: 640px) {
+	.drawer.svelte-1hnp8r8 {
+		display: none;
+	}
+	.sidebar.svelte-1hnp8r8 {
+		display: block;
+	}
+}

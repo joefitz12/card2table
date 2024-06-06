@@ -94,17 +94,12 @@
 		transform: translateX(0);
 		opacity: 1;
 	}
-	.menu h2 {
-		margin: 0;
-	}
 	.menu ol {
-		padding: 0;
-		margin: 0;
 		row-gap: 0.25rem;
 	}
 	.menu li {
 		width: 100%;
-		margin: 0;
+
 		justify-content: space-between;
 		--column-gap: 8px;
 		column-gap: var(--column-gap);

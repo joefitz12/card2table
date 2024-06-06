@@ -1,3 +1,3 @@
-import { TemplateDrawer } from "./TemplateDrawer";
+import { TemplateDrawer } from './TemplateDrawer';
 
 export { TemplateDrawer };

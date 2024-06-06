@@ -1,5 +1,5 @@
-import { open } from "./open";
+import { open } from './open';
 
 export const db = {
-    open
-}
+	open,
+};

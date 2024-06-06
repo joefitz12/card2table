@@ -1,3 +1,3 @@
-import TemplateDrawer from "./TemplateDrawer.svelte";
+import TemplateDrawer from './TemplateDrawer.svelte';
 
 export { TemplateDrawer };

@@ -1,7 +1,4 @@
-import PrintSidebar from "./PrintSidebar.svelte";
-import { TemplateSidebar } from "./TemplateSidebar";
+import PrintSidebar from './PrintSidebar.svelte';
+import { TemplateSidebar } from './TemplateSidebar';
 
-export {
-    PrintSidebar,
-    TemplateSidebar
-};
+export { PrintSidebar, TemplateSidebar };

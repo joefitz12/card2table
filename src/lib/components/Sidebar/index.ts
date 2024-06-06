@@ -1,3 +1,3 @@
-import Sidebar from "./Sidebar.svelte";
+import Sidebar from './Sidebar.svelte';
 
 export { Sidebar };

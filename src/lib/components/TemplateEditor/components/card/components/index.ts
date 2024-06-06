@@ -1,3 +1,3 @@
-import TextElement from "./TextElement.svelte";
+import TextElement from './TextElement.svelte';
 
-export { TextElement }
+export { TextElement };

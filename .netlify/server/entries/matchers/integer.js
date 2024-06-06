@@ -1,6 +1,4 @@
 function match(param) {
-  return /^\d+$/.test(param);
+	return /^\d+$/.test(param);
 }
-export {
-  match
-};
+export { match };

@@ -1,3 +1,3 @@
-import TemplateSidebar from "./TemplateSidebar.svelte";
+import TemplateSidebar from './TemplateSidebar.svelte';
 
-export { TemplateSidebar }
+export { TemplateSidebar };

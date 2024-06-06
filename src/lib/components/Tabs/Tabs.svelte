@@ -103,8 +103,6 @@
 
 <style lang="scss">
 	ol {
-		margin: 0;
-		padding: 0;
 		min-width: 0;
 		overflow-x: auto;
 		overflow-y: clip;
@@ -119,7 +117,6 @@
 		min-height: 34px;
 	}
 	li {
-		margin: 0;
 		color: lightgrey;
 		padding-right: 0.5rem;
 
