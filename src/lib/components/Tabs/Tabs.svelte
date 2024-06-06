@@ -101,7 +101,7 @@
 	{/if}
 </ol>
 
-<style>
+<style lang="scss">
 	ol {
 		margin: 0;
 		padding: 0;
@@ -118,30 +118,33 @@
 		height: 34px;
 		min-height: 34px;
 	}
-	ol li {
+	li {
 		margin: 0;
 		color: lightgrey;
 		padding-right: 0.5rem;
+
+		&:hover {
+			background: lightsteelblue;
+		}
+
+		&:has(a.active) {
+			background: lightblue;
+		}
 	}
-	ol li a {
+	a {
 		padding: 0.5rem;
-		white-space: nowrap;
 		max-width: 5rem;
+		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
-	ol li:has(a.active) {
-		background: lightblue;
-	}
-	ol li:hover {
-		background: lightsteelblue;
-	}
 	button.delete {
 		background: transparent;
-	}
-	button.delete:hover {
-		background: transparent;
-		box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+
+		&:hover {
+			background: transparent;
+			box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+		}
 	}
 	@media print {
 		ol.tabs {
