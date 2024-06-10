@@ -140,6 +140,7 @@
 		height: min-content;
 	}
 	.card-template {
+		line-height: 1;
 		margin: auto;
 		position: relative;
 		display: flex;
