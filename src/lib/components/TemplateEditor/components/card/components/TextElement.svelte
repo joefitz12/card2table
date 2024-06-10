@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { textElements, template } from '$lib/store';
+	import { textElements, template, state } from '$lib/store';
 	export let id: number;
 
 	let textElementContainer: HTMLDivElement;
@@ -12,10 +12,7 @@
 	class:positioned={!!textElement.leftTransform || !!textElement.topTransform}
 	draggable="true"
 	bind:this={textElementContainer}
-	on:dragstart={(e) => {
-		console.log(textElement);
-		textElement.template.onDragstart(e);
-	}}
+	on:dragstart={textElement.template.onDragstart}
 	on:click={(e) => textElement.template.onClick(e, id)}
 	on:keydown={(event) => {
 		if (event.key === 'Enter' || event.key === ' ') {
@@ -76,7 +73,7 @@
 	><span>&#125;</span>
 </div>
 
-<style>
+<style lang="scss">
 	.text-element-container {
 		position: relative;
 		color: var(--color);
@@ -85,7 +82,7 @@
 		transition: border-color 75ms ease-in-out;
 		padding: var(--padding-top) var(--padding-right) var(--padding-bottom) var(--padding-left);
 		margin: var(--margin-top) var(--margin-right) var(--margin-bottom) var(--margin-left);
-		width: var(--card-width) - calc(var(--card-left-padding) + var(--card-right-padding));
+		width: calc(var(--card-width) - (var(--card-left-padding) + var(--card-right-padding)));
 		box-sizing: border-box;
 		border: solid var(--border-color);
 		border-top-width: var(--border-top-width);

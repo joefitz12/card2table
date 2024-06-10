@@ -2,12 +2,14 @@ import { state, textElements } from '$lib/store';
 import { get } from 'svelte/store';
 import { CardTemplate } from '$lib/models/CardTemplate';
 import { TextElement } from '$lib/models/TextElement';
+import { textElement } from '$lib/api';
 
 export class UICardTemplate extends CardTemplate {
 	id: IDBValidKey;
 	textElementId: string;
 	handleDrop: (e: DragEvent) => void;
 	handleDragover: (e: DragEvent) => void;
+	_getTransform: (e: DragEvent) => { topTransform: number; leftTransform: number };
 	constructor({
 		id,
 		unit,
@@ -35,61 +37,51 @@ export class UICardTemplate extends CardTemplate {
 		this.textElementId = '0';
 		this.handleDrop = (e: DragEvent) => {
 			e.stopPropagation();
-			if (!(e.target instanceof HTMLElement) || !e.dataTransfer) {
+			if (
+				!(e.target instanceof HTMLElement) ||
+				!e.dataTransfer ||
+				!e.dataTransfer.getData('text')
+			) {
 				return;
 			}
 
 			// Update text element id offset
+			// @todo -- remove ! from .match
 			const textElementId = e.dataTransfer.getData('text');
+			const id = textElementId.match(/\d+/) ? parseInt(textElementId.match(/\d+/)![0]) : null;
 
-			textElements.update(($textElements) => {
-				const textElement = $textElements.get(textElementId);
-				const textElementIndex = [...$textElements.values()].findIndex(
-					(element) => element.template.id == textElementId
-				);
+			if (!id) {
+				return;
+			}
 
-				if (!textElement) {
-					return $textElements;
-				}
+			const droppedTextElement = get(textElements).get(id);
 
-				// @TODO: find replacement for layerX / layerY
-				// this is needed to capture offset from card
-				// if user drops text element on top of another text element,
-				// e.offsetX / e.offsetY references the offset on that text element (not the card)
-				// Remove ts-ignore
-				const cardOffset = {
-					// @ts-ignore
-					offsetX: e.target.nodeName === 'SPAN' ? e.layerX || e.offsetX : e.offsetX,
-					// @ts-ignore
-					offsetY: e.target.nodeName === 'SPAN' ? e.layerY || e.offsetX : e.offsetY,
-				};
+			if (!droppedTextElement) {
+				throw 'text element does not exist';
+			}
 
-				if (
-					!Math.abs(cardOffset.offsetX - get(state).drag.offsetX) ||
-					!Math.abs(cardOffset.offsetY - get(state).drag.offsetY)
-				) {
-					return $textElements;
-				}
+			const { leftTransform, topTransform } = this._getTransform(e);
 
-				textElement.leftTransform = cardOffset.offsetX - get(state).drag.offsetX;
-				textElement.topTransform = cardOffset.offsetY - get(state).drag.offsetY;
+			const updatedTextElement = { ...droppedTextElement, topTransform, leftTransform };
 
-				return $textElements;
-				// return {
-				//     ...$textElements,
-				//     textElements: $textElements.textElements.toSpliced(textElementIndex, 1, textElement)
-				// };
-			});
-			state.update(($state) => {
-				return {
-					...$state,
-					drag: {
-						...$state.drag,
-						isInProgress: false,
-						elementId: '',
-					},
-				};
-			});
+			textElement
+				.update(updatedTextElement)
+				.then(() => {
+					textElements.update(($textElements) => {
+						return $textElements.set(id, updatedTextElement);
+					});
+					state.update(($state) => {
+						return {
+							...$state,
+							drag: {
+								...$state.drag,
+								isInProgress: false,
+								elementId: '',
+							},
+						};
+					});
+				})
+				.catch((error) => console.error({ error }));
 		};
 		this.handleDragover = (e: DragEvent) => {
 			e.preventDefault();
@@ -119,6 +111,27 @@ export class UICardTemplate extends CardTemplate {
 					},
 				};
 			});
+		};
+		this._getTransform = (e) => {
+			// Establish offset and transform
+			const cardOffset = {
+				// @ts-ignore
+				offsetX: e.target.nodeName === 'SPAN' ? e.layerX || e.offsetX : e.offsetX,
+				// @ts-ignore
+				offsetY: e.target.nodeName === 'SPAN' ? e.layerY || e.offsetX : e.offsetY,
+			};
+
+			if (
+				!Math.abs(cardOffset.offsetX - get(state).drag.offsetX) ||
+				!Math.abs(cardOffset.offsetY - get(state).drag.offsetY)
+			) {
+				throw 'invalid drop';
+			}
+
+			return {
+				leftTransform: cardOffset.offsetX - get(state).drag.offsetX,
+				topTransform: cardOffset.offsetY - get(state).drag.offsetY,
+			};
 		};
 	}
 }

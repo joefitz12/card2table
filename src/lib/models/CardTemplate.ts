@@ -16,8 +16,8 @@ export class CardTemplate {
 	relativeUnit: number;
 	constructor() {
 		this.unit = 'in';
-		this.height = 3.43;
-		this.width = 2.44;
+		this.height = 3.5;
+		this.width = 2.5;
 		this.title = `Card Template`;
 		this.color = '#000000';
 		this.backgroundColor = '#1E91D6';
