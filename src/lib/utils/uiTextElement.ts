@@ -30,6 +30,8 @@ export class UITextElement extends TextElement {
 		padding,
 		margin,
 		minimized,
+		leftTransform,
+		topTransform,
 	}: InstanceType<typeof TextElement> & { id: IDBValidKey }) {
 		super({ templateId, minimized });
 		this.id = id;
@@ -42,6 +44,8 @@ export class UITextElement extends TextElement {
 		this.padding = padding;
 		this.border = border;
 		this.margin = margin;
+		this.leftTransform = leftTransform;
+		this.topTransform = topTransform;
 		this.onMouseover = () => {
 			state.update((state) => {
 				return {

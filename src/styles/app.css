@@ -39,6 +39,10 @@ body {
 	background-color: var(--background-color);
 }
 
+body * {
+	line-height: calc(1em + 0.5rem);
+}
+
 body[data-theme='dark'] {
 	--color: var(--dark-theme-color);
 	--background-color: var(--dark-theme-background-color);
@@ -74,9 +78,11 @@ a {
 	text-decoration: none;
 }
 
-input,
+input:not([type='color'], [type='checkbox']),
 select {
 	font-size: 0.875rem;
+	height: calc(1em + 0.5rem);
+	min-width: 3.5rem;
 }
 
 button {
@@ -133,7 +139,7 @@ fieldset {
 legend {
 	font-weight: 600;
 	background-color: transparent;
-	margin-bottom: -0.75rem;
+	margin-bottom: -0.5rem;
 }
 
 fieldset input {
@@ -182,5 +188,11 @@ h3 {
 @media print {
 	body {
 		overflow: visible;
+	}
+}
+
+@media screen and (min-width: 640px) {
+	legend {
+		margin-bottom: -0.75rem;
 	}
 }

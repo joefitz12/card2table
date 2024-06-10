@@ -4,7 +4,7 @@ import { activeTabs, darkTheme, template, textElements } from '$lib/store';
 import { UICardTemplate, UITextElement } from '$lib/utils';
 import { get } from 'svelte/store';
 
-export function load({ params }) {
+export function load({ params }: {params: {id: string}}) {
 	try {
 		cardTemplate
 			.getById(params.id)

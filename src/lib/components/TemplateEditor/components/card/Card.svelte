@@ -19,7 +19,6 @@
 	let cardContainer: HTMLDivElement;
 
 	afterUpdate(() => {
-		console.log('after update');
 		setRelativeUnit({ cardContainer, card: $template });
 	});
 

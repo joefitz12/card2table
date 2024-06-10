@@ -1,9 +1,8 @@
-import { derived, get, writable } from 'svelte/store';
+import { writable } from 'svelte/store';
 import { browser } from '$app/environment';
 import type { PositionalProps } from './types';
 import { UITextElement } from './utils/uiTextElement';
 import { cardTemplate } from './api/cardTemplate';
-import { TextElement } from './models/TextElement';
 import { UICardTemplate } from './utils/uiCardTemplate';
 import { CardTemplate } from './models/CardTemplate';
 
@@ -183,7 +182,7 @@ template.subscribe(($template) => {
 	if (!$template) {
 		return;
 	}
-	const { handleDrop, handleDragover, textElementId, ...template } = $template;
+	const { handleDrop, handleDragover, _getTransform, textElementId, ...template } = $template;
 
 	cardTemplate.updateById({
 		template,
