@@ -88,6 +88,7 @@
 	}
 	.card-container {
 		flex-grow: 1;
+		line-height: 1;
 	}
 	.title {
 		display: flex;
